@@ -1,4 +1,4 @@
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, ClipboardList, Inbox } from "lucide-react";
 import {
   updateStatusAPI,
   updateProgressAPI,
@@ -6,14 +6,24 @@ import {
 import toast from "react-hot-toast";
 import dayjs from "dayjs";
 
+const thClass =
+  "px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 whitespace-nowrap";
 
 export default function WorkAssignmentTable({ rows, loading, onRefresh }) {
   const getStatusBadge = (status) => {
+    const base =
+      "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold";
     const styles = {
-      pending: "bg-blue-100 text-blue-700 border-blue-200",
-      in_progress: "bg-yellow-100 text-yellow-700 border-yellow-200",
-      completed: "bg-emerald-100 text-emerald-700 border-emerald-200",
-      overdue: "bg-red-100 text-red-700 border-red-200",
+      assigned: `${base} bg-blue-50 text-blue-700 ring-1 ring-blue-200`,
+      in_progress: `${base} bg-amber-50 text-amber-700 ring-1 ring-amber-200`,
+      completed: `${base} bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200`,
+      overdue: `${base} bg-rose-50 text-rose-700 ring-1 ring-rose-200`,
+    };
+    const dots = {
+      assigned: "bg-blue-500",
+      in_progress: "bg-amber-500",
+      completed: "bg-emerald-500",
+      overdue: "bg-rose-500",
     };
     const labels = {
       assigned: "Assigned",
@@ -21,18 +31,14 @@ export default function WorkAssignmentTable({ rows, loading, onRefresh }) {
       completed: "Completed",
       overdue: "Overdue",
     };
-    const icons = {
-      pending: "Pending",
-      in_progress: "⚙️",
-      completed: "✅",
-      overdue: "⏰",
-    };
 
     return (
-      <span
-        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium border ${styles[status]}`}
-      >
-        {icons[status]} {labels[status]}
+      <span className={styles[status] || styles.assigned}>
+        <span
+          className={`h-1.5 w-1.5 rounded-full ${dots[status] || dots.assigned}`}
+          aria-hidden="true"
+        />
+        {labels[status] || status}
       </span>
     );
   };
@@ -59,36 +65,39 @@ export default function WorkAssignmentTable({ rows, loading, onRefresh }) {
 
   const getPriorityBadge = (priority) => {
     const styles = {
-      high: "bg-red-100 text-red-700",
-      medium: "bg-yellow-100 text-yellow-700",
-      low: "bg-green-100 text-green-700",
+      high: "bg-rose-50 text-rose-700 ring-1 ring-rose-200",
+      medium: "bg-amber-50 text-amber-700 ring-1 ring-amber-200",
+      low: "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200",
     };
     const labels = { high: "High", medium: "Medium", low: "Low" };
 
     return (
       <span
-        className={`inline-flex px-2 py-0.5 rounded text-xs font-medium ${styles[priority]}`}
+        className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${styles[priority] || styles.medium}`}
       >
-        {labels[priority]}
+        {labels[priority] || priority}
       </span>
     );
   };
 
   const getProgressBar = (progress, status) => {
-    let color = "bg-blue-500";
-    if (status === "completed") color = "bg-emerald-500";
-    else if (status === "overdue") color = "bg-red-500";
-    else if (progress > 50) color = "bg-yellow-500";
+    let color = "bg-gradient-to-r from-blue-500 to-cyan-500";
+    if (status === "completed")
+      color = "bg-gradient-to-r from-emerald-500 to-teal-500";
+    else if (status === "overdue")
+      color = "bg-gradient-to-r from-rose-500 to-pink-500";
+    else if (progress > 50)
+      color = "bg-gradient-to-r from-amber-500 to-orange-500";
 
     return (
-      <div className="flex items-center gap-2 w-32">
-        <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+      <div className="flex w-32 items-center gap-2">
+        <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100">
           <div
             className={`h-full rounded-full transition-all ${color}`}
             style={{ width: `${progress}%` }}
           />
         </div>
-        <span className="text-xs font-medium text-gray-600 w-8">
+        <span className="w-8 text-xs font-semibold text-slate-600">
           {progress}%
         </span>
       </div>
@@ -96,67 +105,84 @@ export default function WorkAssignmentTable({ rows, loading, onRefresh }) {
   };
 
   return (
-    <div className="bg-white/70 backdrop-blur-xl border border-white/40 rounded-2xl shadow-lg overflow-hidden">
-      <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-800">
-          Work Assignments
-        </h3>
-        <button
-          onClick={onRefresh}
-          disabled={loading}
-          className="flex items-center gap-2 px-3 py-2 text-sm text-indigo-600 hover:bg-indigo-50 rounded-lg transition"
-        >
-          <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-          Refresh
-        </button>
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      {/* HEADER */}
+      <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+            <ClipboardList size={15} aria-hidden="true" />
+          </div>
+          <h3 className="text-sm font-bold tracking-tight text-slate-900">
+            Work Assignments
+          </h3>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">
+            {rows.length} {rows.length === 1 ? "task" : "tasks"}
+          </span>
+          <button
+            onClick={onRefresh}
+            disabled={loading}
+            className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-600 shadow-sm transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 disabled:opacity-50"
+          >
+            <RefreshCw
+              size={13}
+              aria-hidden="true"
+              className={loading ? "animate-spin" : ""}
+            />
+            Refresh
+          </button>
+        </div>
       </div>
 
-      <div className="overflow-auto max-h-[60vh]">
-        <table className="w-full">
-          <thead className="sticky top-0 z-10 bg-gray-50/50">
-            <tr>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                Task ID
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                Title
-              </th>
-
-              <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">
-                Priority
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                Due Date
-              </th>
-                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                Days left
-              </th>
-              <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">
-                Progress
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                Status
-              </th>
+      {/* TABLE */}
+      <div className="max-h-[60vh] overflow-auto">
+        <table className="w-full min-w-[900px] text-sm">
+          <thead className="sticky top-0 z-10 bg-slate-50">
+            <tr className="border-b border-slate-200">
+              <th className={thClass}>Task ID</th>
+              <th className={thClass}>Title</th>
+              <th className={`${thClass} text-center`}>Priority</th>
+              <th className={thClass}>Due Date</th>
+              <th className={thClass}>Days Left</th>
+              <th className={thClass}>Progress</th>
+              <th className={thClass}>Status</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+
+          <tbody className="divide-y divide-slate-100">
             {loading ? (
               <tr>
-                <td
-                  colSpan={8}
-                  className="px-6 py-12 text-center text-gray-500"
-                >
-                  <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-2" />
-                  Loading...
+                <td colSpan={7} className="py-14">
+                  <div className="flex flex-col items-center gap-2 text-slate-400">
+                    <RefreshCw
+                      size={22}
+                      aria-hidden="true"
+                      className="animate-spin"
+                    />
+                    <span className="text-sm font-medium">
+                      Loading assignments...
+                    </span>
+                  </div>
                 </td>
               </tr>
             ) : rows.length === 0 ? (
               <tr>
-                <td
-                  colSpan={8}
-                  className="px-6 py-12 text-center text-gray-500"
-                >
-                  No assignments found.
+                <td colSpan={7} className="py-16">
+                  <div className="flex flex-col items-center gap-3 text-center">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
+                      <Inbox size={24} aria-hidden="true" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-slate-700">
+                        No assignments found
+                      </p>
+                      <p className="mt-0.5 text-xs text-slate-400">
+                        New tasks will appear here once assigned.
+                      </p>
+                    </div>
+                  </div>
                 </td>
               </tr>
             ) : (
@@ -167,62 +193,99 @@ export default function WorkAssignmentTable({ rows, loading, onRefresh }) {
                       100,
                     )
                   : 0;
+
+                const daysLeft = row.deadline
+                  ? Math.max(dayjs(row.deadline).diff(dayjs(), "day"), 0)
+                  : null;
+
                 return (
-                  <tr key={row.id} className="hover:bg-gray-50/50 transition">
-                    <td className="px-4 py-4 text-sm font-mono text-indigo-600">
-                      {row.id}
+                  <tr
+                    key={row.id}
+                    className="transition-colors hover:bg-slate-50"
+                  >
+                    <td className="whitespace-nowrap px-4 py-4 font-mono text-xs font-semibold text-indigo-600">
+                      #{row.id}
                     </td>
+
                     <td className="px-4 py-4">
-                      <p className="font-medium text-gray-800 text-sm">
+                      <p className="text-sm font-semibold text-slate-900">
                         {row.title}
                       </p>
-                      <p className="text-xs text-gray-500 truncate max-w-xs">
+                      <p className="max-w-xs truncate text-xs text-slate-400">
                         {row.description}
                       </p>
                     </td>
-                    <td className="px-4 py-4 text-center">
+
+                    <td className="whitespace-nowrap px-4 py-4 text-center">
                       {getPriorityBadge(row.priority)}
                     </td>
-                    <td className="px-4 py-4 text-sm text-gray-600">
+
+                    <td className="whitespace-nowrap px-4 py-4 text-slate-500">
                       {row.deadline
                         ? new Date(row.deadline).toLocaleDateString("en-GB")
                         : "-"}
                     </td>
-                    <td className="px-4 py-4 text-sm text-gray-600">
-  {row.deadline
-    ? `${Math.max(dayjs(row.deadline).diff(dayjs(), "day"), 0)} days`
-    : "-"}
-</td>
-                    <td className="px-4 py-4">
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="number"
-                          min="0"
-                          max={row.target_value || 100}
-                          value={row.current_value || 0}
-                          onChange={(e) =>
-                            handleProgressChange(row.id, Number(e.target.value))
-                          }
-                          className="w-16 px-2 py-1 border rounded text-xs"
-                        />
-                        <span className="text-xs text-gray-500">
-                          / {row.target_value || 100}
+
+                    <td className="whitespace-nowrap px-4 py-4">
+                      {daysLeft === null ? (
+                        <span className="text-slate-400">-</span>
+                      ) : (
+                        <span
+                          className={`text-xs font-semibold ${
+                            daysLeft === 0
+                              ? "text-rose-600"
+                              : daysLeft <= 2
+                                ? "text-amber-600"
+                                : "text-slate-600"
+                          }`}
+                        >
+                          {daysLeft} {daysLeft === 1 ? "day" : "days"}
                         </span>
-                      </div>{" "}
+                      )}
                     </td>
-                    <td className="px-4 py-4">
-                      <select
-                        value={row.status}
-                        onChange={(e) =>
-                          handleStatusChange(row.id, e.target.value)
-                        }
-                        className="px-2 py-1 border rounded text-xs"
-                      >
-                        <option value="assigned">Assigned</option>
-                        <option value="in_progress">In Progress</option>
-                        <option value="completed">Completed</option>
-                        <option value="overdue">Overdue</option>
-                      </select>{" "}
+
+                    <td className="whitespace-nowrap px-4 py-4">
+                      <div className="flex flex-col gap-1.5">
+                        {getProgressBar(progress, row.status)}
+                        <div className="flex items-center gap-1.5">
+                          <input
+                            type="number"
+                            min="0"
+                            max={row.target_value || 100}
+                            value={row.current_value || 0}
+                            aria-label="Current progress value"
+                            onChange={(e) =>
+                              handleProgressChange(
+                                row.id,
+                                Number(e.target.value),
+                              )
+                            }
+                            className="w-16 rounded-lg border border-slate-200 bg-slate-50/60 px-2 py-1 text-xs text-slate-800 outline-none transition-all focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-100"
+                          />
+                          <span className="text-xs text-slate-400">
+                            / {row.target_value || 100}
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td className="whitespace-nowrap px-4 py-4">
+                      <div className="flex flex-col gap-1.5">
+                        {getStatusBadge(row.status)}
+                        <select
+                          value={row.status}
+                          aria-label="Update status"
+                          onChange={(e) =>
+                            handleStatusChange(row.id, e.target.value)
+                          }
+                          className="rounded-lg border border-slate-200 bg-slate-50/60 px-2 py-1 text-xs font-medium text-slate-700 outline-none transition-all focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-100"
+                        >
+                          <option value="assigned">Assigned</option>
+                          <option value="in_progress">In Progress</option>
+                          <option value="completed">Completed</option>
+                          <option value="overdue">Overdue</option>
+                        </select>
+                      </div>
                     </td>
                   </tr>
                 );
@@ -232,8 +295,9 @@ export default function WorkAssignmentTable({ rows, loading, onRefresh }) {
         </table>
       </div>
 
+      {/* FOOTER */}
       {!loading && rows.length > 0 && (
-        <div className="px-6 py-3 bg-gray-50/50 border-t border-gray-100 text-sm text-gray-500">
+        <div className="border-t border-slate-100 bg-slate-50/60 px-5 py-3 text-xs font-medium text-slate-500">
           Showing {rows.length} assignment{rows.length !== 1 ? "s" : ""}
         </div>
       )}

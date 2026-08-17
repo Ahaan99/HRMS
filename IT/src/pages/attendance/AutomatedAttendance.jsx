@@ -8,7 +8,7 @@ import AttendanceFilters from "../../components/attendance/AttendanceFilters";
 import LocationCapture from "../../components/attendance/LocationCapture";
 import OfficeLocation from "../../components/attendance/OfficeLocation";
 import ShiftTimings from "../../components/attendance/ShiftTimings";
-import { MapPin, Users, Settings, Clock } from "lucide-react";
+import { MapPin, Users, Settings, Clock, UserCheck, UserX, AlarmClock, Plane } from "lucide-react";
 
 export default function AutomatedAttendance() {
   const [stats, setStats] = useState({
@@ -157,7 +157,7 @@ const fetchAttendance = async () => {
               value={stats.present}
               subText="Employees present today"
               gradient="bg-gradient-to-tr from-emerald-500 to-teal-500"
-              icon="✅"
+              icon={<UserCheck size={20} />}
             />
 
             <StatCard
@@ -165,7 +165,7 @@ const fetchAttendance = async () => {
               value={stats.absent}
               subText="Employees absent today"
               gradient="bg-gradient-to-tr from-red-500 to-pink-500"
-              icon="❌"
+              icon={<UserX size={20} />}
             />
 
             <StatCard
@@ -173,7 +173,7 @@ const fetchAttendance = async () => {
               value={stats.late}
               subText="Arrived after 10:00 AM"
               gradient="bg-gradient-to-tr from-amber-500 to-orange-500"
-              icon="⏰"
+              icon={<AlarmClock size={20} />}
             />
 
             <StatCard
@@ -181,7 +181,7 @@ const fetchAttendance = async () => {
               value={stats.onLeave}
               subText="Approved leave today"
               gradient="bg-gradient-to-tr from-blue-500 to-indigo-500"
-              icon="🏖️"
+              icon={<Plane size={20} />}
             />
           </div>
 

@@ -1,7 +1,8 @@
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { Inbox, UserPlus, Archive, MailOpen, Globe } from "lucide-react";
+import { Inbox, UserPlus, Archive, MailOpen } from "lucide-react";
+import HRNavbar from "../../components/hr/HRNavbar";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const authHeaders = () => ({
@@ -18,10 +19,10 @@ const TYPE_LABELS = {
 };
 
 const STATUS_COLORS = {
-  New: "bg-blue-50 text-blue-600",
-  Read: "bg-gray-100 text-gray-600",
-  Converted: "bg-emerald-50 text-emerald-600",
-  Archived: "bg-amber-50 text-amber-600",
+  New: "bg-sky-100 text-sky-700",
+  Read: "bg-slate-100 text-slate-600",
+  Converted: "bg-emerald-100 text-emerald-700",
+  Archived: "bg-amber-100 text-amber-700",
 };
 
 export default function WebFormsInbox() {
@@ -77,26 +78,44 @@ export default function WebFormsInbox() {
   };
 
   return (
-    <div className="p-6 space-y-5 max-w-5xl mx-auto">
-      <div className="flex items-center gap-3">
-        <div className="p-2.5 rounded-xl bg-black text-white">
-          <Globe size={20} />
-        </div>
-        <div>
-          <h1 className="text-xl font-bold text-gray-900">Website Forms</h1>
-          <p className="text-sm text-gray-500">
+    <div className="mx-auto max-w-5xl space-y-5 p-4 sm:p-6">
+      <HRNavbar />
+      {/* ── HERO BAND ───────────────────────────────────────── */}
+      <div className="relative overflow-hidden rounded-3xl bg-slate-900 px-8 py-8 md:px-10">
+        <div
+          className="absolute inset-0 opacity-[0.06]"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, #818cf8 1px, transparent 1px), linear-gradient(to bottom, #818cf8 1px, transparent 1px)",
+            backgroundSize: "44px 44px",
+          }}
+        />
+        <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-violet-600/25 blur-3xl" />
+        <div className="absolute -bottom-24 -left-12 h-56 w-56 rounded-full bg-indigo-600/20 blur-3xl" />
+
+        <div className="relative">
+          <p className="text-xs font-semibold uppercase tracking-widest text-indigo-300">
+            Inbound
+          </p>
+          <h1 className="mt-2 text-2xl font-bold text-white md:text-3xl text-balance">
+            Website Forms
+          </h1>
+          <p className="mt-2 text-sm leading-relaxed text-slate-400">
             {counts.total || 0} submissions &middot; {counts.unread || 0} new
           </p>
         </div>
       </div>
 
-      <div className="flex gap-2 flex-wrap">
+      {/* ── FILTER PILLS ────────────────────────────────────── */}
+      <div className="flex flex-wrap gap-2">
         {["", "New", "Read", "Converted", "Archived"].map((f) => (
           <button
             key={f || "all"}
             onClick={() => setFilter(f)}
-            className={`text-xs font-bold px-3 py-1.5 rounded-lg ${
-              filter === f ? "bg-black text-white" : "bg-gray-100 text-gray-600"
+            className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors ${
+              filter === f
+                ? "bg-indigo-600 text-white shadow-sm"
+                : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
             }`}
           >
             {f || "All"}
@@ -104,73 +123,90 @@ export default function WebFormsInbox() {
         ))}
       </div>
 
+      {/* ── SUBMISSIONS ─────────────────────────────────────── */}
       <div className="space-y-3">
         {subs.map((s) => (
-          <div key={s.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-            <div className="flex items-start justify-between gap-3 flex-wrap">
+          <div
+            key={s.id}
+            className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+          >
+            <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <p className="font-bold text-gray-900">{s.name}</p>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600">
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="font-semibold text-slate-900">{s.name}</p>
+                  <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-semibold text-indigo-600 ring-1 ring-indigo-100">
                     {TYPE_LABELS[s.form_type] || s.form_type}
                   </span>
                   <span
-                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${STATUS_COLORS[s.status] || "bg-gray-100 text-gray-600"}`}
+                    className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${STATUS_COLORS[s.status] || "bg-slate-100 text-slate-600"}`}
                   >
                     {s.status}
                   </span>
                 </div>
-                <p className="text-xs text-gray-400 mt-0.5">
-                  {s.email || "no email"} &middot; {s.phone || "no phone"} &middot;{" "}
-                  {new Date(s.created_at).toLocaleString()} &middot; via {s.source}
+                <p className="mt-0.5 text-xs text-slate-400">
+                  {s.email || "no email"} &middot; {s.phone || "no phone"}{" "}
+                  &middot; {new Date(s.created_at).toLocaleString()} &middot;
+                  via {s.source}
                 </p>
                 {s.subject && (
-                  <p className="text-sm font-semibold text-gray-700 mt-2">{s.subject}</p>
+                  <p className="mt-2 text-sm font-semibold text-slate-700">
+                    {s.subject}
+                  </p>
                 )}
                 {s.message && (
-                  <p className="text-sm text-gray-600 mt-1 whitespace-pre-wrap">{s.message}</p>
+                  <p className="mt-1 whitespace-pre-wrap text-sm leading-relaxed text-slate-600">
+                    {s.message}
+                  </p>
                 )}
               </div>
-              <div className="flex gap-1.5 shrink-0">
+
+              <div className="flex shrink-0 gap-1.5">
                 {s.status === "New" && (
                   <button
                     onClick={() => setStatus(s.id, "Read")}
-                    className="p-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    className="rounded-lg border border-slate-200 bg-slate-50 p-2 text-slate-600 transition-colors hover:bg-slate-100"
                     title="Mark read"
                     aria-label="Mark read"
                   >
-                    <MailOpen size={15} />
+                    <MailOpen size={15} aria-hidden="true" />
                   </button>
                 )}
                 {s.status !== "Converted" && (
                   <button
                     onClick={() => convert(s.id)}
-                    className="p-2 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100"
+                    className="rounded-lg border border-emerald-200 bg-emerald-50 p-2 text-emerald-600 transition-colors hover:bg-emerald-100"
                     title="Convert to candidate"
                     aria-label="Convert to candidate"
                   >
-                    <UserPlus size={15} />
+                    <UserPlus size={15} aria-hidden="true" />
                   </button>
                 )}
                 {s.status !== "Archived" && (
                   <button
                     onClick={() => setStatus(s.id, "Archived")}
-                    className="p-2 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-100"
+                    className="rounded-lg border border-amber-200 bg-amber-50 p-2 text-amber-600 transition-colors hover:bg-amber-100"
                     title="Archive"
                     aria-label="Archive"
                   >
-                    <Archive size={15} />
+                    <Archive size={15} aria-hidden="true" />
                   </button>
                 )}
               </div>
             </div>
           </div>
         ))}
+
         {!loading && subs.length === 0 && (
-          <div className="text-center py-16 text-gray-400">
-            <Inbox size={40} className="mx-auto mb-3 opacity-40" />
-            <p className="font-semibold">No submissions yet</p>
-            <p className="text-sm">Submissions from company websites will appear here.</p>
+          <div className="rounded-2xl border border-slate-200 bg-white py-16 text-center shadow-sm">
+            <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+              <Inbox size={22} aria-hidden="true" />
+            </span>
+            <p className="mt-3 text-sm font-semibold text-slate-600">
+              No submissions yet
+            </p>
+            <p className="mt-1 text-xs text-slate-400">
+              Submissions from company websites will appear here.
+            </p>
           </div>
         )}
       </div>

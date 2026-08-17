@@ -1,6 +1,10 @@
 import { useState } from "react";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+import { Search, Download, FileText, Pencil, Inbox } from "lucide-react";
+
+const controlCls =
+  "rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition-colors focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/25";
 
 export default function HrInterviewTable({
   rows = [],
@@ -16,6 +20,7 @@ export default function HrInterviewTable({
     job_profile: "",
     created_at: "",
     language_id: "",
+    joined: "",
   });
 
   const callStatusMap = {
@@ -30,7 +35,6 @@ export default function HrInterviewTable({
     9: "NOT REACHABLE",
   };
 
-  console.log(rows)
   const filteredRows = rows.filter((item) => {
     const matchesSearch =
       item.candidate_name?.toLowerCase().includes(search.toLowerCase()) ||
@@ -116,311 +120,342 @@ export default function HrInterviewTable({
 
     saveAs(fileData, `Interviews_${Date.now()}.xlsx`);
   };
-  
+
   return (
-    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-auto max-h-[60vh]">
-      <div className="overflow-auto max-h-[60vh]">
-        <h2 className="text-lg font-semibold text-black">
-          Interview Management
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      {/* ── TOOLBAR ─────────────────────────────────────────── */}
+      <div className="border-b border-slate-100 bg-slate-50/60 p-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="relative w-full sm:w-64">
+            <Search
+              size={15}
+              aria-hidden="true"
+              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+            />
+            <input
+              type="text"
+              placeholder="Search name / email"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className={`${controlCls} w-full pl-9`}
+            />
+          </div>
 
-        </h2>
-      </div>
-
-      <div className="p-4 flex flex-col sm:flex-row gap-2 sm:p-3">
-        {/* 🔍 Search */}
-        <input
-          type="text"
-          placeholder="Search name / email"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="border px-3 py-2 rounded-lg text-sm w-full sm:w-64"
-        />
-
-        {/* 📞 Call Status */}
-        <select
-          value={filters.call_status}
-          onChange={(e) =>
-            setFilters({ ...filters, call_status: e.target.value })
-          }
-          className="border px-3 py-2 rounded-lg text-sm"
-        >
-          <option value="">All Call Status</option>
-          {Object.entries(callStatusMap).map(([key, value]) => (
-            <option key={key} value={key}>
-              {value}
-            </option>
-          ))}
-        </select>
-
-        {/* 📍 Location */}
-        <select
-          value={filters.location || ""}
-          onChange={(e) => setFilters({ ...filters, location: e.target.value })}
-          className="border px-3 py-2 rounded-lg text-sm"
-        >
-          <option value="">All Locations</option>
-
-          {locations.map((loc) => (
-            <option key={loc.id} value={loc.name}>
-              {loc.name}
-            </option>
-          ))}
-        </select>
-
-        {/* 🌐 Language */}
-        <select
-          value={filters.language_id}
-          onChange={(e) =>
-            setFilters({ ...filters, language_id: e.target.value })
-          }
-          className="border px-3 py-2 rounded-lg text-sm"
-        >
-          <option value="">All Languages</option>
-
-          {[
-            ...new Map(
-              rows
-                .filter((r) => r.language_id)
-                .map((r) => [r.language_id, r.language_name]),
-            ).entries(),
-          ].map(([id, name]) => (
-            <option key={id} value={id}>
-              {name}
-            </option>
-          ))}
-        </select>
-
-        {/* 💼 Job Profile */}
-        <select
-          value={filters.job_profile}
-          onChange={(e) =>
-            setFilters({ ...filters, job_profile: e.target.value })
-          }
-          className="border px-3 py-2 rounded-lg text-sm"
-        >
-          <option value="">All Positions</option>
-
-          {[...new Set(rows.map((r) => r.job_profile).filter(Boolean))].map(
-            (job, i) => (
-              <option key={i} value={job}>
-                {job}
+          <select
+            value={filters.call_status}
+            onChange={(e) =>
+              setFilters({ ...filters, call_status: e.target.value })
+            }
+            className={controlCls}
+            aria-label="Filter by call status"
+          >
+            <option value="">All Call Status</option>
+            {Object.entries(callStatusMap).map(([key, value]) => (
+              <option key={key} value={key}>
+                {value}
               </option>
-            ),
-          )}
-        </select>
+            ))}
+          </select>
 
-        {/* 🏢 Client Status */}
-        <select
-          value={filters.client_status}
-          onChange={(e) =>
-            setFilters({ ...filters, client_status: e.target.value })
-          }
-          className="border px-3 py-2 rounded-lg text-sm"
-        >
-          <option value="">All Client Status</option>
-          <option value="pending">Pending</option>
-          <option value="accepted">Accepted</option>
-          <option value="rejected">Rejected</option>
-        </select>
+          <select
+            value={filters.location || ""}
+            onChange={(e) =>
+              setFilters({ ...filters, location: e.target.value })
+            }
+            className={controlCls}
+            aria-label="Filter by location"
+          >
+            <option value="">All Locations</option>
+            {locations.map((loc) => (
+              <option key={loc.id} value={loc.name}>
+                {loc.name}
+              </option>
+            ))}
+          </select>
 
-        {/* Joined Status */}
-        <select
-          value={filters.joined}
-          onChange={(e) => setFilters({ ...filters, joined: e.target.value })}
-          className="border px-3 py-2 rounded-lg text-sm"
-        >
-          <option value="">Joined Status</option>
-          <option value="Yes">Yes</option>
-          <option value="No">No</option>
-        </select>
+          <select
+            value={filters.language_id}
+            onChange={(e) =>
+              setFilters({ ...filters, language_id: e.target.value })
+            }
+            className={controlCls}
+            aria-label="Filter by language"
+          >
+            <option value="">All Languages</option>
+            {[
+              ...new Map(
+                rows
+                  .filter((r) => r.language_id)
+                  .map((r) => [r.language_id, r.language_name]),
+              ).entries(),
+            ].map(([id, name]) => (
+              <option key={id} value={id}>
+                {name}
+              </option>
+            ))}
+          </select>
 
-        {/* 📅 Call Date */}
-        <input
-          type="date"
-          value={filters.created_at}
-          onChange={(e) =>
-            setFilters({ ...filters, created_at: e.target.value })
-          }
-          className="border px-3 py-2 rounded-lg text-sm"
-        />
+          <select
+            value={filters.job_profile}
+            onChange={(e) =>
+              setFilters({ ...filters, job_profile: e.target.value })
+            }
+            className={controlCls}
+            aria-label="Filter by position"
+          >
+            <option value="">All Positions</option>
+            {[...new Set(rows.map((r) => r.job_profile).filter(Boolean))].map(
+              (job, i) => (
+                <option key={i} value={job}>
+                  {job}
+                </option>
+              ),
+            )}
+          </select>
 
-        <button
-          onClick={handleDownload}
-          className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700"
-        >
-          Download Excel
-        </button>
+          <select
+            value={filters.client_status}
+            onChange={(e) =>
+              setFilters({ ...filters, client_status: e.target.value })
+            }
+            className={controlCls}
+            aria-label="Filter by client status"
+          >
+            <option value="">All Client Status</option>
+            <option value="pending">Pending</option>
+            <option value="accepted">Accepted</option>
+            <option value="rejected">Rejected</option>
+          </select>
+
+          <select
+            value={filters.joined}
+            onChange={(e) => setFilters({ ...filters, joined: e.target.value })}
+            className={controlCls}
+            aria-label="Filter by joined status"
+          >
+            <option value="">Joined Status</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+
+          <input
+            type="date"
+            value={filters.created_at}
+            onChange={(e) =>
+              setFilters({ ...filters, created_at: e.target.value })
+            }
+            className={controlCls}
+            aria-label="Filter by call date"
+          />
+
+          <button
+            onClick={handleDownload}
+            className="ml-auto inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-emerald-500"
+          >
+            <Download size={15} aria-hidden="true" />
+            Download Excel
+          </button>
+        </div>
+
+        <p className="mt-3 text-xs text-slate-400">
+          Showing{" "}
+          <span className="font-semibold text-slate-600">
+            {filteredRows.length}
+          </span>{" "}
+          of {rows.length} candidates
+        </p>
       </div>
 
-      <table className="w-full text-xs sm:text-sm whitespace-nowrap overflow-auto max-h-[60vh]">
-        <thead className="sticky top-0 z-10 bg-gray-50/10">
-          <tr>
-            <th className="p-2 sm:p-3 text-left">Candidate</th>
-            <th className="p-2 sm:p-3 text-left">Phone</th>
-            <th className="p-2 sm:p-3 text-left">Location</th>
-            <th className="p-2 sm:p-3 text-left">Address</th>
-            <th className="p-2 sm:p-3 text-left">Language</th>
-            <th className="p-2 sm:p-3 text-left">Job Profile</th>
-            <th className="p-2 sm:p-3 text-left">Experience</th>
-            <th className="p-2 sm:p-3 text-left">Salary</th>
-            <th className="p-2 sm:p-3 text-left">Notice</th>
-            <th className="p-2 sm:p-3 text-left">Client Code</th>
-            <th className="p-2 sm:p-3 text-left">Call Status</th>
-            <th className="p-2 sm:p-3 text-left">Interview Date</th>
-            <th className="p-2 sm:p-3 text-left">Interview Time</th>
-            <th className="p-2 sm:p-3 text-left">Call Date</th>
-            <th className="p-2 sm:p-3 text-left">Call Time</th>
-            <th className="p-2 sm:p-3 text-left">CV</th>
-            <th className="p-2 sm:p-3 text-left">Status</th>
-            <th className="p-2 sm:p-3 text-left">Joined</th>
-            <th className="p-2 sm:p-3 text-left">Client Remarks</th>
-            <th className="p-2 sm:p-3 text-left">HR Remarks</th>
-            <th className="p-2 sm:p-3 text-left">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredRows.map((item) => (
-            <tr key={item.id} className="border-t border-white/10">
-              <td className="p-2 sm:p-3 font-medium text-black">
-                {item.candidate_name}
-              </td>
-
-              <td className="p-2 sm:p-3 text-black">{item.candidate_phone}</td>
-              <td className="p-2 sm:p-3 text-black">{item.location || "-"}</td>
-              <td className="p-2 sm:p-3 text-black">{item.address || "-"}</td>
-              <td className="p-2 sm:p-3 text-black">
-                {item.language_name || "-"}
-              </td>
-
-              <td className="p-2 sm:p-3 text-black">
-                {item.job_profile || "-"}
-              </td>
-
-              <td className="p-2 sm:p-3 text-black">
-                {item.experience || "-"}
-              </td>
-
-              <td className="p-2 sm:p-3 text-black">
-                {item.current_ctc ? `₹${item.current_ctc}L` : "-"} →
-                {item.expected_ctc ? `₹${item.expected_ctc}L` : "-"}
-              </td>
-
-              <td className="p-2 sm:p-3 text-black">
-                {item.notice_period || "-"}
-              </td>
-
-              <td className="p-2 sm:p-3 text-black">
-                {item.client_code}
-                {/* 🔧 TODO later: join client name */}
-              </td>
-              <td className="p-2 sm:p-3">
-                <span
-                  className={`px-2 py-1 rounded-lg text-xs font-semibold
-                    ${
-                      Number(item.call_status_id) === 7
-                        ? "bg-green-100 text-green-700"
-                        : Number(item.call_status_id) === 8
-                        ? "bg-red-100 text-red-700"
-                        : Number(item.call_status_id) === 6
-                        ? "bg-purple-100 text-purple-700"
-                        : "bg-gray-100 text-gray-700"
-                    }`}
-                >
-                  {callStatusMap[item.call_status_id] || "-"}
-                </span>
-              </td>
-              <td className="p-2 sm:p-3 text-black">
-                {item.interview_date
-                  ? new Date(item.interview_date).toLocaleDateString("en-IN")
-                  : "-"}{" "}
-              </td>
-
-              <td className="p-2 sm:p-3 text-black">
-                {item.interview_time || "-"}
-              </td>
-
-              <td className="p-2 sm:p-3 text-black">
-                {new Date(item.created_at).toLocaleDateString("en-IN")}
-              </td>
-
-              <td className="p-2 sm:p-3 text-black">
-                {new Date(item.created_at).toLocaleTimeString("en-IN")}
-              </td>
-
-              <td className="p-2 sm:p-3">
-                {item.cv_file ? (
-                  <a
-                    href={`${import.meta.env.VITE_API_BASE_URL}${item.cv_file}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-indigo-600 underline"
-                  >
-                    View CV
-                  </a>
-                ) : (
-                  "-"
-                )}
-              </td>
-
-              <td className="p-2 sm:p-3">
-                <span
-                  className={`px-2 py-1 rounded-lg text-xs font-semibold
-                  ${
-                    item.client_status === "accepted"
-                      ? "bg-green-100 text-green-700"
-                      : item.client_status === "rejected"
-                      ? "bg-red-100 text-red-700"
-                      : "bg-yellow-100 text-yellow-700"
-                  }`}
-                >
-                  {Number(item.call_status_id) === 6
-                    ? (item.client_status || "pending").toUpperCase()
-                    : "irrelevant to client"}
-                </span>
-              </td>
-
-              <td className="p-2 sm:p-3">
-                <span
-                  className={`px-2 py-1 rounded-lg text-xs font-semibold
-                  ${
-                    item.joined === "Yes"
-                      ? "bg-green-100 text-green-700"
-                      : "bg-gray-100 text-gray-600"
-                  }`}
-                >
-                  {item.joined || "No"}
-                </span>
-              </td>
-
-              <td className="p-2 sm:p-3 text-black">
-                {item.client_remarks || "-"}
-              </td>
-
-              <td className="p-2 sm:p-3 text-black">
-                {item.hr_remarks || "-"}
-              </td>
-
-              <td className="p-2 sm:p-3">
-                {/* 🔧 TODO later: open edit modal */}
-                <button
-                  onClick={() => onEdit?.(item)}
-                  className="px-2 sm:px-3 py-1 sm:text-sm rounded-lg bg-indigo-500 text-white text-xs hover:bg-indigo-600 transition"
-                >
-                  Edit
-                </button>
-              </td>
-            </tr>
-          ))}
-
-          {rows.length === 0 && !loading && (
+      {/* ── TABLE ───────────────────────────────────────────── */}
+      <div className="max-h-[62vh] overflow-auto">
+        <table className="w-full whitespace-nowrap text-xs sm:text-sm">
+          <thead className="sticky top-0 z-10 bg-slate-100 text-slate-500">
             <tr>
-              <td colSpan="16" className="text-center p-6 text-gray-500">
-                No interviews found
-              </td>
+              {[
+                "Candidate",
+                "Phone",
+                "Location",
+                "Address",
+                "Language",
+                "Job Profile",
+                "Experience",
+                "Salary",
+                "Notice",
+                "Client Code",
+                "Call Status",
+                "Interview Date",
+                "Interview Time",
+                "Call Date",
+                "Call Time",
+                "CV",
+                "Status",
+                "Joined",
+                "Client Remarks",
+                "HR Remarks",
+                "Action",
+              ].map((h) => (
+                <th
+                  key={h}
+                  className="p-3 text-left text-[11px] font-semibold uppercase tracking-wider"
+                >
+                  {h}
+                </th>
+              ))}
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-y divide-slate-100">
+            {filteredRows.map((item) => (
+              <tr
+                key={item.id}
+                className="transition-colors hover:bg-indigo-50/40"
+              >
+                <td className="p-3 font-semibold text-slate-900">
+                  {item.candidate_name}
+                </td>
+
+                <td className="p-3 text-slate-600">{item.candidate_phone}</td>
+                <td className="p-3 text-slate-600">{item.location || "-"}</td>
+                <td className="p-3 text-slate-600">{item.address || "-"}</td>
+                <td className="p-3 text-slate-600">
+                  {item.language_name || "-"}
+                </td>
+
+                <td className="p-3 text-slate-600">
+                  {item.job_profile || "-"}
+                </td>
+
+                <td className="p-3 text-slate-600">
+                  {item.experience || "-"}
+                </td>
+
+                <td className="p-3 text-slate-600">
+                  {item.current_ctc ? `₹${item.current_ctc}L` : "-"} →
+                  {item.expected_ctc ? `₹${item.expected_ctc}L` : "-"}
+                </td>
+
+                <td className="p-3 text-slate-600">
+                  {item.notice_period || "-"}
+                </td>
+
+                <td className="p-3 text-slate-600">{item.client_code}</td>
+
+                <td className="p-3">
+                  <span
+                    className={`rounded-full px-2.5 py-1 text-[11px] font-semibold
+                      ${
+                        Number(item.call_status_id) === 7
+                          ? "bg-emerald-100 text-emerald-700"
+                          : Number(item.call_status_id) === 8
+                            ? "bg-rose-100 text-rose-700"
+                            : Number(item.call_status_id) === 6
+                              ? "bg-violet-100 text-violet-700"
+                              : "bg-slate-100 text-slate-600"
+                      }`}
+                  >
+                    {callStatusMap[item.call_status_id] || "-"}
+                  </span>
+                </td>
+
+                <td className="p-3 text-slate-600">
+                  {item.interview_date
+                    ? new Date(item.interview_date).toLocaleDateString("en-IN")
+                    : "-"}{" "}
+                </td>
+
+                <td className="p-3 text-slate-600">
+                  {item.interview_time || "-"}
+                </td>
+
+                <td className="p-3 text-slate-600">
+                  {new Date(item.created_at).toLocaleDateString("en-IN")}
+                </td>
+
+                <td className="p-3 text-slate-600">
+                  {new Date(item.created_at).toLocaleTimeString("en-IN")}
+                </td>
+
+                <td className="p-3">
+                  {item.cv_file ? (
+                    <a
+                      href={`${import.meta.env.VITE_API_BASE_URL}${item.cv_file}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1 font-medium text-indigo-600 hover:text-indigo-500 hover:underline"
+                    >
+                      <FileText size={13} aria-hidden="true" />
+                      View CV
+                    </a>
+                  ) : (
+                    "-"
+                  )}
+                </td>
+
+                <td className="p-3">
+                  <span
+                    className={`rounded-full px-2.5 py-1 text-[11px] font-semibold
+                    ${
+                      item.client_status === "accepted"
+                        ? "bg-emerald-100 text-emerald-700"
+                        : item.client_status === "rejected"
+                          ? "bg-rose-100 text-rose-700"
+                          : "bg-amber-100 text-amber-700"
+                    }`}
+                  >
+                    {Number(item.call_status_id) === 6
+                      ? (item.client_status || "pending").toUpperCase()
+                      : "irrelevant to client"}
+                  </span>
+                </td>
+
+                <td className="p-3">
+                  <span
+                    className={`rounded-full px-2.5 py-1 text-[11px] font-semibold
+                    ${
+                      item.joined === "Yes"
+                        ? "bg-emerald-100 text-emerald-700"
+                        : "bg-slate-100 text-slate-500"
+                    }`}
+                  >
+                    {item.joined || "No"}
+                  </span>
+                </td>
+
+                <td className="p-3 text-slate-600">
+                  {item.client_remarks || "-"}
+                </td>
+
+                <td className="p-3 text-slate-600">{item.hr_remarks || "-"}</td>
+
+                <td className="p-3">
+                  <button
+                    onClick={() => onEdit?.(item)}
+                    className="inline-flex items-center gap-1 rounded-lg border border-indigo-200 bg-indigo-50 px-2.5 py-1.5 text-xs font-medium text-indigo-600 transition-colors hover:bg-indigo-100"
+                  >
+                    <Pencil size={12} aria-hidden="true" />
+                    Edit
+                  </button>
+                </td>
+              </tr>
+            ))}
+
+            {filteredRows.length === 0 && !loading && (
+              <tr>
+                <td colSpan="21" className="p-12 text-center">
+                  <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                    <Inbox size={22} aria-hidden="true" />
+                  </span>
+                  <p className="mt-3 text-sm font-medium text-slate-600">
+                    No interviews found
+                  </p>
+                  <p className="mt-1 text-xs text-slate-400">
+                    Try adjusting the filters or add a new interview.
+                  </p>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

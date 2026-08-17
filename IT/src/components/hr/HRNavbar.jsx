@@ -1,11 +1,24 @@
 import { useNavigate } from "react-router-dom";
 import { useHrAuth } from "../../context/HrAuthContext";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, LayoutDashboard, LogOut } from "lucide-react";
 import EmergencyButton from "../common/EmergencyButton";
 
 export default function HRNavbar() {
   const { employee, logout } = useHrAuth();
   const navigate = useNavigate();
+
+  // Fallback: context can be empty if this tab loaded before login state synced
+  const stored = (() => {
+    try {
+      return JSON.parse(localStorage.getItem("hrms_hr_User") || "{}");
+    } catch {
+      return {};
+    }
+  })();
+  const user = employee || stored || {};
+  const displayName = user.name || "Demo User";
+  const displayEmail = user.email || "demo@hrms.com";
+  const initial = displayName.charAt(0).toUpperCase();
 
   const handleLogout = () => {
     logout();
@@ -16,68 +29,74 @@ export default function HRNavbar() {
     <div className="w-full px-3 sm:px-4 lg:px-6 pt-3 sm:pt-4">
       <div
         className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3
-        bg-white/70 backdrop-blur-xl
-        border border-white/40
-        shadow-lg
+        bg-white/80 backdrop-blur-xl
+        border border-slate-200/70
+        shadow-lg shadow-slate-200/50
         rounded-2xl
-        px-6 py-3"
+        px-4 sm:px-6 py-3"
       >
         {/* LEFT */}
-        <div className="flex gap-2 ">
-
-        <img
-          src="../../logo.jpeg"
-          alt="logo"
-          className="w-8 h-8 object-contain rounded-lg"
-        />
-        <h1 className="text-lg font-semibold text-gray-800 tracking-wide">
-          IT Dashboard 
-        </h1>
+        <button
+          onClick={() => navigate("/dashboard")}
+          className="flex items-center gap-3 text-left"
+        >
+          <img
+            src="/logo.jpeg"
+            alt="Ardhnarishwar logo"
+            className="w-9 h-9 object-cover rounded-xl shadow-md ring-2 ring-purple-100"
+          />
+          <div className="leading-tight">
+            <h1 className="text-base font-bold text-slate-900 tracking-tight">
+              IT Dashboard
+            </h1>
+            <p className="text-[10px] font-medium uppercase tracking-widest text-purple-500">
+              Ardhnarishwar
+            </p>
           </div>
+        </button>
 
         {/* RIGHT */}
         <div className="flex flex-wrap items-center gap-2 sm:gap-3 justify-center sm:justify-end">
           <button
             onClick={() => navigate("/chat")}
-            className="p-2 hover:bg-gray-200 rounded"
+            aria-label="Open chat"
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-all hover:border-purple-300 hover:text-purple-600"
           >
-            <MessageCircle size={22} />
+            <MessageCircle size={18} aria-hidden="true" />
           </button>
+
           <button
             onClick={() => navigate("/dashboard")}
-            className="px-4 py-2 bg-indigo-600 shrink-0 text-white rounded-lg hover:bg-indigo-700 shadow-lg"
+            className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-indigo-200 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-300"
           >
+            <LayoutDashboard size={15} aria-hidden="true" />
             Dashboard
           </button>
-          {/* LOGOUT BUTTON */}
+
           <button
             onClick={handleLogout}
-            className="px-4 py-2 text-sm font-medium rounded-xl
-            bg-gradient-to-r from-red-500 to-pink-500
-            text-white shadow-md
-            hover:scale-105 hover:shadow-lg
-            transition"
+            className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-rose-500 to-pink-500 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-rose-200 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-rose-300"
           >
+            <LogOut size={14} aria-hidden="true" />
             Logout
           </button>
+
           <div className="w-full sm:w-auto">
             <EmergencyButton />
           </div>
 
           {/* USER INFO */}
-          <div className="flex items-center gap-2 sm:gap-3 bg-white/60 px-3 sm:px-4 py-2 rounded-xl shadow-sm border border-white/40 w-full sm:w-auto justify-center sm:justify-start">
-            {/* AVATAR */}
-            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white font-semibold shadow">
-              {employee?.name?.charAt(0)}
+          <div className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white py-1.5 pl-1.5 pr-3 shadow-sm w-full sm:w-auto justify-center sm:justify-start">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 text-sm font-bold text-white shadow">
+              {initial}
             </div>
-
-            {/* TEXT */}
-            <div className="leading-tight">
-              <p className="text-xs sm:text-sm font-semibold text-gray-800 truncate max-w-[120px] sm:max-w-none">
-                {" "}
-                {employee?.name}
+            <div className="leading-tight text-left">
+              <p className="text-xs sm:text-sm font-bold text-slate-800 truncate max-w-[120px] sm:max-w-[160px]">
+                {displayName}
               </p>
-              <p className="text-xs text-gray-500">{employee?.email}</p>
+              <p className="text-[10px] sm:text-xs text-slate-400 truncate max-w-[120px] sm:max-w-[160px]">
+                {displayEmail}
+              </p>
             </div>
           </div>
         </div>

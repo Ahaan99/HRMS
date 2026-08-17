@@ -1,4 +1,3 @@
-import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import API from "../../api/axios";
 
@@ -6,6 +5,13 @@ import PageHeader from "../../components/common/PageHeader";
 import StatCard from "../../components/common/StatCard";
 import WorkAssignmentFilters from "../../components/workassignment/WorkAssignmentFilters";
 import WorkAssignmentTable from "../../components/workassignment/WorkAssignmentTable";
+import {
+  ClipboardList,
+  Loader,
+  CheckCircle2,
+  AlarmClockOff,
+} from "lucide-react";
+
 export default function WorkAssignment() {
   const [stats, setStats] = useState({
     assigned: 0,
@@ -58,27 +64,27 @@ export default function WorkAssignment() {
   }, [filters]);
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6 p-6">
       <PageHeader
         title="Automated Work Assignment"
         desc="Auto-assign & track employee tasks"
       />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Assigned"
           value={stats.assigned}
           subText="New tasks assigned"
           gradient="bg-gradient-to-tr from-blue-500 to-cyan-500"
-          icon="📋"
+          icon={<ClipboardList aria-hidden="true" />}
         />
 
         <StatCard
           title="In Progress"
           value={stats.inProgress}
           subText="Tasks being worked on"
-          gradient="bg-gradient-to-tr from-yellow-500 to-orange-500"
-          icon="⚙️"
+          gradient="bg-gradient-to-tr from-amber-500 to-orange-500"
+          icon={<Loader aria-hidden="true" />}
         />
 
         <StatCard
@@ -86,31 +92,25 @@ export default function WorkAssignment() {
           value={stats.completed}
           subText="Tasks finished"
           gradient="bg-gradient-to-tr from-emerald-500 to-teal-500"
-          icon="✅"
+          icon={<CheckCircle2 aria-hidden="true" />}
         />
 
         <StatCard
           title="Overdue"
           value={stats.overdue}
           subText="Past deadline"
-          gradient="bg-gradient-to-tr from-red-500 to-pink-500"
-          icon="⏰"
+          gradient="bg-gradient-to-tr from-rose-500 to-pink-500"
+          icon={<AlarmClockOff aria-hidden="true" />}
         />
       </div>
 
-      <div className="flex justify-between items-center">
-        <WorkAssignmentFilters
-          filters={filters}
-          onFilterChange={setFilters}
-        />
-      </div>
+      <WorkAssignmentFilters filters={filters} onFilterChange={setFilters} />
 
       <WorkAssignmentTable
         rows={assignments}
         loading={loading}
         onRefresh={fetchAssignments}
       />
-
     </div>
   );
 }

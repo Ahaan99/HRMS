@@ -1,11 +1,39 @@
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
-import StatCard from "../../components/common/StatCard";
+import {
+  PhoneCall,
+  CalendarClock,
+  BadgeCheck,
+  UserCheck,
+  Plus,
+} from "lucide-react";
 import HrInterviewTable from "../../components/hr/HrInterviewTable";
 import AddInterviewModal from "../../components/hr/AddInterviewModal";
 import EditInterviewModal from "../../components/hr/EditInterviewModal";
 import HRNavbar from "../../components/hr/HRNavbar";
+
+function StatTile({ title, value, subText, icon: Icon, accent, bar }) {
+  return (
+    <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <span className={`absolute inset-x-0 top-0 h-1 ${bar}`} />
+      <div className="flex items-start justify-between">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">
+            {title}
+          </p>
+          <p className="mt-2 text-3xl font-bold text-slate-900">{value}</p>
+          <p className="mt-1 text-xs text-slate-500">{subText}</p>
+        </div>
+        <span
+          className={`flex h-11 w-11 items-center justify-center rounded-xl ring-1 ${accent}`}
+        >
+          <Icon size={20} aria-hidden="true" />
+        </span>
+      </div>
+    </div>
+  );
+}
 
 export default function InterviewManagement() {
   const [stats, setStats] = useState({
@@ -57,13 +85,13 @@ export default function InterviewManagement() {
       const data = res?.data?.data || [];
       setRows(data);
 
-      // 🔥 calculate stats (HR scoped already from backend)
+      // calculate stats (HR scoped already from backend)
       const totalCalls = data.length;
       const scheduled = data.filter((r) => r.interview_date).length;
       const selected = data.filter(
         (r) => r.client_status === "accepted",
       ).length;
-      const joined = data.filter((r) => r.joined === "Yes").length
+      const joined = data.filter((r) => r.joined === "Yes").length;
 
       setStats({
         totalCalls,
@@ -83,54 +111,83 @@ export default function InterviewManagement() {
   }, []);
 
   return (
-    <>
-      <div className="p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6">
-        <HRNavbar />
-        {/* ================= CARDS */}
-        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
-          <StatCard
+    <div className="min-h-screen bg-slate-100 p-3 sm:p-4 lg:p-6">
+      <HRNavbar />
+
+      <div className="mx-auto mt-6 max-w-[1600px] space-y-6">
+        {/* ── HERO BAND ─────────────────────────────────────── */}
+        <div className="relative overflow-hidden rounded-3xl bg-slate-900 px-8 py-9 md:px-12">
+          <div
+            className="absolute inset-0 opacity-[0.06]"
+            style={{
+              backgroundImage:
+                "linear-gradient(to right, #818cf8 1px, transparent 1px), linear-gradient(to bottom, #818cf8 1px, transparent 1px)",
+              backgroundSize: "44px 44px",
+            }}
+          />
+          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-violet-600/25 blur-3xl" />
+          <div className="absolute -bottom-24 -left-12 h-56 w-56 rounded-full bg-indigo-600/20 blur-3xl" />
+
+          <div className="relative flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-indigo-300">
+                Recruitment
+              </p>
+              <h2 className="mt-2 text-2xl font-bold text-white md:text-3xl text-balance">
+                Interview Management
+              </h2>
+              <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-400">
+                Track every candidate call, schedule interviews, and follow
+                client decisions from one place.
+              </p>
+            </div>
+            <button
+              onClick={() => setShowAdd(true)}
+              className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-900/40 transition-colors hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            >
+              <Plus size={16} aria-hidden="true" />
+              Add Interview
+            </button>
+          </div>
+        </div>
+
+        {/* ── STAT TILES ────────────────────────────────────── */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <StatTile
             title="Total Calls"
             value={stats.totalCalls}
             subText="All candidates handled"
-            gradient="bg-gradient-to-tr from-blue-500 to-cyan-500"
-            icon="📞"
+            icon={PhoneCall}
+            accent="bg-sky-50 text-sky-600 ring-sky-100"
+            bar="bg-sky-500"
           />
-
-          <StatCard
+          <StatTile
             title="Scheduled Interview"
             value={stats.scheduled}
             subText="Interviews planned"
-            gradient="bg-gradient-to-tr from-purple-500 to-indigo-500"
-            icon="📅"
+            icon={CalendarClock}
+            accent="bg-violet-50 text-violet-600 ring-violet-100"
+            bar="bg-violet-500"
           />
-
-          <StatCard
+          <StatTile
             title="Total Selected"
             value={stats.selected}
             subText="Approved by client"
-            gradient="bg-gradient-to-tr from-emerald-500 to-teal-500"
-            icon="✅"
+            icon={BadgeCheck}
+            accent="bg-emerald-50 text-emerald-600 ring-emerald-100"
+            bar="bg-emerald-500"
           />
-
-          <StatCard
+          <StatTile
             title="Joined"
             value={stats.joined}
-            subText="⚠️ placeholder"
-            gradient="bg-gradient-to-tr from-orange-500 to-pink-500"
-            icon="🎯"
+            subText="Candidates onboarded"
+            icon={UserCheck}
+            accent="bg-amber-50 text-amber-600 ring-amber-100"
+            bar="bg-amber-500"
           />
         </div>
 
-        <div className="flex justify-center sm:justify-end">
-          <button
-            onClick={() => setShowAdd(true)}
-            className="px-3 sm:px-4 py-2 text-sm sm:text-base w-full sm:w-auto rounded-xl bg-indigo-600 text-white font-medium hover:opacity-90"
-          >
-            + Add Interview
-          </button>
-        </div>
-
-        {/* ================= TABLE ================= */}
+        {/* ── TABLE ─────────────────────────────────────────── */}
         <HrInterviewTable
           rows={rows}
           loading={loading}
@@ -153,6 +210,6 @@ export default function InterviewManagement() {
           locations={locations}
         />
       </div>
-    </>
+    </div>
   );
 }

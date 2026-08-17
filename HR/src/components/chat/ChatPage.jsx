@@ -11,20 +11,24 @@ export default function ChatPage() {
   const [activeChat, setActiveChat] = useState(null);
 
   return (
-    <>
+    <div className="min-h-screen bg-slate-100 p-3 sm:p-4 lg:p-6">
       <HRNavbar />
-      <div className="flex h-[calc(100vh-103px)] bg-white border rounded-xl overflow-hidden shadow-lg">
+      <div className="mt-6 flex h-[calc(100vh-150px)] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         <ChatList setActiveChat={setActiveChat} activeChat={activeChat} />
         {activeChat?.internal ? (
           <InternalChatWindow activeChat={activeChat} myType={MY_TYPE} />
         ) : activeChat ? (
           <ChatWindow activeChat={activeChat} />
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center bg-gray-50 text-gray-400">
-            <div className="w-20 h-20 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full flex items-center justify-center mb-4">
-              <MessageCircle size={40} className="text-purple-400" />
+          <div className="flex flex-1 flex-col items-center justify-center bg-slate-50 text-slate-400">
+            <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-2xl bg-indigo-50 ring-1 ring-indigo-100">
+              <MessageCircle
+                size={36}
+                aria-hidden="true"
+                className="text-indigo-400"
+              />
             </div>
-            <h3 className="text-lg font-semibold text-gray-600 mb-1">
+            <h3 className="mb-1 text-lg font-semibold text-slate-700">
               Select a chat
             </h3>
             <p className="text-sm">
@@ -33,6 +37,6 @@ export default function ChatPage() {
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }

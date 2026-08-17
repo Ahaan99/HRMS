@@ -5,7 +5,14 @@ import SalesStats from "../components/sales/SalesStats";
 import AddEditSaleModal from "../components/sales/AddEditSaleModal";
 import SalesFilters from "../components/sales/SalesFilters";
 import { useNavigate } from "react-router-dom";
-
+import {
+  FileText,
+  MessageSquare,
+  Plus,
+  Pencil,
+  Inbox,
+  Table2,
+} from "lucide-react";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -48,15 +55,27 @@ const SalesReports = () => {
   };
 
   const getStatusBadge = (status) => {
-    const base = "px-2 py-1 rounded-full text-xs font-semibold";
+    const base =
+      "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold capitalize";
 
     switch (status) {
       case "paid":
-        return `${base} bg-green-100 text-green-700`;
+        return `${base} bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200`;
       case "partial":
-        return `${base} bg-yellow-100 text-yellow-700`;
+        return `${base} bg-amber-50 text-amber-700 ring-1 ring-amber-200`;
       default:
-        return `${base} bg-red-100 text-red-700`;
+        return `${base} bg-rose-50 text-rose-700 ring-1 ring-rose-200`;
+    }
+  };
+
+  const getStatusDot = (status) => {
+    switch (status) {
+      case "paid":
+        return "bg-emerald-500";
+      case "partial":
+        return "bg-amber-500";
+      default:
+        return "bg-rose-500";
     }
   };
 
@@ -82,16 +101,16 @@ const SalesReports = () => {
 
   // ================= UI =================
   return (
-    <div className="space-y-6 m-5">
+    <div className="m-5 space-y-6">
       {/* HEADER */}
       <PageHeader
         title="Sales Reports"
         desc="View sales analytics and subscription revenue."
       />
 
-      {/* 🔥 NEW SEPARATE FILTER BAR (NO OVERLAP) */}
-      <div className="bg-white rounded-2xl shadow border border-gray-100 p-4">
-        <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-3">
+      {/* FILTER + ACTION BAR */}
+      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
           <SalesFilters
             filters={filters}
             setFilters={setFilters}
@@ -104,29 +123,35 @@ const SalesReports = () => {
               })
             }
           />
-          <button
-            onClick={() => navigate("/invoices")}
-            className="bg-green-600 text-white px-4 py-2 rounded mr-3"
-          >
-            Generate Invoice
-          </button>
 
-          <button
-            onClick={() => navigate("/chat")}
-            className="bg-blue-600 text-white px-4 py-2 rounded mr-3"
-          >
-            💬 AI Chat
-          </button>
+          <div className="flex flex-wrap items-center gap-2.5">
+            <button
+              onClick={() => navigate("/invoices")}
+              className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-emerald-200 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-emerald-300"
+            >
+              <FileText size={15} aria-hidden="true" />
+              Generate Invoice
+            </button>
 
-          <button
-            onClick={() => {
-              setEditingSale(null);
-              setOpenModal(true);
-            }}
-            className="btn-primary whitespace-nowrap"
-          >
-            + Add Sale
-          </button>
+            <button
+              onClick={() => navigate("/chat")}
+              className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-blue-200 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-blue-300"
+            >
+              <MessageSquare size={15} aria-hidden="true" />
+              AI Chat
+            </button>
+
+            <button
+              onClick={() => {
+                setEditingSale(null);
+                setOpenModal(true);
+              }}
+              className="flex items-center gap-1.5 whitespace-nowrap rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-200 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-300"
+            >
+              <Plus size={15} aria-hidden="true" />
+              Add Sale
+            </button>
+          </div>
         </div>
       </div>
 
@@ -134,64 +159,99 @@ const SalesReports = () => {
       <SalesStats sales={sales} />
 
       {/* TABLE */}
-      <div className="bg-white m-6 rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="overflow-auto max-h-[60vh]">
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+              <Table2 size={15} aria-hidden="true" />
+            </div>
+            <h3 className="text-sm font-bold tracking-tight text-slate-900">
+              Sales Records
+            </h3>
+          </div>
+          <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">
+            {filteredSales.length}{" "}
+            {filteredSales.length === 1 ? "record" : "records"}
+          </span>
+        </div>
+
+        <div className="max-h-[60vh] overflow-auto">
           <table className="w-full text-sm">
-            <thead className="sticky top-0 z-10 bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="th">Client Code</th>
-                <th className="th">Plan</th>
-                <th className="th">Amount</th>
-                <th className="th">Paid</th>
-                <th className="th">Status</th>
-                <th className="th">Due Date</th>
-                <th className="th text-right">Action</th>
+            <thead className="sticky top-0 z-10 bg-slate-50">
+              <tr className="border-b border-slate-200 text-left">
+                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  Client Code
+                </th>
+                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  Plan
+                </th>
+                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  Amount
+                </th>
+                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  Paid
+                </th>
+                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  Status
+                </th>
+                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  Due Date
+                </th>
+                <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  Action
+                </th>
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-slate-100">
               {filteredSales.map((s) => (
                 <tr
                   key={s.id}
                   className={`transition-colors ${
                     isOverdue(s)
-                      ? "bg-red-50 hover:bg-red-100"
-                      : "hover:bg-gray-50"
+                      ? "bg-rose-50/60 hover:bg-rose-50"
+                      : "hover:bg-slate-50"
                   }`}
                 >
-                  <td className="td font-semibold text-gray-900">
+                  <td className="px-5 py-3.5 font-semibold text-slate-900">
                     {s.client_code}
                   </td>
 
-                  <td className="td">{s.plan_name}</td>
+                  <td className="px-5 py-3.5 text-slate-600">{s.plan_name}</td>
 
-                  <td className="td font-semibold text-gray-900">
-                    ₹{Number(s.amount).toLocaleString()}
+                  <td className="px-5 py-3.5 font-semibold text-slate-900">
+                    {"\u20B9"}
+                    {Number(s.amount).toLocaleString("en-IN")}
                   </td>
 
-                  <td className="td text-green-600 font-semibold">
-                    ₹{Number(s.amount_paid).toLocaleString()}
+                  <td className="px-5 py-3.5 font-semibold text-emerald-600">
+                    {"\u20B9"}
+                    {Number(s.amount_paid).toLocaleString("en-IN")}
                   </td>
 
-                  <td className="td">
+                  <td className="px-5 py-3.5">
                     <span className={getStatusBadge(s.payment_status)}>
+                      <span
+                        className={`h-1.5 w-1.5 rounded-full ${getStatusDot(s.payment_status)}`}
+                        aria-hidden="true"
+                      />
                       {s.payment_status}
                     </span>
                   </td>
 
-                  <td className="td text-gray-600">
+                  <td className="px-5 py-3.5 text-slate-500">
                     {s.due_date?.slice(0, 10)}
                   </td>
 
-                  <td className="td text-right">
+                  <td className="px-5 py-3.5 text-right">
                     <button
-                      className="inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-lg
-                           bg-blue-50 text-blue-600 hover:bg-blue-100 transition"
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-indigo-100 bg-indigo-50 px-3 py-1.5 text-xs font-semibold text-indigo-600 transition-all hover:border-indigo-200 hover:bg-indigo-100"
                       onClick={() => {
                         setEditingSale(s);
                         setOpenModal(true);
                       }}
                     >
+                      <Pencil size={12} aria-hidden="true" />
                       Edit
                     </button>
                   </td>
@@ -200,8 +260,20 @@ const SalesReports = () => {
 
               {!filteredSales.length && (
                 <tr>
-                  <td colSpan="7" className="text-center py-10 text-gray-500">
-                    No sales found
+                  <td colSpan="7" className="py-16">
+                    <div className="flex flex-col items-center gap-3 text-center">
+                      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
+                        <Inbox size={24} aria-hidden="true" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-slate-700">
+                          No sales found
+                        </p>
+                        <p className="mt-0.5 text-xs text-slate-400">
+                          Try adjusting your filters or add a new sale.
+                        </p>
+                      </div>
+                    </div>
                   </td>
                 </tr>
               )}
@@ -209,6 +281,7 @@ const SalesReports = () => {
           </table>
         </div>
       </div>
+
       {/* MODAL */}
       <AddEditSaleModal
         isOpen={openModal}

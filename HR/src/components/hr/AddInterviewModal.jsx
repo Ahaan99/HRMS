@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { X } from "lucide-react";
+
+const inputCls =
+  "w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-colors focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100";
+
+const labelCls = "mb-1 block text-sm font-medium text-slate-700";
 
 export default function AddInterviewModal({
   open,
@@ -32,7 +38,11 @@ export default function AddInterviewModal({
   const [jobPositions, setJobPositions] = useState([]);
   const token = localStorage.getItem("hrms_hr_Token");
   const [languages, setLanguages] = useState([]);
+  const [fetchedLocations, setFetchedLocations] = useState([]);
   const BASE = import.meta.env.VITE_API_BASE_URL;
+
+  // Use locations from props if provided, otherwise fall back to self-fetched
+  const locationOptions = locations?.length ? locations : fetchedLocations;
 
   const callStatusList = [
     { id: 1, name: "NOT PICKED" },
@@ -56,6 +66,24 @@ export default function AddInterviewModal({
   useEffect(() => {
     fetchLanguages();
   }, []);
+
+  const fetchLocations = async () => {
+    try {
+      const res = await axios.get(`${BASE}/hr/interviews/locations`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setFetchedLocations(res?.data?.data || []);
+    } catch (err) {
+      console.log("Location fetch error:", err);
+    }
+  };
+
+  useEffect(() => {
+    // Self-fetch locations when the parent didn't pass any
+    if (!locations?.length) {
+      fetchLocations();
+    }
+  }, [locations]);
 
   const handleChange = (e) => {
     setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
@@ -152,41 +180,51 @@ export default function AddInterviewModal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-      <div className="w-full max-w-lg max-h-[90vh] flex flex-col rounded-3xl border border-white/20 bg-white/10 backdrop-blur-xl shadow-[0_20px_80px_rgba(0,0,0,0.35)]">
-        {" "}
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
+      <div className="flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-3xl bg-white shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-white/20">
-          <h2 className="text-xl font-semibold text-white">Add Interview</h2>
-
-          <button
-            onClick={onClose}
-            className="text-white/60 hover:text-white text-lg"
-          >
-            ✕
-          </button>
+        <div className="relative z-10 shrink-0 overflow-hidden bg-slate-900 px-6 py-5">
+          <div className="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-violet-600/25 blur-3xl" />
+          <div className="relative flex items-center justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-indigo-300">
+                Recruitment
+              </p>
+              <h2 className="mt-0.5 text-xl font-bold text-white">
+                Add Interview
+              </h2>
+            </div>
+            <button
+              onClick={onClose}
+              aria-label="Close"
+              className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-white transition-colors hover:bg-white/20"
+            >
+              <X size={18} aria-hidden="true" />
+            </button>
+          </div>
         </div>
+
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-5 overflow-y-auto">
+        <form onSubmit={handleSubmit} className="space-y-5 overflow-y-auto p-6">
           {/* Candidate Name */}
           <div>
-            <label className="block text-sm font-medium text-white mb-1">
-              Candidate Name <span className="text-red-500">*</span>
+            <label className={labelCls}>
+              Candidate Name <span className="text-rose-500">*</span>
             </label>
             <input
               name="candidate_name"
               value={form.candidate_name}
               onChange={handleChange}
               placeholder="Enter candidate name"
-              className="w-full rounded-xl border border-gray-300 text-white placeholder-white px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className={inputCls}
               required
             />
           </div>
 
           {/* Phone */}
           <div>
-            <label className="block text-sm font-medium text-white mb-1">
-              Phone Number <span className="text-red-500">*</span>
+            <label className={labelCls}>
+              Phone Number <span className="text-rose-500">*</span>
             </label>
             <input
               name="candidate_phone"
@@ -194,30 +232,28 @@ export default function AddInterviewModal({
               value={form.candidate_phone}
               onChange={handleChange}
               placeholder="Enter phone number"
-              className="w-full rounded-xl border border-gray-300 placeholder-white text-white px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className={inputCls}
               required
             />
           </div>
 
           {/* Location */}
           <div>
-            <label className="block text-sm font-medium text-white mb-1">
-              Location <span className="text-red-500">*</span>
+            <label className={labelCls}>
+              Location <span className="text-rose-500">*</span>
             </label>
 
             <select
               name="location"
               value={form.location}
               onChange={handleChange}
-              className="w-full rounded-xl border border-gray-300 text-white px-4 py-2.5"
+              className={inputCls}
               required
             >
-              <option value="" className="text-black">
-                Select Location
-              </option>
+              <option value="">Select Location</option>
 
-              {locations.map((loc) => (
-                <option key={loc.id} value={loc.name} className="text-black">
+              {locationOptions.map((loc) => (
+                <option key={loc.id} value={loc.name}>
                   {loc.name}
                 </option>
               ))}
@@ -225,14 +261,14 @@ export default function AddInterviewModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-white mb-1">
-              Address <span className="text-red-500">*</span>
+            <label className={labelCls}>
+              Address <span className="text-rose-500">*</span>
             </label>
             <textarea
               name="address"
               value={form.address}
               onChange={handleChange}
-              className="w-full rounded-xl border px-4 py-2.5 border-gray-300 text-white"
+              className={inputCls}
               placeholder="Enter address"
               required
             />
@@ -240,36 +276,34 @@ export default function AddInterviewModal({
 
           {/* Client Code */}
           <div>
-            <label className="block text-sm font-medium text-white mb-1">
-              Client Code <span className="text-red-500">*</span>
+            <label className={labelCls}>
+              Client Code <span className="text-rose-500">*</span>
             </label>
             <input
               name="client_code"
               value={form.client_code}
               onChange={handleChange}
               placeholder="Enter client code"
-              className="w-full rounded-xl border border-gray-300 placeholder-white text-white px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className={inputCls}
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-white mb-1">
-              Call Status <span className="text-red-500">*</span>
+            <label className={labelCls}>
+              Call Status <span className="text-rose-500">*</span>
             </label>
 
             <select
               name="call_status_id"
               value={form.call_status_id}
               onChange={handleChange}
-              className="w-full rounded-xl border border-gray-300 text-white px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className={inputCls}
               required
             >
-              <option value="" className="text-black">
-                Select status
-              </option>
+              <option value="">Select status</option>
               {callStatusList.map((s) => (
-                <option key={s.id} value={s.id} className="text-black">
+                <option key={s.id} value={s.id}>
                   {s.id} - {s.name}
                 </option>
               ))}
@@ -277,21 +311,19 @@ export default function AddInterviewModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-white mb-1">
-              Job Profile <span className="text-red-500">*</span>
+            <label className={labelCls}>
+              Job Profile <span className="text-rose-500">*</span>
             </label>
             <select
               name="job_profile"
               value={form.job_profile}
               onChange={handleChange}
-              className="w-full rounded-xl border border-gray-300 text-white px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className={inputCls}
             >
-              <option value="" className="text-black">
-                Select Job Profile
-              </option>
+              <option value="">Select Job Profile</option>
 
               {jobPositions.map((job) => (
-                <option key={job.id} value={job.title} className="text-black">
+                <option key={job.id} value={job.title}>
                   {job.title}
                 </option>
               ))}
@@ -299,21 +331,17 @@ export default function AddInterviewModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-white mb-1">
-              Language
-            </label>
+            <label className={labelCls}>Language</label>
             <select
               name="language_id"
               value={form.language_id}
               onChange={handleChange}
-              className="w-full rounded-xl border border-gray-300 text-white px-4 py-2.5"
+              className={inputCls}
             >
-              <option value="" className="text-black">
-                Select Language
-              </option>
+              <option value="">Select Language</option>
 
               {languages.map((lang) => (
-                <option key={lang.id} value={lang.id} className="text-black">
+                <option key={lang.id} value={lang.id}>
                   {lang.name}
                 </option>
               ))}
@@ -321,130 +349,120 @@ export default function AddInterviewModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-white mb-1">
-              Experience
-            </label>
+            <label className={labelCls}>Experience</label>
             <input
               name="experience"
               placeholder="eg 2 Years"
               value={form.experience}
               onChange={handleChange}
-              className="w-full rounded-xl border px-4 py-2.5 border-gray-300 text-white"
-            />
-          </div>
-
-          <label className="block text-sm font-medium text-white mb-1">
-            Current Salary <span className="text-red-500">*</span>
-          </label>
-          <div className="grid grid-cols-2 gap-4">
-            <input
-              name="current_ctc"
-              placeholder="Current CTC"
-              value={form.current_ctc}
-              onChange={handleChange}
-              className="rounded-xl border px-4 py-2.5 border-gray-300 text-white"
-              required
-            />
-
-            <input
-              name="expected_ctc"
-              placeholder="Expected CTC"
-              value={form.expected_ctc}
-              onChange={handleChange}
-              className="rounded-xl border px-4 py-2.5 border-gray-300 text-white"
+              className={inputCls}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-white mb-1">
-              Notice Period
+            <label className={labelCls}>
+              Current Salary <span className="text-rose-500">*</span>
             </label>
+            <div className="grid grid-cols-2 gap-4">
+              <input
+                name="current_ctc"
+                placeholder="Current CTC"
+                value={form.current_ctc}
+                onChange={handleChange}
+                className={inputCls}
+                required
+              />
+
+              <input
+                name="expected_ctc"
+                placeholder="Expected CTC"
+                value={form.expected_ctc}
+                onChange={handleChange}
+                className={inputCls}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className={labelCls}>Notice Period</label>
             <input
               name="notice_period"
               placeholder="Notice Period"
               value={form.notice_period}
               onChange={handleChange}
-              className="w-full rounded-xl border px-4 py-2.5 border-gray-300 text-white"
+              className={inputCls}
             />
           </div>
 
           {/* Date & Time row */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-sm font-medium text-white mb-1">
-                Interview Date
-              </label>
+              <label className={labelCls}>Interview Date</label>
               <input
                 type="date"
                 name="interview_date"
                 value={form.interview_date}
                 onChange={handleChange}
-                className="w-full rounded-xl border border-gray-300 text-white px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className={inputCls}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-white mb-1">
-                Interview Time
-              </label>
+              <label className={labelCls}>Interview Time</label>
               <input
                 type="time"
                 name="interview_time"
                 value={form.interview_time}
                 onChange={handleChange}
-                className="w-full rounded-xl border border-gray-300 text-white px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className={inputCls}
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-white mb-1">
-              Upload CV
-            </label>
+            <label className={labelCls}>Upload CV</label>
 
             <input
               type="file"
               name="cv_file"
               accept=".pdf,.doc,.docx,image/*"
               onChange={handleFile}
-              className="w-full rounded-xl border border-gray-300 text-white px-4 py-2.5"
+              className={`${inputCls} file:mr-3 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-3 file:py-1 file:text-xs file:font-semibold file:text-indigo-600`}
             />
 
             {form.cv_file && (
-              <p className="text-xs text-green-400 mt-1">
+              <p className="mt-1 text-xs text-emerald-600">
                 Selected: {form.cv_file.name}
               </p>
             )}
 
-            <p className="text-xs text-white/60 mt-1">
+            <p className="mt-1 text-xs text-slate-400">
               Allowed: PDF, DOC, DOCX, Image (Max 5MB)
             </p>
           </div>
           <div>
-            <label className="block text-sm font-medium text-white mb-1">
-              Add Remarks
-            </label>
+            <label className={labelCls}>Add Remarks</label>
             <textarea
               name="hr_remarks"
               value={form.hr_remarks}
               onChange={handleChange}
-              className="w-full rounded-xl border px-4 py-2.5 border-gray-300 text-white"
+              className={inputCls}
               placeholder="Enter remarks"
             />
           </div>
           {/* Actions */}
-          <div className="flex justify-end gap-3 pt-2">
+          <div className="flex justify-end gap-3 border-t border-slate-100 pt-4">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl border border-gray-300 text-white hover:bg-gray-100 transition"
+              className="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50"
             >
               Cancel
             </button>
 
             <button
               disabled={loading}
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:opacity-90 disabled:opacity-60 transition"
+              className="rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-500 disabled:opacity-60"
             >
               {loading ? "Saving..." : "Save Interview"}
             </button>

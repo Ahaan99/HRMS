@@ -13,31 +13,31 @@ import {
   XCircle,
   Award,
   Calendar,
+  X,
+  Inbox,
+  Loader2,
 } from "lucide-react";
 import PageHeader from "../../components/common/PageHeader";
 
 const STATUS_CONFIG = {
   excellent: {
     label: "Excellent",
-    color: "bg-green-100 text-green-700",
-    border: "border-green-500",
+    color: "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200",
+    accent: "bg-gradient-to-r from-emerald-500 to-teal-500",
     icon: CheckCircle,
   },
 
   good: {
     label: "Good",
-    color: "bg-yellow-100 text-yellow-700",
-    border: "border-yellow-500",
+    color: "bg-amber-50 text-amber-700 ring-1 ring-amber-200",
+    accent: "bg-gradient-to-r from-amber-500 to-orange-500",
     icon: AlertCircle,
   },
 
   needs_improvement: {
     label: "Needs Improvement",
-
-    color: "bg-red-100 text-red-700",
-
-    border: "border-red-500",
-
+    color: "bg-rose-50 text-rose-700 ring-1 ring-rose-200",
+    accent: "bg-gradient-to-r from-rose-500 to-pink-500",
     icon: XCircle,
   },
 };
@@ -87,12 +87,16 @@ const PERFORMANCE_CRITERIA = [
 export default function MyPerformance() {
   const [records, setRecords] = useState([]);
 
+  const [loading, setLoading] = useState(false);
+
   const [selectedRecord, setSelectedRecord] = useState(null);
 
   const [viewModal, setViewModal] = useState(false);
 
   const fetchData = async () => {
     try {
+      setLoading(true);
+
       const res = await API.get("/sales/performance");
 
       setRecords(res.data.data || []);
@@ -100,6 +104,8 @@ export default function MyPerformance() {
       console.log(err);
 
       toast.error("Failed to load performance reviews");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -108,166 +114,212 @@ export default function MyPerformance() {
   }, []);
 
   return (
-    <div className="p-4">
-      <PageHeader title="Assigned Leads" desc="Your all Leads is here" />;
-      {/* HEADER */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">My Performance Reviews</h1>
+    <div className="space-y-6 p-4">
+      <PageHeader
+        title="My Performance Reviews"
+        desc="View all your performance evaluations"
+      />
 
-        <p className="text-gray-500 text-sm mt-1">
-          View all your performance evaluations
-        </p>
-      </div>
       {/* CARDS */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-        {records.map((record) => {
-          const config = STATUS_CONFIG[record.status];
+      {loading ? (
+        <div className="flex flex-col items-center gap-2 rounded-2xl border border-slate-200 bg-white py-14 text-slate-400 shadow-sm">
+          <Loader2 size={22} aria-hidden="true" className="animate-spin" />
+          <span className="text-sm font-medium">Loading reviews...</span>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {records.map((record) => {
+            const config = STATUS_CONFIG[record.status];
 
-          const Icon = config.icon;
+            const Icon = config.icon;
 
-          return (
-            <div
-              key={record.id}
-              className={`bg-white rounded-3xl shadow border-l-4 ${config.border} overflow-hidden`}
-            >
-              <div className="p-5">
-                {/* TOP */}
-                <div className="flex justify-between items-start mb-5">
-                  <div>
-                    <h2 className="font-bold text-lg">Performance Review</h2>
+            return (
+              <div
+                key={record.id}
+                className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+              >
+                {/* status accent bar */}
+                <div
+                  className={`pointer-events-none absolute inset-x-0 top-0 h-1 ${config.accent}`}
+                />
 
-                    <div className="flex items-center gap-1 text-sm text-gray-500 mt-1">
-                      <Calendar size={14} />
+                <div className="p-5">
+                  {/* TOP */}
+                  <div className="mb-5 flex items-start justify-between gap-2">
+                    <div>
+                      <h2 className="text-base font-bold tracking-tight text-slate-900">
+                        Performance Review
+                      </h2>
 
-                      {dayjs(record.period).format("MMMM YYYY")}
+                      <div className="mt-1 flex items-center gap-1.5 text-sm text-slate-500">
+                        <Calendar size={13} aria-hidden="true" />
+                        {dayjs(record.period).format("MMMM YYYY")}
+                      </div>
+                    </div>
+
+                    <span
+                      className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${config.color}`}
+                    >
+                      <Icon size={12} aria-hidden="true" />
+                      {config.label}
+                    </span>
+                  </div>
+
+                  {/* SCORE */}
+                  <div className="mb-5 rounded-xl border border-slate-100 bg-slate-50/60 p-4">
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                      Overall Score
+                    </p>
+
+                    <div className="flex items-end gap-1">
+                      <span className="text-4xl font-extrabold tracking-tight text-slate-900">
+                        {record.avgScore}
+                      </span>
+
+                      <span className="mb-1 text-sm text-slate-400">/10</span>
                     </div>
                   </div>
 
-                  <span
-                    className={`flex items-center gap-1 px-3 py-1 rounded-xl text-xs font-bold ${config.color}`}
-                  >
-                    <Icon size={12} />
+                  {/* REMARK */}
+                  <div className="mb-5">
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                      Feedback
+                    </p>
 
-                    {config.label}
-                  </span>
-                </div>
-
-                {/* SCORE */}
-                <div className="mb-5">
-                  <p className="text-sm text-gray-500 mb-1">Overall Score</p>
-
-                  <div className="flex items-end gap-1">
-                    <span className="text-4xl font-extrabold">
-                      {record.avgScore}
-                    </span>
-
-                    <span className="text-gray-400 mb-1">/10</span>
+                    <p className="line-clamp-3 text-sm leading-relaxed text-slate-700">
+                      {record.remarks || "No remarks"}
+                    </p>
                   </div>
+
+                  {/* ACTION */}
+                  <button
+                    onClick={() => {
+                      setSelectedRecord(record);
+
+                      setViewModal(true);
+                    }}
+                    className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white py-2.5 text-sm font-semibold text-slate-600 transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+                  >
+                    <Eye size={15} aria-hidden="true" />
+                    View Details
+                  </button>
                 </div>
-
-                {/* REMARK */}
-                <div className="mb-5">
-                  <p className="text-sm text-gray-500 mb-1">Feedback</p>
-
-                  <p className="text-sm text-gray-700 line-clamp-3">
-                    {record.remarks || "No remarks"}
-                  </p>
-                </div>
-
-                {/* ACTION */}
-                <button
-                  onClick={() => {
-                    setSelectedRecord(record);
-
-                    setViewModal(true);
-                  }}
-                  className="w-full flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 py-2.5 rounded-2xl font-medium transition"
-                >
-                  <Eye size={16} />
-                  View Details
-                </button>
               </div>
-            </div>
-          );
-        })}
-      </div>
-      {!records.length && (
-        <div className="bg-white rounded-3xl shadow border p-10 text-center text-gray-500">
-          No performance reviews found
+            );
+          })}
         </div>
       )}
+
+      {!records.length && !loading && (
+        <div className="rounded-2xl border border-slate-200 bg-white py-16 shadow-sm">
+          <div className="flex flex-col items-center gap-3 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
+              <Inbox size={24} aria-hidden="true" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-slate-700">
+                No performance reviews found
+              </p>
+              <p className="mt-0.5 text-xs text-slate-400">
+                Your evaluations will appear here once reviewed.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* VIEW MODAL */}
       {viewModal && selectedRecord && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-[32px] w-full max-w-4xl max-h-[92vh] overflow-hidden shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
+          <div className="max-h-[92vh] w-full max-w-4xl overflow-hidden rounded-3xl bg-white shadow-2xl">
             {/* HEADER */}
-            <div className="bg-black text-white p-7">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h2 className="text-3xl font-bold">Performance Review</h2>
+            <div className="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-700 px-8 py-7 text-white">
+              <div className="absolute inset-0 opacity-10" aria-hidden="true">
+                <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white" />
+                <div className="absolute bottom-0 left-0 h-24 w-24 rounded-full bg-white" />
+              </div>
 
-                  <p className="text-gray-300 mt-2">
-                    {selectedRecord.employeeName}
-                  </p>
+              <div className="relative flex items-start justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 backdrop-blur">
+                    <Award size={26} aria-hidden="true" />
+                  </div>
+
+                  <div>
+                    <h2 className="text-2xl font-extrabold tracking-tight md:text-3xl">
+                      Performance Review
+                    </h2>
+
+                    <p className="mt-1 text-sm text-indigo-200">
+                      {selectedRecord.employeeName}
+                    </p>
+                  </div>
                 </div>
 
                 <button
                   onClick={() => setViewModal(false)}
-                  className="w-10 h-10 rounded-xl bg-white/10"
+                  aria-label="Close"
+                  className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 backdrop-blur transition hover:bg-white/20"
                 >
-                  ✕
+                  <X size={18} aria-hidden="true" />
                 </button>
               </div>
             </div>
 
             {/* BODY */}
-            <div className="p-7 overflow-y-auto max-h-[70vh]">
+            <div className="max-h-[70vh] overflow-y-auto p-8">
               {/* SCORE */}
-              <div className="bg-gray-50 rounded-3xl p-6 mb-6">
+              <div className="mb-6 rounded-3xl border border-indigo-100 bg-gradient-to-br from-indigo-50 to-white p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-500 mb-2">Overall Score</p>
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                      Overall Score
+                    </p>
 
                     <div className="flex items-end gap-1">
-                      <span className="text-5xl font-extrabold">
+                      <span className="text-5xl font-extrabold tracking-tight text-slate-900">
                         {selectedRecord.avgScore}
                       </span>
 
-                      <span className="text-gray-400 mb-2">/10</span>
+                      <span className="mb-2 text-slate-400">/10</span>
                     </div>
                   </div>
 
-                  <Award size={60} />
+                  <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-200">
+                    <Award size={36} aria-hidden="true" />
+                  </div>
                 </div>
               </div>
 
               {/* CRITERIA */}
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {PERFORMANCE_CRITERIA.map((criteria) => {
                   const value = selectedRecord.scores?.[criteria.id] || 0;
 
                   return (
                     <div
                       key={criteria.id}
-                      className="bg-gray-50 rounded-2xl p-4"
+                      className="rounded-2xl border border-slate-100 bg-slate-50/60 p-4"
                     >
-                      <div className="flex justify-between mb-2">
-                        <p className="font-medium">{criteria.name}</p>
+                      <div className="mb-2 flex justify-between">
+                        <p className="text-sm font-semibold text-slate-700">
+                          {criteria.name}
+                        </p>
 
-                        <p className="font-bold">
+                        <p className="text-sm font-bold text-slate-900">
                           {value}
                           /10
                         </p>
                       </div>
 
-                      <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-200">
                         <div
-                          className={`h-full ${
+                          className={`h-full rounded-full transition-all ${
                             value >= 8
-                              ? "bg-green-500"
+                              ? "bg-gradient-to-r from-emerald-500 to-teal-500"
                               : value >= 6
-                                ? "bg-yellow-500"
-                                : "bg-red-500"
+                                ? "bg-gradient-to-r from-amber-500 to-orange-500"
+                                : "bg-gradient-to-r from-rose-500 to-pink-500"
                           }`}
                           style={{
                             width: `${value * 10}%`,
@@ -280,13 +332,25 @@ export default function MyPerformance() {
               </div>
 
               {/* REMARKS */}
-              <div className="mt-6 bg-gray-50 rounded-3xl p-6">
-                <h3 className="font-bold text-lg mb-3">Remarks</h3>
+              <div className="mt-6 rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-6">
+                <h3 className="mb-3 text-lg font-bold tracking-tight text-slate-900">
+                  Remarks
+                </h3>
 
-                <p className="text-gray-700 whitespace-pre-wrap">
+                <p className="whitespace-pre-wrap leading-relaxed text-slate-700">
                   {selectedRecord.remarks}
                 </p>
               </div>
+            </div>
+
+            {/* FOOTER */}
+            <div className="flex justify-end border-t border-slate-100 bg-slate-50/60 px-8 py-5">
+              <button
+                onClick={() => setViewModal(false)}
+                className="rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-2.5 text-sm font-bold text-white shadow-md shadow-indigo-200 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-300"
+              >
+                Close
+              </button>
             </div>
           </div>
         </div>

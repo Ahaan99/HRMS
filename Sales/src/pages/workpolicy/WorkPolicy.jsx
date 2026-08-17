@@ -5,6 +5,7 @@ import PageHeader from "../../components/common/PageHeader";
 import StatCard from "../../components/common/StatCard";
 import PolicyFilters from "../../components/workpolicy/PolicyFilters";
 import PolicyTable from "../../components/workpolicy/PolicyTable";
+import { ShieldCheck, FileEdit, SearchCheck, Archive } from "lucide-react";
 
 export default function WorkPolicy() {
   const [stats, setStats] = useState({
@@ -37,7 +38,7 @@ export default function WorkPolicy() {
       calculateStats(data);
     } catch (err) {
       toast.error(`Work policies fetch error: ${err}`);
-        setRows([]);
+      setRows([]);
     } finally {
       setLoading(false);
     }
@@ -57,51 +58,49 @@ export default function WorkPolicy() {
   }, [filters]);
 
   return (
-    <div className="p-6 space-y-6">
-            <PageHeader
+    <div className="space-y-6 p-6">
+      <PageHeader
         title="Work Policy Sheet"
         desc="Company work guidelines & policies"
       />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Active Policies"
           value={stats.active}
           subText="Currently in effect"
           gradient="bg-gradient-to-tr from-emerald-500 to-teal-500"
-          icon="📜"
+          icon={<ShieldCheck aria-hidden="true" />}
         />
 
         <StatCard
           title="Draft"
           value={stats.draft}
           subText="Under preparation"
-          gradient="bg-gradient-to-tr from-gray-500 to-slate-500"
-          icon="📝"
+          gradient="bg-gradient-to-tr from-slate-500 to-slate-600"
+          icon={<FileEdit aria-hidden="true" />}
         />
 
         <StatCard
           title="Under Review"
           value={stats.underReview}
           subText="Pending approval"
-          gradient="bg-gradient-to-tr from-yellow-500 to-orange-500"
-          icon="🔍"
+          gradient="bg-gradient-to-tr from-amber-500 to-orange-500"
+          icon={<SearchCheck aria-hidden="true" />}
         />
 
         <StatCard
           title="Archived"
           value={stats.archived}
           subText="Previous versions"
-          gradient="bg-gradient-to-tr from-red-500 to-pink-500"
-          icon="📦"
+          gradient="bg-gradient-to-tr from-rose-500 to-pink-500"
+          icon={<Archive aria-hidden="true" />}
         />
       </div>
 
-      <div className="flex justify-between items-center">
-        <PolicyFilters filters={filters} onFilterChange={setFilters} />
-      </div>
+      <PolicyFilters filters={filters} onFilterChange={setFilters} />
 
-      <PolicyTable rows={rows} loading={loading} onRefresh={fetchPolicies}/>
+      <PolicyTable rows={rows} loading={loading} onRefresh={fetchPolicies} />
     </div>
   );
 }

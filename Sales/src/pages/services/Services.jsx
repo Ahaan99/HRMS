@@ -4,6 +4,12 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import PageHeader from "../../components/common/PageHeader";
 import ServiceInventory from "./ServiceInventory";
+import { Layers, Plus, IndianRupee } from "lucide-react";
+
+const inputClass =
+  "w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-2.5 text-sm text-slate-900 outline-none transition-all placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100";
+
+const labelClass = "mb-1.5 block text-sm font-semibold text-slate-700";
 
 export default function ServiceManagement() {
   const [services, setServices] = useState([]);
@@ -55,173 +61,205 @@ export default function ServiceManagement() {
     fetchServices();
   };
 
-  // 🔥 dynamic label
+  // dynamic label
   const getPricingLabel = () => {
     if (form.pricing_type === "CTC_PERCENT") return "CTC %";
     if (form.pricing_type === "DAYS_SALARY") return "Days Salary";
-    return "Fixed Price (₹)";
+    return "Fixed Price (\u20B9)";
   };
 
   return (
-    <div className="p-6 space-y-8 bg-gray-50 min-h-screen">
+    <div className="min-h-screen space-y-6 bg-slate-50 p-6">
       {/* HEADER */}
 
       <PageHeader
-        title="Your Performance"
-        desc="Your all Performance is here"
+        title="Service Management"
+        desc="Manage your service plans and pricing"
       />
 
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">
-            Service Management
-          </h1>
-          <p className="text-gray-500 text-sm mt-1">
-            Manage your service plans and pricing
-          </p>
-        </div>
-      </div>
- 
       {/* FORM */}
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 space-y-5"
+        className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
       >
-        <h2 className="text-lg font-semibold text-gray-800">
-          Add New Service Plan
-        </h2>
-
-        {/* SERVICE + PLAN */}
-        <div className="grid grid-cols-2 gap-4">
-          <input
-            placeholder="Service Name (e.g. Recruitment)"
-            value={form.service_name}
-            onChange={(e) => setForm({ ...form, service_name: e.target.value })}
-            className="input border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
-            required
-          />
-
-          <input
-            placeholder="Plan Name (A / B / C)"
-            value={form.plan_name}
-            onChange={(e) => setForm({ ...form, plan_name: e.target.value })}
-            className="input border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
-            required
-          />
+        <div className="flex items-center gap-2.5 border-b border-slate-100 px-6 py-4">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+            <Layers size={15} aria-hidden="true" />
+          </div>
+          <h2 className="text-sm font-bold tracking-tight text-slate-900">
+            Add New Service Plan
+          </h2>
         </div>
 
-        {/* PRICING */}
-        <div className="grid grid-cols-2 gap-4">
-          <select
-            value={form.pricing_type}
-            onChange={(e) => setForm({ ...form, pricing_type: e.target.value })}
-            className="input border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="CTC_PERCENT">CTC %</option>
-            <option value="DAYS_SALARY">Days Salary</option>
-            <option value="FIXED">Fixed Price</option>
-          </select>
+        <div className="space-y-5 p-6">
+          {/* SERVICE + PLAN */}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div>
+              <label htmlFor="svc-name" className={labelClass}>
+                Service Name *
+              </label>
+              <input
+                id="svc-name"
+                placeholder="e.g. Recruitment"
+                value={form.service_name}
+                onChange={(e) =>
+                  setForm({ ...form, service_name: e.target.value })
+                }
+                className={inputClass}
+                required
+              />
+            </div>
 
-          <input
-            placeholder={getPricingLabel()}
-            value={form.pricing_value}
-            onChange={(e) =>
-              setForm({ ...form, pricing_value: e.target.value })
-            }
-            className="input border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
-
-        <input
-          placeholder="MRP (Original Price)"
-          value={form.mrp}
-          type="number"
-          onChange={(e) => setForm({ ...form, mrp: e.target.value })}
-          className="input border rounded-lg px-3 py-2 w-full"
-        />
-
-        {/* EXTRA */}
-        <div className="grid grid-cols-3 gap-4">
-          <input
-            placeholder="Replacement (months)"
-            value={form.replacement_months}
-            onChange={(e) =>
-              setForm({ ...form, replacement_months: e.target.value })
-            }
-            className="input border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
-          />
-
-          <input
-            placeholder="Token Amount"
-            value={form.token_amount}
-            onChange={(e) => setForm({ ...form, token_amount: e.target.value })}
-            className="input border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
-          />
-
-          <input
-            placeholder="Payment Terms (e.g. 7 days)"
-            value={form.payment_terms}
-            onChange={(e) =>
-              setForm({ ...form, payment_terms: e.target.value })
-            }
-            className="input border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        <textarea
-          placeholder="Description"
-          value={form.description}
-          onChange={(e) => setForm({ ...form, description: e.target.value })}
-          className="input border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 w-full"
-        />
-
-        <button className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-5 py-2 rounded-lg shadow hover:scale-105 transition">
-          + Add Service Plan
-        </button>
-      </form>
-
-      {/* LIST
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {services.map((s) => (
-          <div
-            key={s.id}
-            className="bg-white p-5 rounded-2xl shadow-md border border-gray-100 hover:shadow-xl transition duration-200"
-          >
-            <div className="flex justify-between items-start">
-              <div>
-                <h2 className="font-semibold text-lg text-gray-800">
-                  {s.service_name}
-                </h2>
-
-                <p className="text-xs text-gray-400 mb-1">Plan {s.plan_name}</p>
-
-                <p className="text-blue-600 font-medium mt-2">
-                  {s.pricing_type === "CTC_PERCENT" &&
-                    `${s.pricing_value}% of CTC`}
-                  {s.pricing_type === "DAYS_SALARY" &&
-                    `${s.pricing_value} days salary`}
-                  {s.pricing_type === "FIXED" && `₹${s.pricing_value}`}
-                </p>
-
-                <div className="mt-2 text-sm text-gray-500 space-y-1">
-                  <p>🔁 Replacement: {s.replacement_months} months</p>
-                  <p>💰 Token: ₹{s.token_amount}</p>
-                  <p>📅 Payment: {s.payment_terms}</p>
-                </div>
-              </div>
-
-              <button
-                onClick={() => navigate(`/services/${s.id}`)}
-                className="text-sm bg-blue-50 text-blue-600 px-3 py-1 rounded-lg hover:bg-blue-100 transition"
-              >
-                View →
-              </button>
+            <div>
+              <label htmlFor="svc-plan" className={labelClass}>
+                Plan Name *
+              </label>
+              <input
+                id="svc-plan"
+                placeholder="A / B / C"
+                value={form.plan_name}
+                onChange={(e) =>
+                  setForm({ ...form, plan_name: e.target.value })
+                }
+                className={inputClass}
+                required
+              />
             </div>
           </div>
-        ))}
-      </div> */}
-      
+
+          {/* PRICING */}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div>
+              <label htmlFor="svc-pricing-type" className={labelClass}>
+                Pricing Type
+              </label>
+              <select
+                id="svc-pricing-type"
+                value={form.pricing_type}
+                onChange={(e) =>
+                  setForm({ ...form, pricing_type: e.target.value })
+                }
+                className={inputClass}
+              >
+                <option value="CTC_PERCENT">CTC %</option>
+                <option value="DAYS_SALARY">Days Salary</option>
+                <option value="FIXED">Fixed Price</option>
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="svc-pricing-value" className={labelClass}>
+                {getPricingLabel()} *
+              </label>
+              <input
+                id="svc-pricing-value"
+                placeholder={`Enter ${getPricingLabel()}`}
+                value={form.pricing_value}
+                onChange={(e) =>
+                  setForm({ ...form, pricing_value: e.target.value })
+                }
+                className={inputClass}
+                required
+              />
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="svc-mrp" className={labelClass}>
+              MRP (Original Price)
+            </label>
+            <div className="relative">
+              <IndianRupee
+                size={15}
+                aria-hidden="true"
+                className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+              />
+              <input
+                id="svc-mrp"
+                placeholder="0.00"
+                value={form.mrp}
+                type="number"
+                min="0"
+                step="0.01"
+                onChange={(e) => setForm({ ...form, mrp: e.target.value })}
+                className={`${inputClass} pl-10`}
+              />
+            </div>
+          </div>
+
+          {/* EXTRA */}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div>
+              <label htmlFor="svc-replacement" className={labelClass}>
+                Replacement (months)
+              </label>
+              <input
+                id="svc-replacement"
+                placeholder="e.g. 3"
+                value={form.replacement_months}
+                onChange={(e) =>
+                  setForm({ ...form, replacement_months: e.target.value })
+                }
+                className={inputClass}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="svc-token" className={labelClass}>
+                Token Amount
+              </label>
+              <input
+                id="svc-token"
+                placeholder="e.g. 5000"
+                value={form.token_amount}
+                onChange={(e) =>
+                  setForm({ ...form, token_amount: e.target.value })
+                }
+                className={inputClass}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="svc-terms" className={labelClass}>
+                Payment Terms
+              </label>
+              <input
+                id="svc-terms"
+                placeholder="e.g. 7 days"
+                value={form.payment_terms}
+                onChange={(e) =>
+                  setForm({ ...form, payment_terms: e.target.value })
+                }
+                className={inputClass}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="svc-description" className={labelClass}>
+              Description
+            </label>
+            <textarea
+              id="svc-description"
+              rows={3}
+              placeholder="Describe what this service plan includes..."
+              value={form.description}
+              onChange={(e) =>
+                setForm({ ...form, description: e.target.value })
+              }
+              className={`${inputClass} min-h-[80px] resize-y`}
+            />
+          </div>
+
+          <div className="flex justify-end border-t border-slate-100 pt-5">
+            <button className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-2.5 text-sm font-bold text-white shadow-md shadow-indigo-200 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-300">
+              <Plus size={15} aria-hidden="true" />
+              Add Service Plan
+            </button>
+          </div>
+        </div>
+      </form>
+
       <ServiceInventory />
     </div>
   );

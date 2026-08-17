@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
-
 import API from "../../api/axios";
-
 import toast from "react-hot-toast";
-
 import dayjs from "dayjs";
-
 import {
   Eye,
   CheckCircle,
@@ -13,114 +9,55 @@ import {
   XCircle,
   Award,
   Calendar,
+  X,
+  ClipboardCheck,
 } from "lucide-react";
-
 import HRNavbar from "../../components/hr/HRNavbar";
 
 const STATUS_CONFIG = {
   excellent: {
     label: "Excellent",
-    color:
-      "bg-green-100 text-green-700",
-    border:
-      "border-green-500",
+    color: "bg-emerald-100 text-emerald-700",
+    bar: "bg-emerald-500",
     icon: CheckCircle,
   },
-
   good: {
     label: "Good",
-    color:
-      "bg-yellow-100 text-yellow-700",
-    border:
-      "border-yellow-500",
+    color: "bg-amber-100 text-amber-700",
+    bar: "bg-amber-500",
     icon: AlertCircle,
   },
-
   needs_improvement: {
-    label:
-      "Needs Improvement",
-
-    color:
-      "bg-red-100 text-red-700",
-
-    border:
-      "border-red-500",
-
+    label: "Needs Improvement",
+    color: "bg-rose-100 text-rose-700",
+    bar: "bg-rose-500",
     icon: XCircle,
   },
 };
 
 const PERFORMANCE_CRITERIA = [
-  {
-    id: "quality",
-    name: "Work Quality",
-  },
-
-  {
-    id: "productivity",
-    name: "Productivity",
-  },
-
-  {
-    id: "communication",
-    name: "Communication",
-  },
-
-  {
-    id: "teamwork",
-    name: "Teamwork",
-  },
-
-  {
-    id: "attendance",
-    name:
-      "Attendance & Punctuality",
-  },
-
-  {
-    id: "initiative",
-    name:
-      "Initiative & Innovation",
-  },
-
-  {
-    id: "deadline",
-    name:
-      "Meeting Deadlines",
-  },
-
-  {
-    id: "adaptability",
-    name: "Adaptability",
-  },
+  { id: "quality", name: "Work Quality" },
+  { id: "productivity", name: "Productivity" },
+  { id: "communication", name: "Communication" },
+  { id: "teamwork", name: "Teamwork" },
+  { id: "attendance", name: "Attendance & Punctuality" },
+  { id: "initiative", name: "Initiative & Innovation" },
+  { id: "deadline", name: "Meeting Deadlines" },
+  { id: "adaptability", name: "Adaptability" },
 ];
 
 export default function MyPerformance() {
-  const [records, setRecords] =
-    useState([]);
-
-  const [selectedRecord, setSelectedRecord] =
-    useState(null);
-
-  const [viewModal, setViewModal] =
-    useState(false);
+  const [records, setRecords] = useState([]);
+  const [selectedRecord, setSelectedRecord] = useState(null);
+  const [viewModal, setViewModal] = useState(false);
 
   const fetchData = async () => {
     try {
-      const res =
-        await API.get(
-          "/hr/performance"
-        );
-        console.log("res.data.data ------- ", res.data.data )
-      setRecords(
-        res.data.data || []
-      );
+      const res = await API.get("/hr/performance");
+      setRecords(res.data.data || []);
     } catch (err) {
       console.log(err);
-
-      toast.error(
-        "Failed to load performance reviews"
-      );
+      toast.error("Failed to load performance reviews");
     }
   };
 
@@ -129,258 +66,224 @@ export default function MyPerformance() {
   }, []);
 
   return (
-    <div className="p-4">
+    <div className="min-h-screen bg-slate-100 p-3 sm:p-4 lg:p-6">
       <HRNavbar />
 
-      {/* HEADER */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">
-          My Performance Reviews
-        </h1>
+      <div className="mx-auto mt-6 max-w-[1600px] space-y-6">
+        {/* ── HERO BAND ─────────────────────────────────────── */}
+        <div className="relative overflow-hidden rounded-3xl bg-slate-900 px-8 py-9 md:px-12">
+          <div
+            className="absolute inset-0 opacity-[0.06]"
+            style={{
+              backgroundImage:
+                "linear-gradient(to right, #818cf8 1px, transparent 1px), linear-gradient(to bottom, #818cf8 1px, transparent 1px)",
+              backgroundSize: "44px 44px",
+            }}
+          />
+          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-violet-600/25 blur-3xl" />
+          <div className="absolute -bottom-24 -left-12 h-56 w-56 rounded-full bg-indigo-600/20 blur-3xl" />
 
-        <p className="text-gray-500 text-sm mt-1">
-          View all your
-          performance evaluations
-        </p>
-      </div>
+          <div className="relative">
+            <p className="text-xs font-semibold uppercase tracking-widest text-indigo-300">
+              Personal
+            </p>
+            <h2 className="mt-2 text-2xl font-bold text-white md:text-3xl text-balance">
+              My Performance Reviews
+            </h2>
+            <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-400">
+              View all your performance evaluations across review periods.
+            </p>
+          </div>
+        </div>
 
-      {/* CARDS */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-        {records.map((record) => {
-          const config =
-            STATUS_CONFIG[
-              record.status
-            ];
+        {/* ── REVIEW CARDS ──────────────────────────────────── */}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {records.map((record) => {
+            const config = STATUS_CONFIG[record.status];
+            const Icon = config.icon;
 
-          const Icon =
-            config.icon;
+            return (
+              <div
+                key={record.id}
+                className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+              >
+                <span
+                  className={`absolute inset-x-0 top-0 h-1 ${config.bar}`}
+                />
 
-          return (
-            <div
-              key={record.id}
-              className={`bg-white rounded-3xl shadow border-l-4 ${config.border} overflow-hidden`}
-            >
-              <div className="p-5">
                 {/* TOP */}
-                <div className="flex justify-between items-start mb-5">
+                <div className="mb-5 flex items-start justify-between">
                   <div>
-                    <h2 className="font-bold text-lg">
+                    <h3 className="font-semibold text-slate-900">
                       Performance Review
-                    </h2>
-
-                    <div className="flex items-center gap-1 text-sm text-gray-500 mt-1">
-                      <Calendar size={14} />
-
-                      {dayjs(
-                        record.period
-                      ).format(
-                        "MMMM YYYY"
-                      )}
+                    </h3>
+                    <div className="mt-1 flex items-center gap-1.5 text-sm text-slate-500">
+                      <Calendar size={14} aria-hidden="true" />
+                      {dayjs(record.period).format("MMMM YYYY")}
                     </div>
                   </div>
 
                   <span
-                    className={`flex items-center gap-1 px-3 py-1 rounded-xl text-xs font-bold ${config.color}`}
+                    className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold ${config.color}`}
                   >
-                    <Icon size={12} />
-
+                    <Icon size={12} aria-hidden="true" />
                     {config.label}
                   </span>
                 </div>
 
                 {/* SCORE */}
                 <div className="mb-5">
-                  <p className="text-sm text-gray-500 mb-1">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">
                     Overall Score
                   </p>
-
-                  <div className="flex items-end gap-1">
-                    <span className="text-4xl font-extrabold">
-                      {
-                        record.avgScore
-                      }
+                  <div className="mt-1 flex items-end gap-1">
+                    <span className="text-4xl font-bold text-slate-900">
+                      {record.avgScore}
                     </span>
-
-                    <span className="text-gray-400 mb-1">
-                      /10
-                    </span>
+                    <span className="mb-1 text-slate-400">/10</span>
                   </div>
                 </div>
 
                 {/* REMARK */}
                 <div className="mb-5">
-                  <p className="text-sm text-gray-500 mb-1">
+                  <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-slate-400">
                     Feedback
                   </p>
-
-                  <p className="text-sm text-gray-700 line-clamp-3">
-                    {record.remarks ||
-                      "No remarks"}
+                  <p className="line-clamp-3 text-sm leading-relaxed text-slate-600">
+                    {record.remarks || "No remarks"}
                   </p>
                 </div>
 
                 {/* ACTION */}
                 <button
                   onClick={() => {
-                    setSelectedRecord(
-                      record
-                    );
-
-                    setViewModal(
-                      true
-                    );
+                    setSelectedRecord(record);
+                    setViewModal(true);
                   }}
-                  className="w-full flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 py-2.5 rounded-2xl font-medium transition"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl border border-indigo-200 bg-indigo-50 py-2.5 text-sm font-medium text-indigo-600 transition-colors hover:bg-indigo-100"
                 >
-                  <Eye size={16} />
+                  <Eye size={15} aria-hidden="true" />
                   View Details
                 </button>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
+
+        {!records.length && (
+          <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center shadow-sm">
+            <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+              <ClipboardCheck size={22} aria-hidden="true" />
+            </span>
+            <p className="mt-3 text-sm font-medium text-slate-600">
+              No performance reviews found
+            </p>
+            <p className="mt-1 text-xs text-slate-400">
+              Your evaluations will appear here once submitted.
+            </p>
+          </div>
+        )}
       </div>
 
-      {!records.length && (
-        <div className="bg-white rounded-3xl shadow border p-10 text-center text-gray-500">
-          No performance reviews
-          found
-        </div>
-      )}
+      {/* ── VIEW MODAL ──────────────────────────────────────── */}
+      {viewModal && selectedRecord && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-4xl overflow-hidden rounded-3xl bg-white shadow-2xl">
+            {/* HEADER */}
+            <div className="relative overflow-hidden bg-slate-900 px-8 py-7">
+              <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-violet-600/25 blur-3xl" />
+              <div className="relative flex items-start justify-between">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-widest text-indigo-300">
+                    Evaluation
+                  </p>
+                  <h2 className="mt-1 text-2xl font-bold text-white">
+                    Performance Review
+                  </h2>
+                  <p className="mt-1 text-sm text-slate-400">
+                    {selectedRecord.employeeName}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setViewModal(false)}
+                  aria-label="Close"
+                  className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-white transition-colors hover:bg-white/20"
+                >
+                  <X size={18} aria-hidden="true" />
+                </button>
+              </div>
+            </div>
 
-      {/* VIEW MODAL */}
-      {viewModal &&
-        selectedRecord && (
-          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white rounded-[32px] w-full max-w-4xl max-h-[92vh] overflow-hidden shadow-2xl">
-              
-              {/* HEADER */}
-              <div className="bg-black text-white p-7">
-                <div className="flex justify-between items-start">
+            {/* BODY */}
+            <div className="max-h-[70vh] overflow-y-auto p-7">
+              {/* SCORE */}
+              <div className="mb-6 rounded-2xl border border-slate-200 bg-slate-50 p-6">
+                <div className="flex items-center justify-between">
                   <div>
-                    <h2 className="text-3xl font-bold">
-                      Performance Review
-                    </h2>
-
-                    <p className="text-gray-300 mt-2">
-                      {
-                        selectedRecord.employeeName
-                      }
+                    <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">
+                      Overall Score
                     </p>
+                    <div className="mt-1 flex items-end gap-1">
+                      <span className="text-5xl font-bold text-slate-900">
+                        {selectedRecord.avgScore}
+                      </span>
+                      <span className="mb-2 text-slate-400">/10</span>
+                    </div>
                   </div>
-
-                  <button
-                    onClick={() =>
-                      setViewModal(
-                        false
-                      )
-                    }
-                    className="w-10 h-10 rounded-xl bg-white/10"
-                  >
-                    ✕
-                  </button>
+                  <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-500 ring-1 ring-indigo-100">
+                    <Award size={32} aria-hidden="true" />
+                  </span>
                 </div>
               </div>
 
-              {/* BODY */}
-              <div className="p-7 overflow-y-auto max-h-[70vh]">
-                
-                {/* SCORE */}
-                <div className="bg-gray-50 rounded-3xl p-6 mb-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-gray-500 mb-2">
-                        Overall Score
-                      </p>
+              {/* CRITERIA */}
+              <div className="space-y-3">
+                {PERFORMANCE_CRITERIA.map((criteria) => {
+                  const value = selectedRecord.scores?.[criteria.id] || 0;
 
-                      <div className="flex items-end gap-1">
-                        <span className="text-5xl font-extrabold">
-                          {
-                            selectedRecord.avgScore
-                          }
-                        </span>
-
-                        <span className="text-gray-400 mb-2">
-                          /10
-                        </span>
+                  return (
+                    <div
+                      key={criteria.id}
+                      className="rounded-xl border border-slate-100 bg-slate-50 p-4"
+                    >
+                      <div className="mb-2 flex justify-between text-sm">
+                        <p className="font-medium text-slate-700">
+                          {criteria.name}
+                        </p>
+                        <p className="font-semibold text-slate-900">
+                          {value}/10
+                        </p>
+                      </div>
+                      <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
+                        <div
+                          className={`h-full rounded-full ${
+                            value >= 8
+                              ? "bg-emerald-500"
+                              : value >= 6
+                                ? "bg-amber-500"
+                                : "bg-rose-500"
+                          }`}
+                          style={{ width: `${value * 10}%` }}
+                        />
                       </div>
                     </div>
+                  );
+                })}
+              </div>
 
-                    <Award
-                      size={60}
-                    />
-                  </div>
-                </div>
-
-                {/* CRITERIA */}
-                <div className="space-y-4">
-                  {PERFORMANCE_CRITERIA.map(
-                    (
-                      criteria
-                    ) => {
-                      const value =
-                        selectedRecord
-                          .scores?.[
-                          criteria.id
-                        ] || 0;
-
-                      return (
-                        <div
-                          key={
-                            criteria.id
-                          }
-                          className="bg-gray-50 rounded-2xl p-4"
-                        >
-                          <div className="flex justify-between mb-2">
-                            <p className="font-medium">
-                              {
-                                criteria.name
-                              }
-                            </p>
-
-                            <p className="font-bold">
-                              {value}
-                              /10
-                            </p>
-                          </div>
-
-                          <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-                            <div
-                              className={`h-full ${
-                                value >= 8
-                                  ? "bg-green-500"
-                                  : value >=
-                                      6
-                                    ? "bg-yellow-500"
-                                    : "bg-red-500"
-                              }`}
-                              style={{
-                                width: `${value * 10}%`,
-                              }}
-                            />
-                          </div>
-                        </div>
-                      );
-                    }
-                  )}
-                </div>
-
-                {/* REMARKS */}
-                <div className="mt-6 bg-gray-50 rounded-3xl p-6">
-                  <h3 className="font-bold text-lg mb-3">
-                    Remarks
-                  </h3>
-
-                  <p className="text-gray-700 whitespace-pre-wrap">
-                    {
-                      selectedRecord.remarks
-                    }
-                  </p>
-                </div>
+              {/* REMARKS */}
+              <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-6">
+                <h3 className="mb-2 text-xs font-semibold uppercase tracking-widest text-slate-400">
+                  Remarks
+                </h3>
+                <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-700">
+                  {selectedRecord.remarks}
+                </p>
               </div>
             </div>
           </div>
-        )}
+        </div>
+      )}
     </div>
   );
 }

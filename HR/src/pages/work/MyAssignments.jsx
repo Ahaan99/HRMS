@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import API from "../../api/axios";
 import toast from "react-hot-toast";
 import dayjs from "dayjs";
-
 import {
   Briefcase,
   Clock,
@@ -11,47 +10,47 @@ import {
   AlertTriangle,
   Eye,
   Calendar,
+  X,
 } from "lucide-react";
-
 import HRNavbar from "../../components/hr/HRNavbar";
 
 const PRIORITY_CONFIG = {
   high: {
     label: "High",
-    color: "bg-red-100 text-red-700",
-    border: "border-red-500",
+    color: "bg-rose-100 text-rose-700",
+    bar: "bg-rose-500",
   },
   medium: {
     label: "Medium",
-    color: "bg-yellow-100 text-yellow-700",
-    border: "border-yellow-500",
+    color: "bg-amber-100 text-amber-700",
+    bar: "bg-amber-500",
   },
   low: {
     label: "Low",
-    color: "bg-green-100 text-green-700",
-    border: "border-green-500",
+    color: "bg-emerald-100 text-emerald-700",
+    bar: "bg-emerald-500",
   },
 };
 
 const STATUS_CONFIG = {
   pending: {
     label: "Pending",
-    color: "bg-gray-100 text-gray-700",
+    color: "bg-slate-100 text-slate-600",
     icon: Circle,
   },
   in_progress: {
     label: "In Progress",
-    color: "bg-blue-100 text-blue-700",
+    color: "bg-sky-100 text-sky-700",
     icon: Clock,
   },
   completed: {
     label: "Completed",
-    color: "bg-green-100 text-green-700",
+    color: "bg-emerald-100 text-emerald-700",
     icon: CheckCircle,
   },
   overdue: {
     label: "Overdue",
-    color: "bg-red-100 text-red-700",
+    color: "bg-rose-100 text-rose-700",
     icon: AlertTriangle,
   },
 };
@@ -60,12 +59,11 @@ export default function MyAssignments() {
   const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedAssignment, setSelectedAssignment] = useState(null);
+
   const fetchAssignments = async () => {
     try {
       setLoading(true);
-
       const res = await API.get("/hr/work-assignments");
-
       setAssignments(res.data.data || []);
     } catch (err) {
       console.error(err);
@@ -93,7 +91,6 @@ export default function MyAssignments() {
       });
 
       toast.success("Status updated");
-
       fetchAssignments();
     } catch (err) {
       console.error(err);
@@ -128,7 +125,6 @@ export default function MyAssignments() {
       });
 
       toast.success("Progress updated");
-
       fetchAssignments();
     } catch (err) {
       console.error(err);
@@ -137,82 +133,97 @@ export default function MyAssignments() {
   };
 
   return (
-    <div className="p-4">
+    <div className="min-h-screen bg-slate-100 p-3 sm:p-4 lg:p-6">
       <HRNavbar />
 
-      <div className="flex items-center gap-3 mb-6">
-        <div className="p-3 rounded-2xl bg-black text-white">
-          <Briefcase size={22} />
+      <div className="mx-auto mt-6 max-w-[1600px] space-y-6">
+        {/* ── HERO BAND ─────────────────────────────────────── */}
+        <div className="relative overflow-hidden rounded-3xl bg-slate-900 px-8 py-9 md:px-12">
+          <div
+            className="absolute inset-0 opacity-[0.06]"
+            style={{
+              backgroundImage:
+                "linear-gradient(to right, #818cf8 1px, transparent 1px), linear-gradient(to bottom, #818cf8 1px, transparent 1px)",
+              backgroundSize: "44px 44px",
+            }}
+          />
+          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-violet-600/25 blur-3xl" />
+          <div className="absolute -bottom-24 -left-12 h-56 w-56 rounded-full bg-indigo-600/20 blur-3xl" />
+
+          <div className="relative">
+            <p className="text-xs font-semibold uppercase tracking-widest text-indigo-300">
+              Personal
+            </p>
+            <h2 className="mt-2 text-2xl font-bold text-white md:text-3xl text-balance">
+              My Work Assignments
+            </h2>
+            <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-400">
+              Track and update your assigned work — status, progress, and
+              deadlines.
+            </p>
+          </div>
         </div>
 
-        <div>
-          <h1 className="text-2xl font-bold">My Work Assignments</h1>
+        {loading ? (
+          <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center text-slate-400 shadow-sm">
+            Loading…
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {assignments.map((assignment) => {
+                const priority = PRIORITY_CONFIG[assignment.priority];
+                const status = STATUS_CONFIG[assignment.status];
+                const StatusIcon = status.icon;
 
-          <p className="text-sm text-gray-500">
-            Track and update your assigned work
-          </p>
-        </div>
-      </div>
+                const isOverdue =
+                  dayjs(assignment.due_date).isBefore(dayjs(), "day") &&
+                  assignment.status !== "completed";
 
-      {loading ? (
-        <div className="text-center py-10">Loading...</div>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-            {assignments.map((assignment) => {
-              const priority = PRIORITY_CONFIG[assignment.priority];
+                return (
+                  <div
+                    key={assignment.id}
+                    className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+                  >
+                    <span
+                      className={`absolute inset-x-0 top-0 h-1 ${priority.bar}`}
+                    />
 
-              const status = STATUS_CONFIG[assignment.status];
-
-              const StatusIcon = status.icon;
-
-              const isOverdue =
-                dayjs(assignment.due_date).isBefore(dayjs(), "day") &&
-                assignment.status !== "completed";
-
-              return (
-                <div
-                  key={assignment.id}
-                  className={`bg-white rounded-2xl shadow border-l-4 ${priority.border} overflow-hidden`}
-                >
-                  <div className="p-5">
                     {/* TOP */}
-                    <div className="flex justify-between items-start mb-4">
+                    <div className="mb-4 flex items-start justify-between">
                       <div>
                         <span
-                          className={`px-2 py-1 rounded text-xs font-bold ${priority.color}`}
+                          className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${priority.color}`}
                         >
                           {priority.label}
                         </span>
-
-                        <h2 className="font-bold text-lg mt-3 text-gray-900">
+                        <h3 className="mt-3 font-semibold text-slate-900">
                           {assignment.title}
-                        </h2>
+                        </h3>
                       </div>
 
                       <span
-                        className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold ${status.color}`}
+                        className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold ${status.color}`}
                       >
-                        <StatusIcon size={12} />
+                        <StatusIcon size={12} aria-hidden="true" />
                         {status.label}
                       </span>
                     </div>
 
                     {/* DESC */}
-                    <p className="text-sm text-gray-600 mb-4">
+                    <p className="mb-4 line-clamp-2 text-sm leading-relaxed text-slate-600">
                       {assignment.description}
                     </p>
 
                     {/* DUE */}
-                    <div className="flex items-center justify-between text-sm mb-4">
-                      <div className="flex items-center gap-1 text-gray-500">
-                        <Calendar size={14} />
-
+                    <div className="mb-4 flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-1.5 text-slate-500">
+                        <Calendar size={14} aria-hidden="true" />
                         {dayjs(assignment.due_date).format("MMM D, YYYY")}
                       </div>
 
                       {isOverdue && (
-                        <span className="text-red-500 text-xs font-semibold">
+                        <span className="text-xs font-semibold text-rose-500">
                           Overdue
                         </span>
                       )}
@@ -220,55 +231,49 @@ export default function MyAssignments() {
 
                     {/* PROGRESS */}
                     <div className="mb-4">
-                      <div className="flex justify-between text-sm mb-1">
+                      <div className="mb-1 flex justify-between text-sm text-slate-600">
                         <span>Progress</span>
-
-                        <span className="font-semibold">
+                        <span className="font-semibold text-slate-800">
                           {assignment.progress}%
                         </span>
                       </div>
 
-                      <div className="w-full bg-gray-100 rounded-full h-2">
+                      <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
                         <div
-                          className={`h-2 rounded-full ${
+                          className={`h-full rounded-full ${
                             assignment.status === "completed"
-                              ? "bg-green-500"
-                              : "bg-blue-500"
+                              ? "bg-emerald-500"
+                              : "bg-indigo-500"
                           }`}
-                          style={{
-                            width: `${assignment.progress}%`,
-                          }}
+                          style={{ width: `${assignment.progress}%` }}
                         />
                       </div>
                     </div>
 
                     {/* ACTIONS */}
-                    <div className="space-y-3">
+                    <div className="space-y-2.5">
                       <select
                         value={assignment.status}
                         onChange={(e) =>
                           handleStatusChange(assignment, e.target.value)
                         }
-                        className="w-full border border-gray-200 rounded-xl px-4 py-2.5 bg-white"
+                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
                       >
                         <option value="pending">Pending</option>
-
                         <option value="in_progress">In Progress</option>
-
                         <option value="completed">Completed</option>
                       </select>
 
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleProgress(assignment, "dec")}
-                          className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 py-2 rounded-xl font-semibold"
+                          className="flex-1 rounded-xl border border-rose-200 bg-rose-50 py-2 text-sm font-semibold text-rose-600 transition-colors hover:bg-rose-100"
                         >
                           -10%
                         </button>
-
                         <button
                           onClick={() => handleProgress(assignment, "inc")}
-                          className="flex-1 bg-green-50 hover:bg-green-100 text-green-600 py-2 rounded-xl font-semibold"
+                          className="flex-1 rounded-xl border border-emerald-200 bg-emerald-50 py-2 text-sm font-semibold text-emerald-600 transition-colors hover:bg-emerald-100"
                         >
                           +10%
                         </button>
@@ -276,145 +281,156 @@ export default function MyAssignments() {
 
                       <button
                         onClick={() => setSelectedAssignment(assignment)}
-                        className="w-full flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 py-2 rounded-xl font-medium"
+                        className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100"
                       >
-                        <Eye size={16} />
+                        <Eye size={15} aria-hidden="true" />
                         View Details
                       </button>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {!assignments.length && (
-            <div className="bg-white rounded-2xl shadow border p-10 text-center text-gray-500">
-              No assignments found
+                );
+              })}
             </div>
-          )}
-        </>
-      )}
 
-      {/* View Popup  */}
-
-      {selectedAssignment && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl">
-            {/* HEADER */}
-            <div className="flex items-center justify-between px-6 py-5 border-b">
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900">
-                  Assignment Details
-                </h2>
-
-                <p className="text-sm text-gray-500 mt-1">
-                  Complete task information
+            {!assignments.length && (
+              <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center shadow-sm">
+                <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                  <Briefcase size={22} aria-hidden="true" />
+                </span>
+                <p className="mt-3 text-sm font-medium text-slate-600">
+                  No assignments found
+                </p>
+                <p className="mt-1 text-xs text-slate-400">
+                  Work assigned to you will appear here.
                 </p>
               </div>
+            )}
+          </>
+        )}
+      </div>
 
-              <button
-                onClick={() => setSelectedAssignment(null)}
-                className="w-10 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center"
-              >
-                ✕
-              </button>
+      {/* ── VIEW MODAL ──────────────────────────────────────── */}
+      {selectedAssignment && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-2xl overflow-hidden rounded-3xl bg-white shadow-2xl">
+            {/* HEADER */}
+            <div className="relative overflow-hidden bg-slate-900 px-7 py-6">
+              <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-violet-600/25 blur-3xl" />
+              <div className="relative flex items-start justify-between">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-widest text-indigo-300">
+                    Task
+                  </p>
+                  <h2 className="mt-1 text-2xl font-bold text-white">
+                    Assignment Details
+                  </h2>
+                  <p className="mt-1 text-sm text-slate-400">
+                    Complete task information
+                  </p>
+                </div>
+                <button
+                  onClick={() => setSelectedAssignment(null)}
+                  aria-label="Close"
+                  className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-white transition-colors hover:bg-white/20"
+                >
+                  <X size={18} aria-hidden="true" />
+                </button>
+              </div>
             </div>
 
             {/* BODY */}
-            <div className="p-6 space-y-5">
-              {/* TITLE */}
+            <div className="space-y-5 p-6">
               <div>
-                <p className="text-sm text-gray-500 mb-1">Task Title</p>
-
-                <h3 className="text-xl font-bold text-gray-900">
+                <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-slate-400">
+                  Task Title
+                </p>
+                <h3 className="text-xl font-bold text-slate-900">
                   {selectedAssignment.title}
                 </h3>
               </div>
 
-              {/* DESCRIPTION */}
-              <div className="bg-gray-50 rounded-2xl p-5">
-                <p className="text-sm text-gray-500 mb-2">Description</p>
-
-                <p className="text-gray-700 leading-relaxed">
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-slate-400">
+                  Description
+                </p>
+                <p className="text-sm leading-relaxed text-slate-700">
                   {selectedAssignment.description}
                 </p>
               </div>
 
               {/* INFO GRID */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {" "}
-                <div className="bg-blue-50 rounded-2xl p-4">
-                  <p className="text-sm text-blue-600 mb-1">Status</p>
-
-                  <p className="font-bold text-gray-900 capitalize">
-                    {selectedAssignment.status.replace("_", " ")}
-                  </p>
-                </div>
-                <div className="bg-green-50 rounded-2xl p-4">
-                  <p className="text-sm text-green-600 mb-1">Progress</p>
-
-                  <p className="font-bold text-gray-900">
-                    {selectedAssignment.progress}%
-                  </p>
-                </div>
-                <div className="bg-yellow-50 rounded-2xl p-4">
-                  <p className="text-sm text-yellow-600 mb-1">Priority</p>
-
-                  <p className="font-bold text-gray-900 capitalize">
-                    {selectedAssignment.priority}
-                  </p>
-                </div>
-                <div className="bg-purple-50 rounded-2xl p-4">
-                  <p className="text-sm text-purple-600 mb-1">Due Date</p>
-
-                  <p className="font-bold text-gray-900">
-                    {dayjs(selectedAssignment.due_date).format("MMM D, YYYY")}
-                  </p>
-                </div>
-                <div className="bg-red-50 rounded-2xl p-4">
-                  <p className="text-sm text-red-600 mb-1">Days Left</p>
-
-                  <p className="font-bold text-gray-900">
-                    {Math.max(
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+                {[
+                  {
+                    label: "Status",
+                    value: selectedAssignment.status.replace("_", " "),
+                    cls: "capitalize",
+                  },
+                  {
+                    label: "Progress",
+                    value: `${selectedAssignment.progress}%`,
+                  },
+                  {
+                    label: "Priority",
+                    value: selectedAssignment.priority,
+                    cls: "capitalize",
+                  },
+                  {
+                    label: "Due Date",
+                    value: dayjs(selectedAssignment.due_date).format(
+                      "MMM D, YYYY",
+                    ),
+                  },
+                  {
+                    label: "Days Left",
+                    value: `${Math.max(
                       dayjs(selectedAssignment.due_date).diff(dayjs(), "day"),
                       0,
-                    )}{" "}
-                    days
-                  </p>
-                </div>
+                    )} days`,
+                  },
+                ].map((cell) => (
+                  <div
+                    key={cell.label}
+                    className="rounded-xl border border-slate-100 bg-slate-50 p-4"
+                  >
+                    <p className="mb-1 text-[11px] font-semibold uppercase tracking-widest text-slate-400">
+                      {cell.label}
+                    </p>
+                    <p
+                      className={`text-sm font-bold text-slate-900 ${cell.cls || ""}`}
+                    >
+                      {cell.value}
+                    </p>
+                  </div>
+                ))}
               </div>
 
               {/* PROGRESS BAR */}
               <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-gray-500">Task Completion</span>
-
-                  <span className="font-semibold">
+                <div className="mb-2 flex justify-between text-sm">
+                  <span className="text-slate-500">Task Completion</span>
+                  <span className="font-semibold text-slate-800">
                     {selectedAssignment.progress}%
                   </span>
                 </div>
-
-                <div className="w-full bg-gray-100 rounded-full h-3">
+                <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
                   <div
-                    className={`h-3 rounded-full ${
+                    className={`h-full rounded-full ${
                       selectedAssignment.status === "completed"
-                        ? "bg-green-500"
-                        : "bg-blue-500"
+                        ? "bg-emerald-500"
+                        : "bg-indigo-500"
                     }`}
-                    style={{
-                      width: `${selectedAssignment.progress}%`,
-                    }}
+                    style={{ width: `${selectedAssignment.progress}%` }}
                   />
                 </div>
               </div>
             </div>
 
             {/* FOOTER */}
-            <div className="px-6 py-5 border-t flex justify-end">
+            <div className="flex justify-end border-t border-slate-100 bg-slate-50 px-6 py-4">
               <button
                 onClick={() => setSelectedAssignment(null)}
-                className="px-5 py-2.5 rounded-xl bg-black text-white font-semibold hover:bg-gray-900"
+                className="rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-slate-800"
               >
                 Close
               </button>

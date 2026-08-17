@@ -1,20 +1,27 @@
-import { Filter } from "lucide-react";
+import { ListFilter, Flag } from "lucide-react";
 
 export default function WorkAssignmentFilters({ filters, onFilterChange }) {
   const handleChange = (key, value) => {
     onFilterChange((prev) => ({ ...prev, [key]: value }));
   };
 
+  const selectClass =
+    "rounded-xl border border-slate-200 bg-slate-50/60 py-2.5 pl-9 pr-8 text-sm font-medium text-slate-700 outline-none transition-all focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100";
+
   return (
-    <div className="bg-white/70 backdrop-blur-xl border border-white/40 rounded-2xl px-6 py-4 shadow-lg">
-      <div className="flex flex-wrap items-center gap-4">
-        <div className="flex items-center gap-2">
-          <Filter className="w-5 h-5 text-gray-500" />
-          <label className="text-sm font-medium text-gray-700">Status</label>
+    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative">
+          <ListFilter
+            size={15}
+            aria-hidden="true"
+            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+          />
           <select
             value={filters.status}
             onChange={(e) => handleChange("status", e.target.value)}
-            className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            aria-label="Filter by status"
+            className={selectClass}
           >
             <option value="">All Status</option>
             <option value="assigned">Assigned</option>
@@ -24,17 +31,22 @@ export default function WorkAssignmentFilters({ filters, onFilterChange }) {
           </select>
         </div>
 
-        <div className="flex items-center gap-2">
-          <label className="text-sm font-medium text-gray-700">Priority</label>
+        <div className="relative">
+          <Flag
+            size={15}
+            aria-hidden="true"
+            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+          />
           <select
             value={filters.priority}
             onChange={(e) => handleChange("priority", e.target.value)}
-            className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            aria-label="Filter by priority"
+            className={selectClass}
           >
             <option value="">All Priority</option>
-            <option value="high">🔴 High</option>
-            <option value="medium">🟡 Medium</option>
-            <option value="low">🟢 Low</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
           </select>
         </div>
       </div>

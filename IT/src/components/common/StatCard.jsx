@@ -1,21 +1,25 @@
 export default function StatCard({ title, value, subText, icon, gradient }) {
   return (
-    <div
-      className={`p-4 sm:p-5 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl
-                  shadow-[0_0_40px_rgba(0,0,0,0.4)]
-                  hover:scale-[1.02] transition duration-200 relative overflow-hidden`}
-    >
-      {/* Glow */}
-      <div className={`absolute inset-0 opacity-40 blur-2xl  ${gradient}`} />
+    <div className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+      {/* top accent bar */}
+      <div
+        className={`pointer-events-none absolute inset-x-0 top-0 h-1 ${gradient}`}
+      />
 
-      <div className="relative z-10 flex items-start justify-between">
-        <div>
-          <p className="text-white/60 text-xs sm:text-sm font-medium text-black">{title}</p>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-black mt-1 ">{value}</h2>
-          <p className="text-black/50 text-xs mt-2">{subText}</p>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+            {title}
+          </p>
+          <h2 className="mt-1.5 text-3xl font-extrabold tracking-tight text-slate-900">
+            {value}
+          </h2>
+          <p className="mt-1.5 text-xs text-slate-500">{subText}</p>
         </div>
 
-        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-white/10 flex items-center justify-center text-xl">
+        <div
+          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-white shadow-md transition-transform duration-300 group-hover:scale-105 ${gradient}`}
+        >
           {icon}
         </div>
       </div>

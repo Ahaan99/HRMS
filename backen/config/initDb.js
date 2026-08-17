@@ -907,6 +907,13 @@ CREATE TABLE IF NOT EXISTS client_expenses (
   `);
 
   await db.query(`
+    INSERT IGNORE INTO locations (name) VALUES
+    ('Delhi'), ('Mumbai'), ('Bengaluru'), ('Hyderabad'), ('Chennai'),
+    ('Pune'), ('Kolkata'), ('Ahmedabad'), ('Jaipur'), ('Noida'),
+    ('Gurugram'), ('Indore'), ('Lucknow'), ('Chandigarh'), ('Remote')
+  `);
+
+  await db.query(`
   CREATE TABLE IF NOT EXISTS super_admin_attendance (
     id INT AUTO_INCREMENT PRIMARY KEY,
     employee_id INT,

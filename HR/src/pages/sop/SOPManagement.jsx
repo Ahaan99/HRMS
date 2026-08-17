@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import {
-  BookOpen,
   Upload,
   Download,
   History,
@@ -211,29 +210,44 @@ export default function SOPManagement() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
+    <div className="min-h-screen bg-slate-100 pb-24">
       <HRNavbar />
 
       <div className="px-3 sm:px-6 lg:px-8 pt-6 max-w-7xl mx-auto">
         {/* header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-              <BookOpen className="text-indigo-600" size={26} />
-              SOP Management
-            </h1>
-            <p className="text-sm text-gray-500 mt-0.5">
-              Internal SOP library, version control, acknowledgement &amp;
-              training tracking
-            </p>
+        <div className="relative overflow-hidden rounded-3xl bg-slate-900 px-8 py-8 md:px-10 mb-6">
+          <div
+            className="absolute inset-0 opacity-[0.06]"
+            style={{
+              backgroundImage:
+                "linear-gradient(to right, #818cf8 1px, transparent 1px), linear-gradient(to bottom, #818cf8 1px, transparent 1px)",
+              backgroundSize: "44px 44px",
+            }}
+          />
+          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-violet-600/25 blur-3xl" />
+          <div className="absolute -bottom-24 -left-12 h-56 w-56 rounded-full bg-indigo-600/20 blur-3xl" />
+
+          <div className="relative flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-indigo-300">
+                Knowledge Base
+              </p>
+              <h1 className="mt-2 text-2xl font-bold text-white md:text-3xl text-balance">
+                SOP Management
+              </h1>
+              <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-400">
+                Internal SOP library, version control, acknowledgement &amp;
+                training tracking.
+              </p>
+            </div>
+            <button
+              onClick={openCreate}
+              className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-900/40 transition-colors hover:bg-indigo-500"
+            >
+              <Upload size={16} />
+              Upload SOP
+            </button>
           </div>
-          <button
-            onClick={openCreate}
-            className="inline-flex items-center gap-2 bg-indigo-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-indigo-700 shadow"
-          >
-            <Upload size={16} />
-            Upload SOP
-          </button>
         </div>
 
         {/* tabs */}
@@ -245,10 +259,10 @@ export default function SOPManagement() {
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition ${
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                 tab === t.key
-                  ? "bg-gray-900 text-white"
-                  : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-100"
+                  ? "bg-indigo-600 text-white shadow-sm"
+                  : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
               }`}
             >
               {t.label}

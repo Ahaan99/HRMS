@@ -13,65 +13,62 @@ import {
   Eye,
   Edit,
   Calendar,
+  X,
+  Inbox,
+  Loader2,
 } from "lucide-react";
 import PageHeader from "../../components/common/PageHeader";
-
 
 const STATUS_CONFIG = {
   pending: {
     label: "Pending",
-    color: "bg-yellow-100 text-yellow-700",
+    color: "bg-amber-50 text-amber-700 ring-1 ring-amber-200",
     icon: AlertCircle,
   },
 
   submitted: {
     label: "Submitted",
-    color: "bg-blue-100 text-blue-700",
+    color: "bg-blue-50 text-blue-700 ring-1 ring-blue-200",
     icon: Clock,
   },
 
   approved: {
     label: "Approved",
-    color: "bg-green-100 text-green-700",
+    color: "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200",
     icon: CheckCircle,
   },
 
   rejected: {
     label: "Rejected",
-    color: "bg-red-100 text-red-700",
+    color: "bg-rose-50 text-rose-700 ring-1 ring-rose-200",
     icon: XCircle,
   },
 };
 
+const inputClass =
+  "w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-2.5 text-sm text-slate-900 outline-none transition-all placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100";
+
+const labelClass = "mb-1.5 block text-sm font-semibold text-slate-700";
+
 export default function MyEOD() {
   const [reports, setReports] = useState([]);
 
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const [openModal, setOpenModal] =
-    useState(false);
+  const [openModal, setOpenModal] = useState(false);
 
-  const [viewModal, setViewModal] =
-    useState(false);
+  const [viewModal, setViewModal] = useState(false);
 
-  const [selectedReport, setSelectedReport] =
-    useState(null);
+  const [selectedReport, setSelectedReport] = useState(null);
 
-  const [editId, setEditId] =
-    useState(null);
+  const [editId, setEditId] = useState(null);
 
   const [form, setForm] = useState({
     date: dayjs().format("YYYY-MM-DD"),
-
     tasksCompleted: "",
-
     tasksInProgress: "",
-
     blockers: "",
-
     tomorrowPlan: "",
-
     notes: "",
   });
 
@@ -79,17 +76,13 @@ export default function MyEOD() {
     try {
       setLoading(true);
 
-      const res = await API.get(
-        "/sales/eod"
-      );
+      const res = await API.get("/sales/eod");
 
       setReports(res.data.data || []);
     } catch (err) {
       console.error(err);
 
-      toast.error(
-        "Failed to load reports"
-      );
+      toast.error("Failed to load reports");
     } finally {
       setLoading(false);
     }
@@ -101,18 +94,11 @@ export default function MyEOD() {
 
   const resetForm = () => {
     setForm({
-      date: dayjs().format(
-        "YYYY-MM-DD"
-      ),
-
+      date: dayjs().format("YYYY-MM-DD"),
       tasksCompleted: "",
-
       tasksInProgress: "",
-
       blockers: "",
-
       tomorrowPlan: "",
-
       notes: "",
     });
 
@@ -124,31 +110,19 @@ export default function MyEOD() {
 
     try {
       if (!form.tasksCompleted) {
-        toast.error(
-          "Tasks completed required"
-        );
+        toast.error("Tasks completed required");
 
         return;
       }
 
       if (editId) {
-        await API.patch(
-          `/sales/eod/${editId}`,
-          form
-        );
+        await API.patch(`/sales/eod/${editId}`, form);
 
-        toast.success(
-          "EOD updated"
-        );
+        toast.success("EOD updated");
       } else {
-        await API.post(
-          "/sales/eod",
-          form
-        );
+        await API.post("/sales/eod", form);
 
-        toast.success(
-          "EOD submitted"
-        );
+        toast.success("EOD submitted");
       }
 
       setOpenModal(false);
@@ -159,10 +133,7 @@ export default function MyEOD() {
     } catch (err) {
       console.error(err);
 
-      toast.error(
-        err?.response?.data?.message ||
-          "Action failed"
-      );
+      toast.error(err?.response?.data?.message || "Action failed");
     }
   };
 
@@ -170,22 +141,11 @@ export default function MyEOD() {
     setEditId(report.id);
 
     setForm({
-      date: dayjs(report.date).format(
-        "YYYY-MM-DD"
-      ),
-
-      tasksCompleted:
-        report.tasksCompleted || "",
-
-      tasksInProgress:
-        report.tasksInProgress || "",
-
-      blockers:
-        report.blockers || "",
-
-      tomorrowPlan:
-        report.tomorrowPlan || "",
-
+      date: dayjs(report.date).format("YYYY-MM-DD"),
+      tasksCompleted: report.tasksCompleted || "",
+      tasksInProgress: report.tasksInProgress || "",
+      blockers: report.blockers || "",
+      tomorrowPlan: report.tomorrowPlan || "",
       notes: report.notes || "",
     });
 
@@ -193,31 +153,13 @@ export default function MyEOD() {
   };
 
   return (
-    <div className="p-4">
-
-      <PageHeader
-        title="Work Policy Sheet"
-        desc="Company work guidelines & policies"
-      />
-
+    <div className="space-y-6 p-4">
       {/* HEADER */}
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center gap-3">
-          <div className="p-3 rounded-2xl bg-black text-white">
-            <FileText size={22} />
-          </div>
-
-          <div>
-            <h1 className="text-2xl font-bold">
-              My EOD Reports
-            </h1>
-
-            <p className="text-sm text-gray-500">
-              Submit and manage your
-              daily reports
-            </p>
-          </div>
-        </div>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <PageHeader
+          title="My EOD Reports"
+          desc="Submit and manage your daily reports"
+        />
 
         <button
           onClick={() => {
@@ -225,120 +167,104 @@ export default function MyEOD() {
 
             setOpenModal(true);
           }}
-          className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-black hover:bg-gray-900 text-white font-semibold"
+          className="flex shrink-0 items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-200 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-300"
         >
-          <Plus size={18} />
+          <Plus size={15} aria-hidden="true" />
           Submit EOD
         </button>
       </div>
 
       {/* CARDS */}
       {loading ? (
-        <div className="text-center py-10">
-          Loading...
+        <div className="flex flex-col items-center gap-2 rounded-2xl border border-slate-200 bg-white py-14 text-slate-400 shadow-sm">
+          <Loader2 size={22} aria-hidden="true" className="animate-spin" />
+          <span className="text-sm font-medium">Loading reports...</span>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
           {reports.map((report) => {
-            const status =
-              STATUS_CONFIG[
-                report.status
-              ];
+            const status = STATUS_CONFIG[report.status];
 
-            const StatusIcon =
-              status.icon;
+            const StatusIcon = status.icon;
 
             return (
               <div
                 key={report.id}
-                className="bg-white rounded-3xl shadow border overflow-hidden"
+                className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
               >
                 <div className="p-5">
                   {/* TOP */}
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h2 className="font-bold text-lg">
-                        EOD Report
-                      </h2>
+                  <div className="mb-4 flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                        <FileText size={17} aria-hidden="true" />
+                      </div>
+                      <div>
+                        <h2 className="text-base font-bold tracking-tight text-slate-900">
+                          EOD Report
+                        </h2>
 
-                      <div className="flex items-center gap-1 text-sm text-gray-500 mt-1">
-                        <Calendar size={14} />
-
-                        {dayjs(
-                          report.date
-                        ).format(
-                          "MMM D, YYYY"
-                        )}
+                        <div className="mt-0.5 flex items-center gap-1 text-xs text-slate-500">
+                          <Calendar size={12} aria-hidden="true" />
+                          {dayjs(report.date).format("MMM D, YYYY")}
+                        </div>
                       </div>
                     </div>
 
                     <span
-                      className={`flex items-center gap-1 px-3 py-1 rounded-xl text-xs font-bold ${status.color}`}
+                      className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${status.color}`}
                     >
-                      <StatusIcon size={12} />
-
+                      <StatusIcon size={12} aria-hidden="true" />
                       {status.label}
                     </span>
                   </div>
 
                   {/* TASKS */}
-                  <div className="space-y-3 mb-5">
-                    <div>
-                      <p className="text-xs text-gray-500 mb-1">
+                  <div className="mb-5 space-y-3">
+                    <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3">
+                      <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-slate-400">
                         Tasks Completed
                       </p>
 
-                      <p className="text-sm text-gray-700 line-clamp-2">
-                        {
-                          report.tasksCompleted
-                        }
+                      <p className="line-clamp-2 text-sm leading-relaxed text-slate-700">
+                        {report.tasksCompleted}
                       </p>
                     </div>
 
-                    <div>
-                      <p className="text-xs text-gray-500 mb-1">
+                    <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3">
+                      <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-slate-400">
                         Tomorrow Plan
                       </p>
 
-                      <p className="text-sm text-gray-700 line-clamp-2">
-                        {
-                          report.tomorrowPlan
-                        }
+                      <p className="line-clamp-2 text-sm leading-relaxed text-slate-700">
+                        {report.tomorrowPlan}
                       </p>
                     </div>
                   </div>
 
                   {/* ACTIONS */}
-                  <div className="flex gap-2 pt-4 border-t">
+                  <div className="flex gap-2 border-t border-slate-100 pt-4">
                     <button
                       onClick={() => {
-                        setSelectedReport(
-                          report
-                        );
+                        setSelectedReport(report);
 
-                        setViewModal(
-                          true
-                        );
+                        setViewModal(true);
                       }}
-                      className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 font-medium"
+                      className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white py-2 text-sm font-semibold text-slate-600 transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
                     >
-                      <Eye size={15} />
+                      <Eye size={14} aria-hidden="true" />
                       View
                     </button>
-                    {report.status !==
-                      "approved" && report.status !== "rejected" && (
-                      <button
-                        onClick={() =>
-                          handleEdit(
-                            report
-                          )
-                        }
-                        className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 font-medium"
-                      >
-                        <Edit size={15} />
-                        Edit
-                      </button>
-                    )}
+                    {report.status !== "approved" &&
+                      report.status !== "rejected" && (
+                        <button
+                          onClick={() => handleEdit(report)}
+                          className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-indigo-100 bg-indigo-50 py-2 text-sm font-semibold text-indigo-600 transition-all hover:border-indigo-200 hover:bg-indigo-100"
+                        >
+                          <Edit size={14} aria-hidden="true" />
+                          Edit
+                        </button>
+                      )}
                   </div>
                 </div>
               </div>
@@ -347,113 +273,110 @@ export default function MyEOD() {
         </div>
       )}
 
-      {!reports.length &&
-        !loading && (
-          <div className="bg-white rounded-3xl shadow border p-10 text-center text-gray-500">
-            No EOD reports found
+      {!reports.length && !loading && (
+        <div className="rounded-2xl border border-slate-200 bg-white py-16 shadow-sm">
+          <div className="flex flex-col items-center gap-3 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
+              <Inbox size={24} aria-hidden="true" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-slate-700">
+                No EOD reports found
+              </p>
+              <p className="mt-0.5 text-xs text-slate-400">
+                Submit your first daily report to get started.
+              </p>
+            </div>
           </div>
-        )}
+        </div>
+      )}
 
       {/* CREATE / EDIT MODAL */}
       {openModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b">
-              <h2 className="text-2xl font-bold">
-                {editId
-                  ? "Edit EOD"
-                  : "Submit EOD"}
-              </h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4 backdrop-blur-sm">
+          <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-3xl border border-white/60 bg-white/95 shadow-2xl backdrop-blur-xl">
+            <div className="flex items-center justify-between border-b border-slate-100 px-6 py-5">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-200">
+                  <FileText size={17} aria-hidden="true" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-extrabold tracking-tight text-slate-900">
+                    {editId ? "Edit EOD" : "Submit EOD"}
+                  </h2>
+                  <p className="text-xs text-slate-500">
+                    Daily work summary
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setOpenModal(false);
+                  resetForm();
+                }}
+                aria-label="Close"
+                className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
+              >
+                <X size={18} aria-hidden="true" />
+              </button>
             </div>
 
-            <form
-              onSubmit={handleSubmit}
-              className="p-6 space-y-5"
-            >
+            <form onSubmit={handleSubmit} className="space-y-4 p-6">
               <div>
-                <label className="block text-sm font-medium mb-1">
+                <label htmlFor="eod-date" className={labelClass}>
                   Date
                 </label>
 
                 <input
+                  id="eod-date"
                   type="date"
                   value={form.date}
-                  onChange={(e) =>
-                    setForm({
-                      ...form,
-                      date:
-                        e.target.value,
-                    })
-                  }
-                  className="w-full border rounded-xl px-4 py-3"
+                  onChange={(e) => setForm({ ...form, date: e.target.value })}
+                  className={inputClass}
                 />
               </div>
 
               {[
-                [
-                  "tasksCompleted",
-                  "Tasks Completed",
-                ],
-
-                [
-                  "tasksInProgress",
-                  "Tasks In Progress",
-                ],
-
-                [
-                  "blockers",
-                  "Blockers",
-                ],
-
-                [
-                  "tomorrowPlan",
-                  "Tomorrow Plan",
-                ],
-
+                ["tasksCompleted", "Tasks Completed"],
+                ["tasksInProgress", "Tasks In Progress"],
+                ["blockers", "Blockers"],
+                ["tomorrowPlan", "Tomorrow Plan"],
                 ["notes", "Notes"],
               ].map(([key, label]) => (
                 <div key={key}>
-                  <label className="block text-sm font-medium mb-1">
+                  <label htmlFor={`eod-${key}`} className={labelClass}>
                     {label}
                   </label>
 
                   <textarea
+                    id={`eod-${key}`}
                     rows={3}
                     value={form[key]}
-                    onChange={(e) =>
-                      setForm({
-                        ...form,
-                        [key]:
-                          e.target.value,
-                      })
-                    }
-                    className="w-full border rounded-xl px-4 py-3 resize-none"
+                    onChange={(e) => setForm({ ...form, [key]: e.target.value })}
+                    className={`${inputClass} min-h-[80px] resize-y`}
+                    placeholder={`Enter ${label.toLowerCase()}...`}
                   />
                 </div>
               ))}
 
-              <div className="flex justify-end gap-3 pt-4 border-t">
+              <div className="flex justify-end gap-3 border-t border-slate-100 pt-4">
                 <button
                   type="button"
                   onClick={() => {
-                    setOpenModal(
-                      false
-                    );
+                    setOpenModal(false);
 
                     resetForm();
                   }}
-                  className="px-5 py-2.5 rounded-xl bg-gray-100"
+                  className="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-600 transition-all hover:border-slate-300 hover:bg-slate-50"
                 >
                   Cancel
                 </button>
 
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-xl bg-black text-white"
+                  className="rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-2.5 text-sm font-bold text-white shadow-md shadow-indigo-200 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-300"
                 >
-                  {editId
-                    ? "Update"
-                    : "Submit"}
+                  {editId ? "Update" : "Submit"}
                 </button>
               </div>
             </form>
@@ -461,221 +384,193 @@ export default function MyEOD() {
         </div>
       )}
 
-{/* VIEW MODAL */}
-{viewModal &&
-  selectedReport && (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white rounded-[32px] w-full max-w-4xl max-h-[92vh] overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200">
-        
-        {/* HEADER */}
-        <div className="relative overflow-hidden bg-gradient-to-r from-black via-gray-900 to-gray-800 px-8 py-7 text-white">
-          
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-white" />
-            <div className="absolute bottom-0 left-0 w-24 h-24 rounded-full bg-white" />
-          </div>
-
-          <div className="relative flex items-start justify-between">
-            <div>
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur flex items-center justify-center">
-                  <FileText size={26} />
-                </div>
-
-                <div>
-                  <h2 className="text-3xl font-bold">
-                    EOD Report
-                  </h2>
-
-                  <p className="text-gray-300 text-sm mt-1">
-                    Daily work summary and progress report
-                  </p>
-                </div>
+      {/* VIEW MODAL */}
+      {viewModal && selectedReport && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm">
+          <div className="max-h-[92vh] w-full max-w-4xl overflow-hidden rounded-3xl bg-white shadow-2xl">
+            {/* HEADER */}
+            <div className="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-700 px-8 py-7 text-white">
+              <div className="absolute inset-0 opacity-10" aria-hidden="true">
+                <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white" />
+                <div className="absolute bottom-0 left-0 h-24 w-24 rounded-full bg-white" />
               </div>
 
-              <div className="flex flex-wrap items-center gap-3 mt-5">
-                <div className="px-4 py-2 rounded-xl bg-white/10 backdrop-blur text-sm">
-                  📅{" "}
-                  {dayjs(
-                    selectedReport.date
-                  ).format(
-                    "MMMM D, YYYY"
-                  )}
+              <div className="relative flex items-start justify-between">
+                <div>
+                  <div className="mb-3 flex items-center gap-3">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 backdrop-blur">
+                      <FileText size={26} aria-hidden="true" />
+                    </div>
+
+                    <div>
+                      <h2 className="text-2xl font-extrabold tracking-tight md:text-3xl">
+                        EOD Report
+                      </h2>
+
+                      <p className="mt-1 text-sm text-indigo-200">
+                        Daily work summary and progress report
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-5 flex flex-wrap items-center gap-3">
+                    <div className="flex items-center gap-2 rounded-xl bg-white/10 px-4 py-2 text-sm backdrop-blur">
+                      <Calendar size={14} aria-hidden="true" />
+                      {dayjs(selectedReport.date).format("MMMM D, YYYY")}
+                    </div>
+
+                    <div
+                      className={`rounded-xl px-4 py-2 text-sm font-semibold ${
+                        STATUS_CONFIG[selectedReport.status]?.color
+                      }`}
+                    >
+                      {STATUS_CONFIG[selectedReport.status]?.label}
+                    </div>
+                  </div>
                 </div>
 
-                <div
-                  className={`px-4 py-2 rounded-xl text-sm font-semibold ${
-                    STATUS_CONFIG[
-                      selectedReport.status
-                    ]?.color
-                  }`}
+                <button
+                  onClick={() => setViewModal(false)}
+                  aria-label="Close"
+                  className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 backdrop-blur transition hover:bg-white/20"
                 >
-                  {
-                    STATUS_CONFIG[
-                      selectedReport.status
-                    ]?.label
-                  }
-                </div>
+                  <X size={18} aria-hidden="true" />
+                </button>
               </div>
             </div>
 
-            <button
-              onClick={() =>
-                setViewModal(false)
-              }
-              className="w-11 h-11 rounded-2xl bg-white/10 hover:bg-white/20 backdrop-blur flex items-center justify-center transition"
-            >
-              ✕
-            </button>
-          </div>
-        </div>
+            {/* BODY */}
+            <div className="max-h-[60vh] overflow-y-auto p-8">
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                {/* TASK COMPLETED */}
+                <div className="rounded-3xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-6 transition hover:shadow-lg">
+                  <div className="mb-4 flex items-center gap-3">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600">
+                      <CheckCircle size={22} aria-hidden="true" />
+                    </div>
 
-        {/* BODY */}
-        <div className="p-8 overflow-y-auto max-h-[70vh]">
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            
-            {/* TASK COMPLETED */}
-            <div className="group bg-gradient-to-br from-green-50 to-white border border-green-100 rounded-3xl p-6 hover:shadow-lg transition">
-              
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-2xl bg-green-100 text-green-600 flex items-center justify-center">
-                  <CheckCircle size={22} />
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-900">
+                        Tasks Completed
+                      </h3>
+
+                      <p className="text-sm text-slate-500">
+                        Successfully finished work
+                      </p>
+                    </div>
+                  </div>
+
+                  <p className="whitespace-pre-wrap leading-relaxed text-slate-700">
+                    {selectedReport.tasksCompleted || "No completed tasks"}
+                  </p>
                 </div>
 
-                <div>
-                  <h3 className="font-bold text-lg text-gray-900">
-                    Tasks Completed
-                  </h3>
+                {/* IN PROGRESS */}
+                <div className="rounded-3xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-6 transition hover:shadow-lg">
+                  <div className="mb-4 flex items-center gap-3">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-blue-600">
+                      <Clock size={22} aria-hidden="true" />
+                    </div>
 
-                  <p className="text-sm text-gray-500">
-                    Successfully finished work
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-900">
+                        In Progress
+                      </h3>
+
+                      <p className="text-sm text-slate-500">
+                        Ongoing tasks and activities
+                      </p>
+                    </div>
+                  </div>
+
+                  <p className="whitespace-pre-wrap leading-relaxed text-slate-700">
+                    {selectedReport.tasksInProgress || "No active tasks"}
+                  </p>
+                </div>
+
+                {/* BLOCKERS */}
+                <div className="rounded-3xl border border-rose-100 bg-gradient-to-br from-rose-50 to-white p-6 transition hover:shadow-lg">
+                  <div className="mb-4 flex items-center gap-3">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-100 text-rose-600">
+                      <AlertCircle size={22} aria-hidden="true" />
+                    </div>
+
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-900">
+                        Blockers
+                      </h3>
+
+                      <p className="text-sm text-slate-500">
+                        Issues or roadblocks faced
+                      </p>
+                    </div>
+                  </div>
+
+                  <p className="whitespace-pre-wrap leading-relaxed text-slate-700">
+                    {selectedReport.blockers || "No blockers reported"}
+                  </p>
+                </div>
+
+                {/* TOMORROW PLAN */}
+                <div className="rounded-3xl border border-purple-100 bg-gradient-to-br from-purple-50 to-white p-6 transition hover:shadow-lg">
+                  <div className="mb-4 flex items-center gap-3">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-100 text-purple-600">
+                      <Calendar size={22} aria-hidden="true" />
+                    </div>
+
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-900">
+                        Tomorrow Plan
+                      </h3>
+
+                      <p className="text-sm text-slate-500">
+                        Planned work for next day
+                      </p>
+                    </div>
+                  </div>
+
+                  <p className="whitespace-pre-wrap leading-relaxed text-slate-700">
+                    {selectedReport.tomorrowPlan || "No plans added"}
                   </p>
                 </div>
               </div>
 
-              <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                {selectedReport.tasksCompleted ||
-                  "No completed tasks"}
-              </p>
-            </div>
+              {/* NOTES */}
+              <div className="mt-6 rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-6">
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-200 text-slate-700">
+                    <Edit size={22} aria-hidden="true" />
+                  </div>
 
-            {/* IN PROGRESS */}
-            <div className="bg-gradient-to-br from-blue-50 to-white border border-blue-100 rounded-3xl p-6 hover:shadow-lg transition">
-              
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center">
-                  <Clock size={22} />
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-900">
+                      Additional Notes
+                    </h3>
+
+                    <p className="text-sm text-slate-500">
+                      Extra comments and observations
+                    </p>
+                  </div>
                 </div>
 
-                <div>
-                  <h3 className="font-bold text-lg text-gray-900">
-                    In Progress
-                  </h3>
-
-                  <p className="text-sm text-gray-500">
-                    Ongoing tasks and activities
-                  </p>
-                </div>
-              </div>
-
-              <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                {selectedReport.tasksInProgress ||
-                  "No active tasks"}
-              </p>
-            </div>
-
-            {/* BLOCKERS */}
-            <div className="bg-gradient-to-br from-red-50 to-white border border-red-100 rounded-3xl p-6 hover:shadow-lg transition">
-              
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center">
-                  <AlertCircle size={22} />
-                </div>
-
-                <div>
-                  <h3 className="font-bold text-lg text-gray-900">
-                    Blockers
-                  </h3>
-
-                  <p className="text-sm text-gray-500">
-                    Issues or roadblocks faced
-                  </p>
-                </div>
-              </div>
-
-              <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                {selectedReport.blockers ||
-                  "No blockers reported"}
-              </p>
-            </div>
-
-            {/* TOMORROW PLAN */}
-            <div className="bg-gradient-to-br from-purple-50 to-white border border-purple-100 rounded-3xl p-6 hover:shadow-lg transition">
-              
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center">
-                  <Calendar size={22} />
-                </div>
-
-                <div>
-                  <h3 className="font-bold text-lg text-gray-900">
-                    Tomorrow Plan
-                  </h3>
-
-                  <p className="text-sm text-gray-500">
-                    Planned work for next day
-                  </p>
-                </div>
-              </div>
-
-              <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                {selectedReport.tomorrowPlan ||
-                  "No plans added"}
-              </p>
-            </div>
-          </div>
-
-          {/* NOTES */}
-          <div className="mt-6 bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-3xl p-6">
-            
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-2xl bg-gray-200 text-gray-700 flex items-center justify-center">
-                <Edit size={22} />
-              </div>
-
-              <div>
-                <h3 className="font-bold text-lg text-gray-900">
-                  Additional Notes
-                </h3>
-
-                <p className="text-sm text-gray-500">
-                  Extra comments and observations
+                <p className="whitespace-pre-wrap leading-relaxed text-slate-700">
+                  {selectedReport.notes || "No additional notes"}
                 </p>
               </div>
             </div>
 
-            <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-              {selectedReport.notes ||
-                "No additional notes"}
-            </p>
+            {/* FOOTER */}
+            <div className="flex justify-end border-t border-slate-100 bg-slate-50/60 px-8 py-5">
+              <button
+                onClick={() => setViewModal(false)}
+                className="rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-2.5 text-sm font-bold text-white shadow-md shadow-indigo-200 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-300"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
-
-        {/* FOOTER */}
-        <div className="px-8 py-5 border-t bg-gray-50 flex justify-end">
-          <button
-            onClick={() =>
-              setViewModal(false)
-            }
-            className="px-6 py-3 rounded-2xl bg-black hover:bg-gray-900 text-white font-semibold transition"
-          >
-            Close
-          </button>
-        </div>
-      </div>
-    </div>
-)}
+      )}
     </div>
   );
 }

@@ -79,7 +79,7 @@ const getTimeStatus = (actualTime, expectedTime, isLogin = true) => {
         </button>
       </div>
 
-      <div className="overflow-auto max-h-[60vh]">
+      <div className="overflow-auto max-h-[60vh] scrollbar-hide">
         <table className="w-full">
           <thead className="sticky top-0 z-10 bg-gray-50/50">
             <tr>

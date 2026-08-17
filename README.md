@@ -1,4 +1,4 @@
-# HRMS — Complete Human Resource Management System
+﻿# HRMS â€” Complete Human Resource Management System
 
 A merged, multi-portal HRMS platform. One Node.js backend powers six React portals, plus three independent Python services for Employee Verification, Smart Attendance, and an AI Robo Interview.
 
@@ -15,12 +15,12 @@ A merged, multi-portal HRMS platform. One Node.js backend powers six React porta
 | 5 | Employee Portal | `employee/` | React + Vite | `5176` |
 | 6 | IT Portal | `IT/` | React + Vite | `5177` (pinned) |
 | 7 | Sales Portal | `Sales/` | React + Vite | `5178` |
-| 8 | Employee Verification — Backend | `employee-verification-system/employee-verification-backend/` | Python + FastAPI | `8000` |
-| 9 | Employee Verification — Frontend | `employee-verification-system/frontend/frontend/` | React + Vite | `5179` |
+| 8 | Employee Verification â€” Backend | `employee-verification-system/employee-verification-backend/` | Python + FastAPI | `8000` |
+| 9 | Employee Verification â€” Frontend | `employee-verification-system/frontend/frontend/` | React + Vite | `5179` |
 | 10 | AI Robo Interview | `HR_robo/` | Python + FastAPI + Groq | `8001` |
-| 11 | Smart Attendance | `smart-Attendance-main/smart-Attendance-main/Smart_Attendance/Smart_Attendance/` | Python + Flask + MongoDB | `5001` |
+| 11 | Smart Attendance | `smart-Attendance-main/smart-Attendance-main/Smart_Attendance/Smart_Attendance/` | Python + Flask + MongoDB | `5050` |
 
-> Vite assigns ports in launch order (5173, 5174, …). Use the explicit `--port` flags below so every portal always gets the same port.
+> Vite assigns ports in launch order (5173, 5174, â€¦). Use the explicit `--port` flags below so every portal always gets the same port.
 
 ---
 
@@ -37,9 +37,9 @@ Install these BEFORE anything else:
 | [Git](https://git-scm.com) | any | Cloning the repo |
 
 Optional:
-- **Ollama** (`OLLAMA_URL`) — only if you use the local-AI features of the main backend.
-- **Twilio account** — only for SMS/OTP features.
-- **Groq API key** — required for the AI Robo Interview.
+- **Ollama** (`OLLAMA_URL`) â€” only if you use the local-AI features of the main backend.
+- **Twilio account** â€” only for SMS/OTP features.
+- **Groq API key** â€” required for the AI Robo Interview.
 
 Verify installs:
 
@@ -59,7 +59,7 @@ git clone https://github.com/Ahaan99/HRMS.git
 cd HRMS
 ```
 
-Or download the ZIP from GitHub → **Code → Download ZIP** → extract it → open a terminal inside the extracted folder. Nothing else in the code needs to change — you only create the `.env` files below.
+Or download the ZIP from GitHub â†’ **Code â†’ Download ZIP** â†’ extract it â†’ open a terminal inside the extracted folder. Nothing else in the code needs to change â€” you only create the `.env` files below.
 
 ---
 
@@ -90,11 +90,11 @@ JWT_EXPIRES_IN=1d
 # Sales department id (set after departments exist, can leave 1 initially)
 SALES_DEPT_ID=1
 
-# Optional — local AI via Ollama
+# Optional â€” local AI via Ollama
 OLLAMA_URL=http://localhost:11434
 OLLAMA_MODEL=llama3
 
-# Optional — Twilio (SMS / phone OTP)
+# Optional â€” Twilio (SMS / phone OTP)
 TWILIO_ACCOUNT_SID=
 TWILIO_AUTH_TOKEN=
 TWILIO_API_SECRET=
@@ -104,7 +104,7 @@ TWILIO_FROM_NUMBER=
 SMART_ATTENDANCE_KEY=any_random_shared_secret
 ```
 
-### 3.2 Frontend portals — one file each
+### 3.2 Frontend portals â€” one file each
 
 Create the SAME two-line file in `admin/.env`, `HR/.env`, `employee/.env`, `IT/.env`, `Sales/.env`:
 
@@ -148,7 +148,7 @@ CREATE DATABASE hrms;
 CREATE DATABASE employee_verification;
 ```
 
-The main backend auto-creates its tables and seeds the Super Admin account on first start — no manual SQL needed beyond creating the databases.
+The main backend auto-creates its tables and seeds the Super Admin account on first start â€” no manual SQL needed beyond creating the databases.
 
 ### MongoDB (Smart Attendance)
 
@@ -171,7 +171,7 @@ cd Sales         && npm install && cd ..
 cd employee-verification-system/frontend/frontend && npm install && cd ../../..
 ```
 
-**Python services** — create a virtual environment per service (recommended):
+**Python services** â€” create a virtual environment per service (recommended):
 
 ```bash
 # Employee Verification backend
@@ -243,12 +243,10 @@ cd HR_robo
 venv\Scripts\activate
 python run.py
 
-# Smart Attendance (Flask, port 5001 to avoid clashing with the Node backend)
+# Smart Attendance (Flask, runs on port 5050)
 cd smart-Attendance-main/smart-Attendance-main/Smart_Attendance/Smart_Attendance/backend
 venv\Scripts\activate
 python app.py
-# If it tries to use port 5000, run instead:
-#   set FLASK_RUN_PORT=5001 && flask --app app run    (Windows)
 ```
 
 ### 6.4 Open in the browser
@@ -263,7 +261,7 @@ python app.py
 | Sales | http://localhost:5178 |
 | Employee Verification | http://localhost:5179 |
 | AI Robo Interview | http://localhost:8001 |
-| Smart Attendance | http://localhost:5001 |
+| Smart Attendance | http://localhost:5050 |
 
 Log into the Admin portal with the `SUPER_ADMIN_EMAIL` / `SUPER_ADMIN_PASSWORD` you set in `backen/.env`.
 
@@ -277,7 +275,7 @@ Log into the Admin portal with the `SUPER_ADMIN_EMAIL` / `SUPER_ADMIN_PASSWORD` 
 4. `npm install` done in every Node folder (Section 5)
 5. `pip install -r requirements.txt` done in every Python service (Section 5)
 6. Backend started FIRST, then the portals
-7. Login as Super Admin → create Departments, Designations → add Employees → their credentials work on the other portals
+7. Login as Super Admin â†’ create Departments, Designations â†’ add Employees â†’ their credentials work on the other portals
 
 ---
 
@@ -301,13 +299,13 @@ Log into the Admin portal with the `SUPER_ADMIN_EMAIL` / `SUPER_ADMIN_PASSWORD` 
 | Problem | Fix |
 |---------|-----|
 | `ECONNREFUSED 3306` | MySQL not running or wrong `DB_*` values in `backen/.env` |
-| `Access Denied` / `Forbidden` toast | Role lacks route access — check `protect([...])` in `backen/modules/**/*.routes.js` |
+| `Access Denied` / `Forbidden` toast | Role lacks route access â€” check `protect([...])` in `backen/modules/**/*.routes.js` |
 | Blank portal page | Backend not running, or `VITE_API_BASE_URL` missing/wrong in that portal's `.env` |
-| Port already in use | Another service took it — pass a different `--port`, or free the port |
+| Port already in use | Another service took it â€” pass a different `--port`, or free the port |
 | `pip install` fails on a package | Upgrade pip: `python -m pip install --upgrade pip`, retry inside the venv |
 | Robo Interview 401/500 | Missing/invalid `GROQ_API_KEY` in `HR_robo/.env` |
 | Smart Attendance DB errors | MongoDB service not started |
-| OTP SMS not sending | Twilio vars empty — feature is optional; email OTP still works |
+| OTP SMS not sending | Twilio vars empty â€” feature is optional; email OTP still works |
 
 ---
 
@@ -315,17 +313,17 @@ Log into the Admin portal with the `SUPER_ADMIN_EMAIL` / `SUPER_ADMIN_PASSWORD` 
 
 ```
 HRMS/
-├── backen/                        # Node.js Express API (MySQL, JWT, Socket.IO)
-├── admin/                         # Super Admin portal (React + Vite)
-├── HR/                            # HR portal
-├── client/                        # Client portal
-├── employee/                      # Employee portal
-├── IT/                            # IT portal
-├── Sales/                         # Sales portal
-├── employee-verification-system/
-│   ├── employee-verification-backend/   # FastAPI + MySQL
-│   └── frontend/frontend/               # React + Vite
-├── HR_robo/                       # AI Robo Interview (FastAPI + Groq)
-├── smart-Attendance-main/         # Smart Attendance (Flask + MongoDB + face engine)
-└── scripts/                       # Utility scripts
+â”œâ”€â”€ backen/                        # Node.js Express API (MySQL, JWT, Socket.IO)
+â”œâ”€â”€ admin/                         # Super Admin portal (React + Vite)
+â”œâ”€â”€ HR/                            # HR portal
+â”œâ”€â”€ client/                        # Client portal
+â”œâ”€â”€ employee/                      # Employee portal
+â”œâ”€â”€ IT/                            # IT portal
+â”œâ”€â”€ Sales/                         # Sales portal
+â”œâ”€â”€ employee-verification-system/
+â”‚   â”œâ”€â”€ employee-verification-backend/   # FastAPI + MySQL
+â”‚   â””â”€â”€ frontend/frontend/               # React + Vite
+â”œâ”€â”€ HR_robo/                       # AI Robo Interview (FastAPI + Groq)
+â”œâ”€â”€ smart-Attendance-main/         # Smart Attendance (Flask + MongoDB + face engine)
+â””â”€â”€ scripts/                       # Utility scripts
 ```

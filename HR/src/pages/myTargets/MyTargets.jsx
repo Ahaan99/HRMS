@@ -1,21 +1,21 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import API from "../../api/axios";
 import dayjs from "dayjs";
 import toast from "react-hot-toast";
-import { Plus, Eye, Calendar, Users, Clock, AlertCircle } from "lucide-react";
+import { Plus, Calendar, Clock, Target } from "lucide-react";
 import HRNavbar from "../../components/hr/HRNavbar";
 
 const PRIORITY_CONFIG = {
-  high: { label: "High", color: "bg-red-100 text-red-700" },
-  medium: { label: "Medium", color: "bg-yellow-100 text-yellow-700" },
-  low: { label: "Low", color: "bg-green-100 text-green-700" },
+  high: { label: "High", color: "bg-rose-100 text-rose-700" },
+  medium: { label: "Medium", color: "bg-amber-100 text-amber-700" },
+  low: { label: "Low", color: "bg-emerald-100 text-emerald-700" },
 };
 
 const TARGET_STATUS_CONFIG = {
-  pending: { label: "Pending", color: "bg-gray-100 text-gray-700" },
-  in_progress: { label: "In Progress", color: "bg-blue-100 text-blue-700" },
-  completed: { label: "Completed", color: "bg-green-100 text-green-700" },
-  overdue: { label: "Overdue", color: "bg-red-100 text-red-700" },
+  pending: { label: "Pending", color: "bg-slate-100 text-slate-600" },
+  in_progress: { label: "In Progress", color: "bg-sky-100 text-sky-700" },
+  completed: { label: "Completed", color: "bg-emerald-100 text-emerald-700" },
+  overdue: { label: "Overdue", color: "bg-rose-100 text-rose-700" },
 };
 
 export default function MyTargets() {
@@ -58,86 +58,142 @@ export default function MyTargets() {
     Math.min(Math.round((t.current_value / t.target_value) * 100), 100);
 
   return (
-    <div className="p-4">
+    <div className="min-h-screen bg-slate-100 p-3 sm:p-4 lg:p-6">
       <HRNavbar />
-      <h1 className="text-xl font-semibold mb-4">My Work</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {targets.map((t) => {
-          const progress = getProgress(t);
-          const priority = PRIORITY_CONFIG[t.priority];
-          const status = TARGET_STATUS_CONFIG[t.status];
+      <div className="mx-auto mt-6 max-w-[1600px] space-y-6">
+        {/* ── HERO BAND ─────────────────────────────────────── */}
+        <div className="relative overflow-hidden rounded-3xl bg-slate-900 px-8 py-9 md:px-12">
+          <div
+            className="absolute inset-0 opacity-[0.06]"
+            style={{
+              backgroundImage:
+                "linear-gradient(to right, #818cf8 1px, transparent 1px), linear-gradient(to bottom, #818cf8 1px, transparent 1px)",
+              backgroundSize: "44px 44px",
+            }}
+          />
+          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-violet-600/25 blur-3xl" />
+          <div className="absolute -bottom-24 -left-12 h-56 w-56 rounded-full bg-indigo-600/20 blur-3xl" />
 
-          const isOverdue =
-            dayjs(t.deadline).isBefore(dayjs()) && t.status !== "completed";
+          <div className="relative">
+            <p className="text-xs font-semibold uppercase tracking-widest text-indigo-300">
+              Personal
+            </p>
+            <h2 className="mt-2 text-2xl font-bold text-white md:text-3xl text-balance">
+              My Work
+            </h2>
+            <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-400">
+              Targets assigned to you — track progress and log updates as you
+              go.
+            </p>
+          </div>
+        </div>
 
-          return (
-            <div
-              key={t.id}
-              className={`bg-white rounded-2xl shadow border-2 p-5 ${
-                t.status === "completed"
-                  ? "border-green-500"
-                  : isOverdue
-                  ? "border-red-500"
-                  : "border-gray-200"
-              }`}
-            >
-              {/* Header */}
-              <div className="flex justify-between mb-3">
-                <span className={`px-2 py-1 text-xs rounded ${priority.color}`}>
-                  {priority.label}
-                </span>
+        {/* ── TARGET CARDS ──────────────────────────────────── */}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {targets.map((t) => {
+            const progress = getProgress(t);
+            const priority = PRIORITY_CONFIG[t.priority];
+            const status = TARGET_STATUS_CONFIG[t.status];
 
-                <span className={`px-2 py-1 text-xs rounded ${status.color}`}>
-                  {isOverdue ? "Overdue" : status.label}
-                </span>
-              </div>
+            const isOverdue =
+              dayjs(t.deadline).isBefore(dayjs()) && t.status !== "completed";
 
-              <h3 className="font-semibold text-gray-800 mb-2">{t.title}</h3>
-
-              <div className="text-sm text-gray-500 mb-2 flex items-center gap-1">
-                <Calendar size={14} />
-                {dayjs(t.deadline).format("MMM D, YYYY")}
-              </div>
-
-              <div className="text-sm text-gray-500 mb-3 flex items-center gap-1">
-                <Clock size={14} />
-                {Math.max(dayjs(t.deadline).diff(dayjs(), "day"), 0)} days left
-              </div>
-
-              {/* Progress */}
-              <div className="mb-3">
-                <div className="flex justify-between text-sm mb-1">
-                  <span>
-                    {t.current_value}/{t.target_value} {t.unit}
-                  </span>
-                  <span>{progress}%</span>
-                </div>
-
-                <div className="w-full bg-gray-100 rounded-full h-2">
-                  <div
-                    className="bg-blue-500 h-2 rounded-full"
-                    style={{ width: `${progress}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* Action */}
-              <button
-                onClick={() =>
-                  handleUpdateProgress(t.id, t.current_value, t.target_value)
-                }
-                className="w-full flex items-center justify-center gap-2 bg-green-50 hover:bg-green-100 text-green-600 py-2 rounded-lg text-sm"
+            return (
+              <div
+                key={t.id}
+                className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
               >
-                <Plus size={14} />
-                Update Progress
-              </button>
-            </div>
-          );
-        })}
+                <span
+                  className={`absolute inset-x-0 top-0 h-1 ${
+                    t.status === "completed"
+                      ? "bg-emerald-500"
+                      : isOverdue
+                        ? "bg-rose-500"
+                        : "bg-indigo-500"
+                  }`}
+                />
+
+                {/* Header */}
+                <div className="mb-3 flex justify-between">
+                  <span
+                    className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${priority.color}`}
+                  >
+                    {priority.label}
+                  </span>
+
+                  <span
+                    className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${status.color}`}
+                  >
+                    {isOverdue ? "Overdue" : status.label}
+                  </span>
+                </div>
+
+                <h3 className="mb-2 font-semibold text-slate-900">{t.title}</h3>
+
+                <div className="mb-1.5 flex items-center gap-1.5 text-sm text-slate-500">
+                  <Calendar size={14} aria-hidden="true" />
+                  {dayjs(t.deadline).format("MMM D, YYYY")}
+                </div>
+
+                <div className="mb-4 flex items-center gap-1.5 text-sm text-slate-500">
+                  <Clock size={14} aria-hidden="true" />
+                  {Math.max(dayjs(t.deadline).diff(dayjs(), "day"), 0)} days
+                  left
+                </div>
+
+                {/* Progress */}
+                <div className="mb-4">
+                  <div className="mb-1 flex justify-between text-sm text-slate-600">
+                    <span>
+                      {t.current_value}/{t.target_value} {t.unit}
+                    </span>
+                    <span className="font-semibold text-slate-800">
+                      {progress}%
+                    </span>
+                  </div>
+
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
+                    <div
+                      className={`h-full rounded-full ${
+                        t.status === "completed"
+                          ? "bg-emerald-500"
+                          : isOverdue
+                            ? "bg-rose-500"
+                            : "bg-indigo-500"
+                      }`}
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* Action */}
+                <button
+                  onClick={() =>
+                    handleUpdateProgress(t.id, t.current_value, t.target_value)
+                  }
+                  className="flex w-full items-center justify-center gap-2 rounded-xl border border-indigo-200 bg-indigo-50 py-2 text-sm font-medium text-indigo-600 transition-colors hover:bg-indigo-100"
+                >
+                  <Plus size={14} aria-hidden="true" />
+                  Update Progress
+                </button>
+              </div>
+            );
+          })}
+        </div>
 
         {!targets.length && !loading && (
-          <p className="text-gray-500">No targets assigned</p>
+          <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center shadow-sm">
+            <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+              <Target size={22} aria-hidden="true" />
+            </span>
+            <p className="mt-3 text-sm font-medium text-slate-600">
+              No targets assigned
+            </p>
+            <p className="mt-1 text-xs text-slate-400">
+              Targets assigned to you will appear here.
+            </p>
+          </div>
         )}
       </div>
     </div>

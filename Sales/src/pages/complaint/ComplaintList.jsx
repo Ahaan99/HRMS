@@ -3,13 +3,39 @@ import API from "../../api/axios.js";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import PageHeader from "../../components/common/PageHeader.jsx";
-// import HRNavbar from "../../components/hr/HRNavbar";
+import {
+  MessageSquareWarning,
+  User,
+  Building2,
+  Globe,
+  Send,
+} from "lucide-react";
+
+const PRIORITIES = [
+  {
+    value: "low",
+    label: "Low",
+    active: "border-emerald-300 bg-emerald-50 text-emerald-700",
+    dot: "bg-emerald-500",
+  },
+  {
+    value: "medium",
+    label: "Medium",
+    active: "border-amber-300 bg-amber-50 text-amber-700",
+    dot: "bg-amber-500",
+  },
+  {
+    value: "high",
+    label: "High",
+    active: "border-rose-300 bg-rose-50 text-rose-700",
+    dot: "bg-rose-500",
+  },
+];
 
 export default function ComplaintList() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // 🔥 NEW FORM STATE
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -18,7 +44,6 @@ export default function ComplaintList() {
 
   const navigate = useNavigate();
 
-  // 🔥 FETCH
   const fetchComplaints = async () => {
     try {
       setLoading(true);
@@ -35,7 +60,6 @@ export default function ComplaintList() {
     fetchComplaints();
   }, []);
 
-  // 🔥 CREATE COMPLAINT
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -71,100 +95,197 @@ export default function ComplaintList() {
     return "Unknown";
   };
 
-  if (loading) return <p className="p-4">Loading...</p>;
+  if (loading)
+    return (
+      <div className="p-4">
+        <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center text-slate-400 shadow-sm">
+          Loading…
+        </div>
+      </div>
+    );
 
   return (
-    <div className="p-4 space-y-6">
+    <div className="space-y-6 p-4">
       <PageHeader
         title=" Complaint Box"
         desc=" You can send any kind of complaint here Direct to super admin "
       />
-      {/* 🔥 NEW COMPLAINT BOX (ALWAYS VISIBLE) */}
-      <div className="border rounded-xl p-4 shadow-sm bg-white">
-        <h2 className="font-semibold mb-3">Create New Complaint</h2>
 
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <input
-            value={form.title}
-            onChange={(e) => setForm({ ...form, title: e.target.value })}
-            placeholder="Complaint title..."
-            className="w-full border p-2 rounded"
-          />
+      {/* ── NEW COMPLAINT FORM ────────────────────────────── */}
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="flex items-center gap-3 border-b border-slate-100 px-6 py-4">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+            <MessageSquareWarning size={18} aria-hidden="true" />
+          </span>
+          <div>
+            <h3 className="text-sm font-semibold text-slate-900">
+              Create New Complaint
+            </h3>
+            <p className="text-xs text-slate-400">
+              Describe the issue and set a priority — your complaint is routed
+              automatically.
+            </p>
+          </div>
+        </div>
 
-          <textarea
-            value={form.description}
-            onChange={(e) => setForm({ ...form, description: e.target.value })}
-            placeholder="Describe your issue..."
-            className="w-full border p-2 rounded"
-          />
+        <form onSubmit={handleSubmit} className="space-y-5 p-6">
+          <div className="grid gap-5 lg:grid-cols-2">
+            <div>
+              <label
+                htmlFor="complaint-title"
+                className="mb-1.5 block text-sm font-medium text-slate-700"
+              >
+                Title <span className="text-rose-500">*</span>
+              </label>
+              <input
+                id="complaint-title"
+                value={form.title}
+                onChange={(e) => setForm({ ...form, title: e.target.value })}
+                placeholder="Short summary, e.g. Lead data missing"
+                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-colors focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+              />
+            </div>
 
-          <div className="flex justify-between items-center">
-            <select
-              value={form.priority}
-              onChange={(e) => setForm({ ...form, priority: e.target.value })}
-              className="border p-2 rounded"
+            <div>
+              <span className="mb-1.5 block text-sm font-medium text-slate-700">
+                Priority
+              </span>
+              <div
+                role="radiogroup"
+                aria-label="Priority"
+                className="flex flex-wrap gap-2"
+              >
+                {PRIORITIES.map((p) => {
+                  const selected = form.priority === p.value;
+                  return (
+                    <button
+                      key={p.value}
+                      type="button"
+                      role="radio"
+                      aria-checked={selected}
+                      onClick={() => setForm({ ...form, priority: p.value })}
+                      className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium transition-colors ${
+                        selected
+                          ? p.active
+                          : "border-slate-200 bg-white text-slate-500 hover:bg-slate-50"
+                      }`}
+                    >
+                      <span
+                        aria-hidden="true"
+                        className={`h-2 w-2 rounded-full ${
+                          selected ? p.dot : "bg-slate-300"
+                        }`}
+                      />
+                      {p.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label
+              htmlFor="complaint-description"
+              className="mb-1.5 block text-sm font-medium text-slate-700"
             >
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </select>
+              Description <span className="text-rose-500">*</span>
+            </label>
+            <textarea
+              id="complaint-description"
+              value={form.description}
+              onChange={(e) =>
+                setForm({ ...form, description: e.target.value })
+              }
+              placeholder="Describe your issue in detail — what happened, when, and who is affected..."
+              rows={4}
+              className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-colors focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+            />
+          </div>
 
-            <button className="bg-blue-500 text-white px-4 py-2 rounded">
-              Submit
+          <div className="flex items-center justify-between gap-4 border-t border-slate-100 pt-4">
+            <p className="text-xs text-slate-400">
+              Fields marked <span className="text-rose-500">*</span> are
+              required.
+            </p>
+            <button className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-indigo-500">
+              <Send size={15} aria-hidden="true" />
+              Submit Complaint
             </button>
           </div>
         </form>
       </div>
 
-      {/* 🔥 EMPTY STATE */}
+      {/* ── EMPTY STATE ───────────────────────────────────── */}
       {data.length === 0 && (
-        <div className="text-center text-gray-400">
-          No complaints yet. Create your first complaint.
+        <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center shadow-sm">
+          <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+            <MessageSquareWarning size={22} aria-hidden="true" />
+          </span>
+          <p className="mt-3 text-sm font-medium text-slate-600">
+            No complaints yet
+          </p>
+          <p className="mt-1 text-xs text-slate-400">
+            Create your first complaint above.
+          </p>
         </div>
       )}
 
-      {/* 🔥 LIST */}
-      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+      {/* ── LIST ──────────────────────────────────────────── */}
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {data.map((item) => (
           <div
             key={item.id}
             onClick={() => navigate(`/complaints/${item.id}`)}
-            className="p-4 rounded-xl border shadow hover:shadow-lg cursor-pointer transition"
+            className="cursor-pointer rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
           >
             {/* TOP */}
-            <div className="flex justify-between items-center mb-2">
-              <h2 className="font-semibold">{item.title}</h2>
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h3 className="font-semibold text-slate-900">{item.title}</h3>
 
               <span
-                className={`text-xs px-2 py-1 rounded ${
+                className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold capitalize ${
                   item.priority === "high"
-                    ? "bg-red-100 text-red-600"
+                    ? "bg-rose-100 text-rose-700"
                     : item.priority === "medium"
-                      ? "bg-yellow-100 text-yellow-600"
-                      : "bg-green-100 text-green-600"
+                      ? "bg-amber-100 text-amber-700"
+                      : "bg-emerald-100 text-emerald-700"
                 }`}
               >
                 {item.priority}
               </span>
             </div>
 
-            {/* USER */}
-            <p className="text-sm text-gray-600">
-              👤 {item.employee_name || item.client_name || "You"}
-            </p>
+            <div className="space-y-1.5 text-sm text-slate-600">
+              <p className="flex items-center gap-2">
+                <User
+                  size={14}
+                  aria-hidden="true"
+                  className="text-slate-400"
+                />
+                {item.employee_name || item.client_name || "You"}
+              </p>
+              <p className="flex items-center gap-2">
+                <Building2
+                  size={14}
+                  aria-hidden="true"
+                  className="text-slate-400"
+                />
+                {item.department_name || "N/A"}
+              </p>
+              <p className="flex items-center gap-2 text-indigo-600">
+                <Globe
+                  size={14}
+                  aria-hidden="true"
+                  className="text-indigo-400"
+                />
+                {getPortal(item.created_by_role)}
+              </p>
+            </div>
 
-            {/* DEPARTMENT */}
-            <p className="text-sm text-gray-500">
-              🏢 {item.department_name || "N/A"}
+            <p className="mt-3 border-t border-slate-100 pt-2 text-xs capitalize text-slate-400">
+              Status: {item.status}
             </p>
-
-            {/* PORTAL */}
-            <p className="text-xs text-blue-500 mt-1">
-              🌐 {getPortal(item.created_by_role)}
-            </p>
-
-            {/* STATUS */}
-            <p className="text-xs mt-2 text-gray-400">Status: {item.status}</p>
           </div>
         ))}
       </div>

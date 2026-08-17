@@ -56,42 +56,76 @@ function Login() {
 
   return (
     <div className="login-container">
-      <div className="login-card">
-        <img src="/logo.png" alt="Ardhnarishwar logo" className="login-logo" />
+      <div className="login-shell">
+        {/* ===== BRAND PANEL ===== */}
+        <div className="login-brand">
+          <div className="login-brand-top">
+            <img
+              src="/logo.png"
+              alt="Ardhnarishwar logo"
+              className="login-logo"
+            />
+            <div>
+              <p className="login-brand-name">ARDHNARISHWAR</p>
+              <p className="login-brand-sub">Employee Verification System</p>
+            </div>
+          </div>
 
-        <h2>Employee Verification Portal</h2>
-        <p className="login-sub">
-          Sign in to manage verifications, documents and background checks
-        </p>
+          <div className="login-brand-body">
+            <h1>
+              Verify with <span>confidence.</span>
+            </h1>
+            <p>
+              Manage verifications, documents and background checks from one
+              secure portal.
+            </p>
 
-        <label htmlFor="login-email">Email</label>
-        <input
-          id="login-email"
-          type="email"
-          placeholder="you@company.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          onKeyDown={handleKeyPress}
-        />
+            <ul className="login-points">
+              <li>Document &amp; identity verification</li>
+              <li>Background check tracking</li>
+              <li>Exportable audit reports</li>
+            </ul>
+          </div>
 
-        <label htmlFor="login-password">Password</label>
-        <input
-          id="login-password"
-          type="password"
-          placeholder="Your password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          onKeyDown={handleKeyPress}
-        />
+          <p className="login-brand-foot">
+            Trusted internal tool &middot; Authorized staff only
+          </p>
+        </div>
 
-        <button onClick={login} disabled={loading}>
-          {loading ? "Signing In..." : "Sign In"}
-        </button>
+        {/* ===== FORM PANEL ===== */}
+        <div className="login-card">
+          <h2>Welcome back</h2>
+          <p className="login-sub">Sign in to your verification workspace</p>
 
-        <div className="login-demo">
-          Demo credentials
-          <br />
-          <strong>admin@test.com</strong> / <strong>admin123</strong>
+          <label htmlFor="login-email">Email</label>
+          <input
+            id="login-email"
+            type="email"
+            placeholder="you@company.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={handleKeyPress}
+          />
+
+          <label htmlFor="login-password">Password</label>
+          <input
+            id="login-password"
+            type="password"
+            placeholder="Your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={handleKeyPress}
+          />
+
+          <button onClick={login} disabled={loading}>
+            {loading ? "Signing In..." : "Sign In"}
+          </button>
+
+          <div className="login-demo">
+            Demo credentials
+            <br />
+            <strong>admin@test.com</strong> / <strong>admin123</strong>
+          </div>
         </div>
       </div>
     </div>
