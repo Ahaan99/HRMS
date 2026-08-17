@@ -1,0 +1,130 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════════════════
+   RECRUWEB ADMIN — PREMIUM DESIGN SYSTEM
+   Palette: ink navy #0B1220 · accent indigo #4F63F0 · paper #F7F8FB
+   Type: Inter (UI) · JetBrains Mono (numbers/IDs)
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  --ink: #0b1220;
+  --ink-2: #33405c;
+  --ink-3: #7b8698;
+  --paper: #f7f8fb;
+  --card: #ffffff;
+  --line: #e6e9f0;
+  --line-2: #d5dae4;
+  --accent: #4f63f0;
+  --accent-soft: #eef0fe;
+  --green: #148662;
+  --green-soft: #e7f5f0;
+  --amber: #b45309;
+  --amber-soft: #fdf3e3;
+  --red: #c73e4c;
+  --red-soft: #fdeef0;
+}
+
+html,
+body {
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.font-mono,
+.num {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Hide all scrollbar visuals completely — content stays fully
+   scrollable via wheel, trackpad, touch, and keyboard */
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* legacy Edge/IE */
+}
+
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Edge, Safari */
+  width: 0;
+  height: 0;
+}
+
+@keyframes slideAcross {
+  0% {
+    transform: translateX(-120%);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100vw);
+    opacity: 1;
+  }
+}
+
+.animate-slide-across {
+  animation: slideAcross 10s linear forwards;
+}
+
+/* ═ premium card primitives — use across all pages ═ */
+@layer components {
+  .card-premium {
+    @apply bg-white rounded-2xl border border-[#e6e9f0] transition-shadow duration-200;
+    box-shadow:
+      0 1px 2px rgba(11, 18, 32, 0.04),
+      0 8px 24px -12px rgba(11, 18, 32, 0.1);
+  }
+  .card-premium:hover {
+    box-shadow:
+      0 1px 2px rgba(11, 18, 32, 0.05),
+      0 16px 40px -12px rgba(11, 18, 32, 0.16);
+  }
+  .card-header-premium {
+    @apply text-[15px] font-bold text-[#0b1220] tracking-[-0.01em];
+  }
+  .card-sub-premium {
+    @apply text-xs text-[#7b8698] mt-0.5;
+  }
+  .chip-premium {
+    @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold;
+  }
+  .btn-premium {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold
+      bg-[#0b1220] text-white transition-all duration-150
+      hover:bg-[#1c2740] active:scale-[0.98];
+    box-shadow: 0 4px 14px -4px rgba(11, 18, 32, 0.35);
+  }
+  .btn-premium-outline {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold
+      bg-white text-[#0b1220] border border-[#d5dae4] transition-all duration-150
+      hover:border-[#0b1220] hover:bg-[#f7f8fb] active:scale-[0.98];
+  }
+  .input-premium {
+    @apply w-full px-3.5 py-2.5 rounded-xl text-sm bg-white border border-[#d5dae4]
+      placeholder:text-[#7b8698] transition-shadow duration-150
+      focus:outline-none focus:border-[#4f63f0];
+  }
+  .input-premium:focus {
+    box-shadow: 0 0 0 3px rgba(79, 99, 240, 0.14);
+  }
+}
+
+/* page fade-in for a composed feel */
+@keyframes pageIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+main > * {
+  animation: pageIn 0.3s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
