@@ -94,7 +94,7 @@ const handleSubmit = async (e) => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600"></div>
       </div>
     );
   }
@@ -108,7 +108,7 @@ const handleSubmit = async (e) => {
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          className="flex items-center gap-2 bg-gradient-to-br from-violet-600 to-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-md shadow-indigo-600/25 hover:shadow-lg hover:shadow-indigo-600/35 transition"
         >
           <Plus className="w-5 h-5" />
           Add Record
@@ -120,12 +120,12 @@ const handleSubmit = async (e) => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Total GST</p>
-              <p className="text-3xl font-bold text-purple-600 mt-1">
+              <p className="text-3xl font-extrabold tracking-tight text-gray-900 mt-1">
                 ₹{parseFloat(totals.gstTotal || 0).toLocaleString()}
               </p>
             </div>
-            <div className="p-4 bg-purple-100 rounded-lg">
-              <Receipt className="w-8 h-8 text-purple-600" />
+            <div className="p-3 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl shadow-md">
+              <Receipt className="w-6 h-6 text-white" />
             </div>
           </div>
         </div>
@@ -134,12 +134,12 @@ const handleSubmit = async (e) => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Total TDS</p>
-              <p className="text-3xl font-bold text-orange-600 mt-1">
+              <p className="text-3xl font-extrabold tracking-tight text-gray-900 mt-1">
                 ₹{parseFloat(totals.tdsTotal).toLocaleString()}
               </p>
             </div>
-            <div className="p-4 bg-orange-100 rounded-lg">
-              <FileText className="w-8 h-8 text-orange-600" />
+            <div className="p-3 bg-gradient-to-br from-orange-400 to-rose-500 rounded-xl shadow-md">
+              <FileText className="w-6 h-6 text-white" />
             </div>
           </div>
         </div>
@@ -148,12 +148,12 @@ const handleSubmit = async (e) => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Total Tax</p>
-              <p className="text-3xl font-bold text-blue-600 mt-1">
+              <p className="text-3xl font-extrabold tracking-tight text-gray-900 mt-1">
                 ₹{(parseFloat(totals.gstTotal || 0) + parseFloat(totals.tdsTotal)).toLocaleString()}
               </p>
             </div>
-            <div className="p-4 bg-blue-100 rounded-lg">
-              <Receipt className="w-8 h-8 text-blue-600" />
+            <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-md">
+              <Receipt className="w-6 h-6 text-white" />
             </div>
           </div>
         </div>
@@ -165,7 +165,7 @@ const handleSubmit = async (e) => {
             onClick={() => setActiveTab("all")}
             className={`pb-2 px-1 font-medium ${
               activeTab === "all"
-                ? "border-b-2 border-blue-600 text-blue-600"
+                ? "border-b-2 border-violet-600 text-violet-700 font-semibold"
                 : "text-gray-600 hover:text-gray-900"
             }`}
           >
@@ -175,7 +175,7 @@ const handleSubmit = async (e) => {
             onClick={() => setActiveTab("GST")}
             className={`pb-2 px-1 font-medium ${
               activeTab === "GST"
-                ? "border-b-2 border-blue-600 text-blue-600"
+                ? "border-b-2 border-violet-600 text-violet-700 font-semibold"
                 : "text-gray-600 hover:text-gray-900"
             }`}
           >
@@ -185,7 +185,7 @@ const handleSubmit = async (e) => {
             onClick={() => setActiveTab("TDS")}
             className={`pb-2 px-1 font-medium ${
               activeTab === "TDS"
-                ? "border-b-2 border-blue-600 text-blue-600"
+                ? "border-b-2 border-violet-600 text-violet-700 font-semibold"
                 : "text-gray-600 hover:text-gray-900"
             }`}
           >
@@ -305,7 +305,7 @@ const handleSubmit = async (e) => {
                 >
                   Cancel
                 </button>
-                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                <button type="submit" className="px-4 py-2 bg-gradient-to-br from-violet-600 to-indigo-600 text-white rounded-xl text-sm font-semibold shadow-md shadow-indigo-600/25 hover:shadow-lg hover:shadow-indigo-600/35 transition">
                   Add Record
                 </button>
               </div>

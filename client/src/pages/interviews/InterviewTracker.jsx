@@ -109,15 +109,15 @@ return (
     <div className="bg-white/80 backdrop-blur rounded-2xl shadow-xl border border-white/40 overflow-hidden w-screen sm:max-w-[calc(100vw-288px-40px)]">
 
       {/* HEADER */}
-      <div className="px-6 py-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white flex justify-between items-center">
+      <div className="px-6 py-5 bg-white border-b border-gray-100 flex justify-between items-center">
         <div>
-          <h2 className="text-lg font-semibold">Interview Tracker</h2>
-          <p className="text-xs opacity-80">
+          <h2 className="text-lg font-extrabold tracking-tight text-gray-900">Interview Tracker</h2>
+          <p className="text-xs text-gray-500 mt-0.5">
             Manage candidate interviews efficiently
           </p>
         </div>
 
-        <div className="text-xs bg-white/20 px-3 py-1 rounded-full">
+        <div className="text-xs font-semibold bg-violet-50 text-violet-700 border border-violet-200 px-3 py-1 rounded-full">
           {data.length} Candidates
         </div>
       </div>

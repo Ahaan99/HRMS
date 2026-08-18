@@ -163,7 +163,7 @@ export default function PurchaseOrders() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600"></div>
       </div>
     );
   }
@@ -179,7 +179,7 @@ export default function PurchaseOrders() {
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          className="flex items-center gap-2 bg-gradient-to-br from-violet-600 to-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-md shadow-indigo-600/25 hover:shadow-lg hover:shadow-indigo-600/35 transition"
         >
           <Plus className="w-5 h-5" />
           Create Order
@@ -191,12 +191,12 @@ export default function PurchaseOrders() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Total Orders</p>
-              <p className="text-3xl font-bold text-blue-600 mt-1">
+              <p className="text-3xl font-extrabold tracking-tight text-gray-900 mt-1">
                 {orders.length}
               </p>
             </div>
-            <div className="p-4 bg-blue-100 rounded-lg">
-              <ShoppingCart className="w-8 h-8 text-blue-600" />
+            <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-md">
+              <ShoppingCart className="w-6 h-6 text-white" />
             </div>
           </div>
         </div>
@@ -205,12 +205,12 @@ export default function PurchaseOrders() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Pending</p>
-              <p className="text-3xl font-bold text-yellow-600 mt-1">
+              <p className="text-3xl font-extrabold tracking-tight text-gray-900 mt-1">
                 {orders.filter((o) => o.status === "pending").length}
               </p>
             </div>
-            <div className="p-4 bg-yellow-100 rounded-lg">
-              <Check className="w-8 h-8 text-yellow-600" />
+            <div className="p-3 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl shadow-md">
+              <Check className="w-6 h-6 text-white" />
             </div>
           </div>
         </div>
@@ -219,7 +219,7 @@ export default function PurchaseOrders() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Total Value</p>
-              <p className="text-3xl font-bold text-purple-600 mt-1">
+              <p className="text-3xl font-extrabold tracking-tight text-gray-900 mt-1">
                 ₹
                 {orders
                   .filter((o) => o.status === "approved") // ✅ only approved
@@ -227,8 +227,8 @@ export default function PurchaseOrders() {
                   .toLocaleString()}
               </p>
             </div>
-            <div className="p-4 bg-purple-100 rounded-lg">
-              <ShoppingCart className="w-8 h-8 text-purple-600" />
+            <div className="p-3 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl shadow-md">
+              <ShoppingCart className="w-6 h-6 text-white" />
             </div>
           </div>
         </div>
@@ -462,7 +462,7 @@ export default function PurchaseOrders() {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="px-4 py-2 bg-gradient-to-br from-violet-600 to-indigo-600 text-white rounded-xl text-sm font-semibold shadow-md shadow-indigo-600/25 hover:shadow-lg hover:shadow-indigo-600/35 transition"
                 >
                   Create Order
                 </button>

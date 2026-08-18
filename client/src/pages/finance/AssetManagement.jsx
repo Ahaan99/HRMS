@@ -167,7 +167,7 @@ const handleEdit = (asset) => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600"></div>
       </div>
     );
   }
@@ -192,7 +192,7 @@ const handleEdit = (asset) => {
               description: "",
             });
           }}
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          className="flex items-center gap-2 bg-gradient-to-br from-violet-600 to-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-md shadow-indigo-600/25 hover:shadow-lg hover:shadow-indigo-600/35 transition"
         >
           <Plus className="w-5 h-5" />
           Add Asset
@@ -204,12 +204,12 @@ const handleEdit = (asset) => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Total Asset Value</p>
-              <p className="text-3xl font-bold text-purple-600 mt-1">
+              <p className="text-3xl font-extrabold tracking-tight text-gray-900 mt-1">
                 ₹{parseFloat(totalValue).toLocaleString()}
               </p>
             </div>
-            <div className="p-4 bg-purple-100 rounded-lg">
-              <Building2 className="w-8 h-8 text-purple-600" />
+            <div className="p-3 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl shadow-md">
+              <Building2 className="w-6 h-6 text-white" />
             </div>
           </div>
         </div>
@@ -218,10 +218,10 @@ const handleEdit = (asset) => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Total Assets</p>
-              <p className="text-3xl font-bold text-blue-600 mt-1">{assets.length}</p>
+              <p className="text-3xl font-extrabold tracking-tight text-gray-900 mt-1">{assets.length}</p>
             </div>
-            <div className="p-4 bg-blue-100 rounded-lg">
-              <CheckCircle className="w-8 h-8 text-blue-600" />
+            <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-md">
+              <CheckCircle className="w-6 h-6 text-white" />
             </div>
           </div>
         </div>
@@ -373,7 +373,7 @@ const handleEdit = (asset) => {
                 >
                   Cancel
                 </button>
-                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                <button type="submit" className="px-4 py-2 bg-gradient-to-br from-violet-600 to-indigo-600 text-white rounded-xl text-sm font-semibold shadow-md shadow-indigo-600/25 hover:shadow-lg hover:shadow-indigo-600/35 transition">
                   {editingId ? "Update" : "Add"} Asset
                 </button>
               </div>

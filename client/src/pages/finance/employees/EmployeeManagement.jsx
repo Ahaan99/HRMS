@@ -375,8 +375,8 @@ const openEditModal = (emp) => {
         </div>
 
         {/* ✅ Scroll*/}
-        <div className="max-h-[70vh] overflow-y-auto">
-          <div className="w-full overflow-auto max-h-[60vh]">
+        <div className="max-h-[70vh] overflow-y-auto scrollbar-thin-premium">
+          <div className="w-full overflow-auto max-h-[60vh] scrollbar-thin-premium">
             <table className="min-w-[1650px] w-full text-sm">
               <thead className="sticky top-0 z-10 bg-gray-50 text-gray-600 sticky top-0 z-10">
                 <tr>

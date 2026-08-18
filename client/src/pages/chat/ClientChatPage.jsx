@@ -128,11 +128,11 @@ export default function ClientChatPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search HR..."
-                className="w-full bg-gray-100 rounded-full pl-9 pr-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-200"
+                className="w-full bg-gray-100 rounded-full pl-9 pr-3 py-2 text-sm outline-none focus:ring-2 focus:ring-violet-200"
               />
             </div>
           </div>
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto scrollbar-hide">
             {filtered.map((hr) => {
               const isActive = activeHR?.id === hr.id;
               return (
@@ -141,11 +141,11 @@ export default function ClientChatPage() {
                   onClick={() => setActiveHR(hr)}
                   className={`p-3.5 border-b cursor-pointer transition-all flex items-center gap-3 ${
                     isActive
-                      ? "bg-indigo-50 border-l-4 border-l-indigo-500"
+                      ? "bg-violet-50 border-l-4 border-l-violet-500"
                       : "hover:bg-gray-50 border-l-4 border-l-transparent"
                   }`}
                 >
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-blue-500 flex items-center justify-center text-white font-bold text-sm shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shrink-0 shadow-sm">
                     {hr.name?.charAt(0)}
                   </div>
                   <div className="min-w-0">
@@ -168,8 +168,8 @@ export default function ClientChatPage() {
         {/* chat window */}
         {!activeHR ? (
           <div className="flex-1 flex flex-col items-center justify-center bg-gray-50 text-gray-400">
-            <div className="w-20 h-20 bg-gradient-to-r from-indigo-100 to-blue-100 rounded-full flex items-center justify-center mb-4">
-              <MessageCircle size={40} className="text-indigo-400" />
+            <div className="w-20 h-20 bg-gradient-to-br from-violet-100 to-indigo-100 rounded-full flex items-center justify-center mb-4">
+              <MessageCircle size={40} className="text-violet-400" />
             </div>
             <h3 className="text-lg font-semibold text-gray-600 mb-1">
               Select HR to start chatting
@@ -193,7 +193,7 @@ export default function ClientChatPage() {
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-4 md:px-10 py-4 bg-[#eae6df]">
+            <div className="flex-1 overflow-y-auto px-4 md:px-10 py-4 bg-gradient-to-b from-gray-50 to-violet-50/40 scrollbar-thin-premium">
               {messages.map((msg, index) => {
                 const isMine = msg.sender_type === "client";
                 const day = dayLabel(msg.created_at);
@@ -214,8 +214,8 @@ export default function ClientChatPage() {
                       <div
                         className={`relative max-w-[70%] px-3 py-1.5 shadow-sm text-sm leading-relaxed ${
                           isMine
-                            ? "bg-[#d9fdd3] text-gray-900 rounded-lg rounded-tr-none"
-                            : "bg-white text-gray-900 rounded-lg rounded-tl-none"
+                            ? "bg-gradient-to-br from-violet-600 to-indigo-600 text-white rounded-2xl rounded-tr-md shadow-md shadow-indigo-600/15"
+                            : "bg-white text-gray-900 rounded-2xl rounded-tl-md border border-gray-100"
                         }`}
                       >
                         {!isMine && (
@@ -226,7 +226,7 @@ export default function ClientChatPage() {
                         <span className="whitespace-pre-line break-words align-middle">
                           {msg.message}
                         </span>
-                        <span className="inline-block float-right ml-2 mt-2 text-[10px] text-gray-500 select-none">
+                        <span className="inline-block float-right ml-2 mt-2 text-[10px] opacity-60 select-none">
                           {fmt(msg.created_at)}
                         </span>
                       </div>
@@ -237,20 +237,20 @@ export default function ClientChatPage() {
               <div ref={bottomRef} />
             </div>
 
-            <div className="px-4 py-3 bg-[#f0f2f5] border-t shrink-0">
+            <div className="px-4 py-3 bg-white border-t border-gray-100 shrink-0">
               <div className="flex items-center gap-2">
                 <input
                   value={text}
                   onChange={(e) => setText(e.target.value)}
                   onKeyDown={handleKey}
                   placeholder="Type a message"
-                  className="flex-1 bg-white border border-transparent rounded-full px-5 py-2.5 outline-none focus:border-indigo-300 text-sm shadow-sm"
+                  className="flex-1 bg-white border border-transparent rounded-full px-5 py-2.5 outline-none border-gray-200 focus:border-violet-400 focus:ring-2 focus:ring-violet-200 text-sm shadow-sm"
                 />
                 <button
                   onClick={sendMessage}
                   disabled={!text.trim() || sending || !conversationId}
                   aria-label="Send message"
-                  className="w-11 h-11 rounded-full flex items-center justify-center bg-gradient-to-r from-indigo-500 to-blue-500 disabled:from-gray-300 disabled:to-gray-300 text-white transition shrink-0"
+                  className="w-11 h-11 rounded-full flex items-center justify-center bg-gradient-to-br from-violet-600 to-indigo-600 disabled:from-gray-300 disabled:to-gray-300 text-white shadow-md shadow-indigo-600/25 hover:shadow-lg transition shrink-0"
                 >
                   {sending ? (
                     <Loader2 className="animate-spin" size={19} />

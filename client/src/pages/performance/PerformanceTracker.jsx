@@ -314,7 +314,7 @@ export default function PerformanceTracker() {
         {!isEmployee && (
           <button
             onClick={openAddModal}
-            className="px-5 py-2.5 rounded-xl bg-black text-white font-semibold hover:bg-gray-900 transition"
+            className="px-5 py-2.5 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 text-white font-semibold shadow-md shadow-indigo-600/25 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-600/35 transition"
           >
             + Add Performance
           </button>
@@ -322,27 +322,27 @@ export default function PerformanceTracker() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-2xl shadow border border-gray-100 p-4">
-          <p className="text-sm text-gray-500 font-medium">Total Records</p>
-          <p className="text-2xl font-bold text-gray-900 mt-1">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 border-t-2 border-t-violet-500">
+          <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Total Records</p>
+          <p className="text-3xl font-extrabold tracking-tight text-gray-900 mt-1.5">
             {statCounts.total}
           </p>
         </div>
-        <div className="bg-green-50 rounded-2xl shadow border border-green-200 p-4">
-          <p className="text-sm text-green-600 font-medium">Excellent (4-5)</p>
-          <p className="text-2xl font-bold text-green-700 mt-1">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 border-t-2 border-t-emerald-500">
+          <p className="text-xs font-semibold uppercase tracking-wide text-emerald-600">Excellent (4-5)</p>
+          <p className="text-3xl font-extrabold tracking-tight text-gray-900 mt-1.5">
             {statCounts.excellent}
           </p>
         </div>
-        <div className="bg-yellow-50 rounded-2xl shadow border border-yellow-200 p-4">
-          <p className="text-sm text-yellow-600 font-medium">Good (3)</p>
-          <p className="text-2xl font-bold text-yellow-700 mt-1">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 border-t-2 border-t-amber-500">
+          <p className="text-xs font-semibold uppercase tracking-wide text-amber-600">Good (3)</p>
+          <p className="text-3xl font-extrabold tracking-tight text-gray-900 mt-1.5">
             {statCounts.good}
           </p>
         </div>
-        <div className="bg-red-50 rounded-2xl shadow border border-red-200 p-4">
-          <p className="text-sm text-red-600 font-medium">Poor (1-2)</p>
-          <p className="text-2xl font-bold text-red-700 mt-1">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 border-t-2 border-t-rose-500">
+          <p className="text-xs font-semibold uppercase tracking-wide text-rose-600">Poor (1-2)</p>
+          <p className="text-3xl font-extrabold tracking-tight text-gray-900 mt-1.5">
             {statCounts.poor}
           </p>
         </div>

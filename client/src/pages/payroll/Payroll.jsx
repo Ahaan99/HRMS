@@ -238,14 +238,14 @@ export default function Payroll() {
 
           <button
             onClick={() => setShowPdfModal(true)}
-            className="px-4 py-2 bg-green-600 text-white rounded-lg"
+            className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:border-indigo-300 hover:text-indigo-700"
           >
             Download PDF
           </button>
 
           <button
             onClick={() => setShowModal(true)}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-lg"
+            className="rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-indigo-600/25 transition hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-600/35"
           >
             Add Payroll
           </button>
@@ -574,7 +574,7 @@ export default function Payroll() {
 
                 <button
                   onClick={handleDownloadPDF}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg"
+                  className="rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-indigo-600/25 transition hover:shadow-lg hover:shadow-indigo-600/35"
                 >
                   Download
                 </button>

@@ -9,3 +9,35 @@
 .animate-gradientMove {
   animation: gradientMove 12s ease infinite;
 }
+/* Hide scrollbar but keep scrolling */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Premium thin scrollbar */
+.scrollbar-thin-premium {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(124, 58, 237, 0.25) transparent;
+}
+.scrollbar-thin-premium::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.scrollbar-thin-premium::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin-premium::-webkit-scrollbar-thumb {
+  background: rgba(124, 58, 237, 0.25);
+  border-radius: 9999px;
+}
+.scrollbar-thin-premium::-webkit-scrollbar-thumb:hover {
+  background: rgba(124, 58, 237, 0.5);
+}
+.scrollbar-thin-premium::-webkit-scrollbar-corner {
+  background: transparent;
+}
+

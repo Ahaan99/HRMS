@@ -1,21 +1,32 @@
 export default function StatCard({ title, value, subText, icon, gradient }) {
   return (
     <div
-      className={`p-5 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl
-                  shadow-[0_0_40px_rgba(0,0,0,0.4)]
-                  hover:scale-[1.02] transition duration-200 relative overflow-hidden`}
+      className="group relative overflow-hidden rounded-2xl border border-gray-100 bg-white p-5
+                 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-lg"
     >
-      {/* Glow */}
-      <div className={`absolute inset-0 opacity-40 blur-2xl  ${gradient}`} />
+      {/* Accent glow (subtle, top-right) */}
+      <div
+        className={`pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full opacity-15 blur-2xl transition-opacity duration-200 group-hover:opacity-25 ${gradient}`}
+      />
 
-      <div className="relative z-10 flex items-start justify-between">
-        <div>
-          <p className="text-white/60 text-sm font-medium text-black">{title}</p>
-          <h2 className="text-3xl font-extrabold text-black mt-1 ">{value}</h2>
-          <p className="text-black/50 text-xs mt-2">{subText}</p>
+      <div className="relative z-10 flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="truncate text-xs font-semibold uppercase tracking-wide text-gray-500">
+            {title}
+          </p>
+          <h2 className="mt-1.5 text-3xl font-extrabold tracking-tight text-gray-900">
+            {value}
+          </h2>
+          {subText ? (
+            <p className="mt-1.5 text-xs font-medium text-gray-400">
+              {subText}
+            </p>
+          ) : null}
         </div>
 
-        <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-xl">
+        <div
+          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-lg text-white shadow-md ${gradient}`}
+        >
           {icon}
         </div>
       </div>

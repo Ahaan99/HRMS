@@ -15,7 +15,7 @@ export default function ClientSidebar({ open, setOpen }) {
 
       <aside
         className={`
-        fixed md:static z-50 top-0 left-0 h-full w-72 h-screen md:h-[calc(100vh-0px)]
+        fixed md:sticky z-50 top-0 left-0 w-72 h-screen
         bg-gradient-to-b from-[#0b1220] to-[#0f172a] text-white flex flex-col
         transform transition-transform duration-300
         ${open ? "translate-x-0" : "-translate-x-full"}
@@ -39,7 +39,7 @@ export default function ClientSidebar({ open, setOpen }) {
         </div>
 
         {/* Menu */}
-        <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+        <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto scrollbar-hide">
           {CLIENT_MENU.map((item) => {
             const Icon = item.icon;
 

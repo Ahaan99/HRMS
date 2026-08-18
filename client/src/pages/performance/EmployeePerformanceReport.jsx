@@ -187,34 +187,34 @@ export default function EmployeePerformanceReport() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <div className="bg-white rounded-2xl shadow border border-gray-100 p-4">
-          <p className="text-sm text-gray-500 font-medium">Total Employees</p>
-          <p className="text-2xl font-bold text-gray-900 mt-1">{statCounts.total}</p>
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 border-t-2 border-t-violet-500 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Total Employees</p>
+          <p className="text-3xl font-extrabold tracking-tight text-gray-900 mt-1">{statCounts.total}</p>
         </div>
-        <div className="bg-gradient-to-br from-green-400 to-green-600 rounded-2xl shadow border border-green-300 p-4">
-          <p className="text-sm text-green-100 font-medium flex items-center gap-2">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 border-t-2 border-t-emerald-500 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-emerald-600 flex items-center gap-2">
             <span className="w-3 h-3 bg-white rounded-full"></span>
             Excellent (4-5)
           </p>
-          <p className="text-3xl font-bold text-white mt-1">{statCounts.excellent}</p>
+          <p className="text-3xl font-extrabold tracking-tight text-gray-900 mt-1">{statCounts.excellent}</p>
         </div>
-        <div className="bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-2xl shadow border border-yellow-300 p-4">
-          <p className="text-sm text-yellow-100 font-medium flex items-center gap-2">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 border-t-2 border-t-amber-500 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-amber-600 flex items-center gap-2">
             <span className="w-3 h-3 bg-white rounded-full"></span>
             Good (3)
           </p>
-          <p className="text-3xl font-bold text-white mt-1">{statCounts.good}</p>
+          <p className="text-3xl font-extrabold tracking-tight text-gray-900 mt-1">{statCounts.good}</p>
         </div>
-        <div className="bg-gradient-to-br from-red-400 to-red-600 rounded-2xl shadow border border-red-300 p-4">
-          <p className="text-sm text-red-100 font-medium flex items-center gap-2">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 border-t-2 border-t-rose-500 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-rose-600 flex items-center gap-2">
             <span className="w-3 h-3 bg-white rounded-full"></span>
             Poor (1-2)
           </p>
-          <p className="text-3xl font-bold text-white mt-1">{statCounts.poor}</p>
+          <p className="text-3xl font-extrabold tracking-tight text-gray-900 mt-1">{statCounts.poor}</p>
         </div>
-        <div className="bg-gray-100 rounded-2xl shadow border border-gray-200 p-4">
-          <p className="text-sm text-gray-600 font-medium">No Rating</p>
-          <p className="text-2xl font-bold text-gray-700 mt-1">{statCounts.noRating}</p>
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 border-t-2 border-t-gray-300 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">No Rating</p>
+          <p className="text-3xl font-extrabold tracking-tight text-gray-900 mt-1">{statCounts.noRating}</p>
         </div>
       </div>
 
@@ -223,12 +223,12 @@ export default function EmployeePerformanceReport() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by name, email, or employee code..."
-          className="w-full xl:w-[420px] border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-black"
+          className="w-full xl:w-[420px] border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-200"
         />
         <select
           value={deptFilter}
           onChange={(e) => setDeptFilter(Number(e.target.value))}
-          className="w-full xl:w-[200px] border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-black bg-white"
+          className="w-full xl:w-[200px] border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-200 bg-white"
         >
           {deptFilterOptions.map((opt) => (
             <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -237,7 +237,7 @@ export default function EmployeePerformanceReport() {
         <select
           value={ratingFilter}
           onChange={(e) => setRatingFilter(e.target.value)}
-          className="w-full xl:w-[180px] border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-black bg-white"
+          className="w-full xl:w-[180px] border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-200 bg-white"
         >
           {ratingFilterOptions.map((opt) => (
             <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -337,29 +337,29 @@ export default function EmployeePerformanceReport() {
       <div className="bg-white rounded-2xl shadow border border-gray-100 p-6">
         <h3 className="text-lg font-bold text-gray-900 mb-4">Performance Legend</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-green-100 to-green-50 rounded-xl border-2 border-green-300">
-            <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">4-5</div>
+          <div className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
+            <div className="w-11 h-11 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-xl flex items-center justify-center text-white font-bold text-base shadow-md">4-5</div>
             <div>
               <p className="font-bold text-green-700">Excellent</p>
               <p className="text-xs text-green-600">Outstanding performance</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-yellow-100 to-yellow-50 rounded-xl border-2 border-yellow-300">
-            <div className="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">3</div>
+          <div className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
+            <div className="w-11 h-11 bg-gradient-to-br from-amber-400 to-amber-600 rounded-xl flex items-center justify-center text-white font-bold text-base shadow-md">3</div>
             <div>
               <p className="font-bold text-yellow-700">Good</p>
               <p className="text-xs text-yellow-600">Meets expectations</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-red-100 to-red-50 rounded-xl border-2 border-red-300">
-            <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">1-2</div>
+          <div className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
+            <div className="w-11 h-11 bg-gradient-to-br from-rose-400 to-rose-600 rounded-xl flex items-center justify-center text-white font-bold text-base shadow-md">1-2</div>
             <div>
               <p className="font-bold text-red-700">Poor</p>
               <p className="text-xs text-red-600">Needs improvement</p>
             </div>
           </div>
           <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-gray-100 to-gray-50 rounded-xl border-2 border-gray-300">
-            <div className="w-12 h-12 bg-gray-400 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">-</div>
+            <div className="w-11 h-11 bg-gradient-to-br from-gray-300 to-gray-400 rounded-xl flex items-center justify-center text-white font-bold text-base shadow-md">-</div>
             <div>
               <p className="font-bold text-gray-700">No Rating</p>
               <p className="text-xs text-gray-500">Not reviewed yet</p>
