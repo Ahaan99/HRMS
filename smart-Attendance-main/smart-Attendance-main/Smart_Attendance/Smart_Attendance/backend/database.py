@@ -592,7 +592,31 @@ settings_col   = SettingsCollection()      # runtime settings
 
 
 def hash_password(password: str) -> str:
-    return hashlib.sha256(password.encode()).hexdigest()
+    """bcrypt hash (salted, slow — production grade)."""
+    import bcrypt
+    return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+
+
+def verify_password(password: str, stored: str) -> bool:
+    """Check a password against a stored hash.
+    Supports current bcrypt hashes AND legacy unsalted SHA-256 hashes
+    (from before the bcrypt migration), so existing users can still log in.
+    """
+    if not stored:
+        return False
+    if stored.startswith("$2a$") or stored.startswith("$2b$") or stored.startswith("$2y$"):
+        import bcrypt
+        try:
+            return bcrypt.checkpw(password.encode(), stored.encode())
+        except ValueError:
+            return False
+    # legacy sha256 hex digest
+    return hashlib.sha256(password.encode()).hexdigest() == stored
+
+
+def needs_rehash(stored: str) -> bool:
+    """True if the stored hash is a legacy SHA-256 digest."""
+    return bool(stored) and not stored.startswith("$2")
 
 
 # ── Seed default admin if not exists ─────────────

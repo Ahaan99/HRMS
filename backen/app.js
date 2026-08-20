@@ -163,7 +163,13 @@ import agreementTemplatesRoutes from "./modules/client/agreementTemplates/agreem
 
 const app = express();
 
-app.use(cors());
+// CORS: in production set CORS_ORIGINS in .env to a comma-separated list
+// (e.g. "https://hrms.yourdomain.com,https://attendance.yourdomain.com").
+// When unset (development), all origins are allowed as before.
+const corsOrigins = process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(",").map((o) => o.trim())
+  : true;
+app.use(cors({ origin: corsOrigins, credentials: true }));
 app.use(express.json());
 
 app.use((req, res, next) => {

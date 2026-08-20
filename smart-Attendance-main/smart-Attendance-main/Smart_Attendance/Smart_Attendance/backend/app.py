@@ -7,7 +7,7 @@ import socket, os, csv, io, random, math
 from config import SECRET_KEY, OFFICE_LAT, OFFICE_LNG, OFFICE_RADIUS_M
 from database import (
     db, employees_col, attendance_col, users_col, settings_col,
-    hash_password, seed_admin
+    hash_password, verify_password, needs_rehash, seed_admin
 )
 from face_engine import encode_face_from_b64, recognize_face_from_b64
 from wifi_attendance import is_office_ip, get_client_real_ip
@@ -200,8 +200,13 @@ def login():
         return jsonify({"ok": False, "error": "All fields are required"})
 
     user = users_col.find_one({"mobile": mobile, "role": role})
-    if not user or user["password"] != hash_password(password):
+    if not user or not verify_password(password, user.get("password", "")):
         return jsonify({"ok": False, "error": "Incorrect password or mobile number"})
+
+    # transparently upgrade legacy SHA-256 hashes to bcrypt on login
+    if needs_rehash(user["password"]):
+        users_col.update_one({"_id": user["_id"]},
+                             {"$set": {"password": hash_password(password)}})
 
     session["user_id"] = str(user["_id"])
 
