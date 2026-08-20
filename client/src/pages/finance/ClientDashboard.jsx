@@ -102,6 +102,7 @@ export default function ClientDashboard() {
       <div className="bg-white p-4 rounded-xl shadow">
         {/* Revenue */}
         {activeView === "revenue" && (
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-gray-100">
               <tr>
@@ -123,10 +124,12 @@ export default function ClientDashboard() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
 
         {/* Expenses */}
         {activeView === "expenses" && (
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-gray-100">
               <tr>
@@ -148,6 +151,7 @@ export default function ClientDashboard() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
 
         {/* Profit */}

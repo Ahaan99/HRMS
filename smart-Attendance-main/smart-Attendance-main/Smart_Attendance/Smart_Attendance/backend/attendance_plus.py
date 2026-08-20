@@ -15,7 +15,7 @@ import json
 from datetime import datetime
 
 from flask import Blueprint, request, jsonify, session
-from bson import ObjectId
+from database import ObjectId
 
 from database import (
     attendance_col, users_col, settings_col, db

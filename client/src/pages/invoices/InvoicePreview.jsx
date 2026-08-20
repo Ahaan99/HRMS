@@ -90,6 +90,7 @@ export default function InvoicePreview() {
           <p>GSTIN: {invoice.client_gstin}</p>
         </div>
         {/* TABLE */}
+        <div className="overflow-x-auto">
         <table className="w-full border mt-4 text-sm">
           <thead>
             <tr>
@@ -117,6 +118,7 @@ export default function InvoicePreview() {
             ))}
           </tbody>
         </table>
+        </div>
         {/* TOTAL */}
         <div className="flex justify-end mt-4 text-sm">
           <div>

@@ -1,8 +1,14 @@
 import os
 
 
+# ── MySQL connection settings ──────────────────────────────
+MYSQL_HOST     = os.environ.get("MYSQL_HOST", "localhost")
+MYSQL_PORT     = int(os.environ.get("MYSQL_PORT", "3306"))
+MYSQL_USER     = os.environ.get("MYSQL_USER", "root")
+MYSQL_PASSWORD = os.environ.get("MYSQL_PASSWORD", "Phabindra@2680")
+MYSQL_DB       = os.environ.get("MYSQL_DB", "smart_attendance")
 
-# MongoDB connection URL
+# MongoDB connection URL (kept only for the one-time data migration script)
 MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017/")
 
 # Flask secret key

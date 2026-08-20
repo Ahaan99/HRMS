@@ -36,6 +36,7 @@ export default function ClientProfitAnalytics({ revenues, expenses }) {
 
       <h2 className="font-semibold mb-3">Profit Analytics</h2>
 
+      <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b">
@@ -57,6 +58,7 @@ export default function ClientProfitAnalytics({ revenues, expenses }) {
           ))}
         </tbody>
       </table>
+      </div>
 
     </div>
   );

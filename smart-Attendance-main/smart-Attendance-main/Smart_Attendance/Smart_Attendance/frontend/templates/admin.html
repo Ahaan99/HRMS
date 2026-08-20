@@ -204,6 +204,44 @@ input[type=checkbox]{accent-color:var(--red);width:14px;height:14px;cursor:point
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
 /* === v0 premium polish layer === */
+/* ── RESPONSIVE ── */
+/* Tablet (<=1024px): two-column stats, single-pane tab body */
+@media (max-width:1024px){
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .tab-body{grid-template-columns:1fr}
+  .dl-grid{grid-template-columns:repeat(2,1fr)}
+}
+/* Phone (<=768px): stack everything, sidebar becomes horizontal scroll nav */
+@media (max-width:768px){
+  body{height:auto;min-height:100vh;overflow:auto;
+       grid-template-columns:1fr!important;
+       grid-template-rows:auto auto 1fr!important}
+  .topbar{flex-wrap:wrap;padding:8px 12px;gap:8px;height:auto;min-height:var(--top-h)}
+  .topbar-right{gap:8px;width:auto}
+  .top-date{display:none}
+  .sidebar{flex-direction:row;overflow-x:auto;overflow-y:hidden;
+           border-right:none;border-bottom:1px solid var(--border);
+           padding:8px 10px;gap:6px;-webkit-overflow-scrolling:touch}
+  .sidebar .nav-section{display:none}
+  .sidebar .sidebar-spacer{display:none}
+  .nav-btn{flex-shrink:0;white-space:nowrap;padding:8px 12px}
+  .main{overflow:visible}
+  .tab{height:auto}
+  .stats-row{grid-template-columns:repeat(2,1fr);padding:12px 12px 0;gap:8px}
+  .tab-body{padding:12px;gap:12px}
+  .panel{padding:14px}
+  .dl-grid{grid-template-columns:1fr}
+  .acc-row{grid-template-columns:70px 1fr 96px;gap:6px;font-size:12px}
+  .btn-row{flex-wrap:wrap}
+  /* tables scroll sideways instead of breaking the page */
+  .panel{overflow-x:auto}
+  .log-table{min-width:520px}
+  .modal-card{padding:20px}
+}
+/* Small phone (<=420px): single-column stats */
+@media (max-width:420px){
+  .stats-row{grid-template-columns:1fr}
+}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-thumb{background:rgba(56,189,248,.28);border-radius:3px}
 ::-webkit-scrollbar-thumb:hover{background:rgba(56,189,248,.5)}

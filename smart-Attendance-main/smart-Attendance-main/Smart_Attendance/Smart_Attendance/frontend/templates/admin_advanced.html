@@ -47,6 +47,13 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue,#38bdf8)!importa
 table tr{transition:background .14s}
 h1,h2,h3{letter-spacing:-.02em}
 /* === end polish === */
+/* ── RESPONSIVE: tables scroll sideways on small screens ── */
+@media (max-width:768px){
+  .wrap{padding:16px 10px;gap:14px}
+  .card{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .card table{min-width:560px}
+  .topbar{padding:0 12px}
+}
 </style>
 </head>
 <body>

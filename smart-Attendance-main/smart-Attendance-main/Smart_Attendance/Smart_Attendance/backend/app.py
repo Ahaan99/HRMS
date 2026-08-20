@@ -1,7 +1,7 @@
 ﻿from flask import Flask, request, jsonify, render_template, session, redirect, url_for, Response
 from flask_cors import CORS
 from datetime import datetime
-from bson import ObjectId
+from database import ObjectId
 import socket, os, csv, io, random, math
 
 from config import SECRET_KEY, OFFICE_LAT, OFFICE_LNG, OFFICE_RADIUS_M
@@ -884,4 +884,7 @@ def bulk_delete_attendance():
 
 if __name__ == "__main__":
     seed_admin()
-    app.run(host="0.0.0.0", port=5050, debug=True)
+    # use_reloader=False: the auto-reloader watches site-packages and can
+    # wedge the server mid-restart (requests hang). threaded=True so face
+    # captures don't block logins and dashboard calls.
+    app.run(host="0.0.0.0", port=5050, debug=True, use_reloader=False, threaded=True)
