@@ -1,3 +1,4 @@
+import PageHero from "../../components/common/PageHero";
 import { useEffect, useState } from "react";
 import { getAllInterviews } from "../../services/interviewService";
 import AdminInterviewTable from "../../components/Interview/AdminInterviewTable";
@@ -42,13 +43,16 @@ export default function InterviewScheduling() {
     <div className="p-4 sm:p-6 space-y-6 w-full">
 
       {/* HEADER */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight">Interview Scheduling</h1>
-          <p className="text-sm text-slate-500 mt-1">Manage, monitor, and track all upcoming candidate sessions.</p>
-        </div>
-        <ExportButton data={rows} filename="interview-schedule" className="self-start md:self-auto" />
-      </div>
+      <PageHero
+        title="Interview Scheduling"
+        subtitle="Manage, monitor, and track all upcoming candidate sessions"
+        chips={[
+          {
+            label: `${rows.length} ${rows.length === 1 ? "Session" : "Sessions"} on page`,
+          },
+        ]}
+        actions={<ExportButton data={rows} filename="interview-schedule" />}
+      />
 
       {/* FILTERS & PAGINATION BAR */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">

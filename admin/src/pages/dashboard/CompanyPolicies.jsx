@@ -48,56 +48,44 @@ const POLICY_CATEGORIES = [
     id: "leave",
     name: "Leave Policy",
     icon: Calendar,
-    color: "bg-blue-50 text-blue-600",
-    borderColor: "border-blue-500",
     description: "Annual leave, sick leave, casual leave rules",
   },
   {
     id: "time",
     name: "Time & Attendance",
     icon: Clock,
-    color: "bg-green-50 text-green-600",
-    borderColor: "border-green-500",
     description: "Working hours, shifts, late arrival rules",
   },
   {
     id: "lunch",
     name: "Lunch & Breaks",
     icon: Coffee,
-    color: "bg-orange-50 text-orange-600",
-    borderColor: "border-orange-500",
     description: "Break times, lunch duration policies",
   },
   {
     id: "attendance",
     name: "Attendance",
     icon: Users,
-    color: "bg-purple-50 text-purple-600",
-    borderColor: "border-purple-500",
     description: "Absent, present, half-day, WFH policies",
   },
   {
     id: "salary",
     name: "Salary & Compensation",
     icon: DollarSign,
-    color: "bg-emerald-50 text-emerald-600",
-    borderColor: "border-emerald-500",
     description: "Salary structure, bonuses, increments",
   },
   {
     id: "penalty",
     name: "Deductions & Penalties",
     icon: Scale,
-    color: "bg-red-50 text-red-600",
-    borderColor: "border-red-500",
     description: "Late fines, absent penalties, deductions",
   },
 ];
 
 const PRIORITY_CONFIG = {
-  high: { label: "High", color: "bg-red-100 text-red-700" },
-  medium: { label: "Medium", color: "bg-yellow-100 text-yellow-700" },
-  low: { label: "Low", color: "bg-green-100 text-green-700" },
+  high: { label: "High", color: "bg-red-50 text-red-600 border border-red-100" },
+  medium: { label: "Medium", color: "bg-amber-50 text-amber-600 border border-amber-100" },
+  low: { label: "Low", color: "bg-gray-100 text-gray-500 border border-gray-200" },
 };
 
 export default function CompanyPolicies() {
@@ -356,49 +344,75 @@ export default function CompanyPolicies() {
           const Icon = cat.icon;
           const stats = categoryStats[cat.id] || { total: 0, active: 0 };
           return (
-            <div
+            <button
               key={cat.id}
+              type="button"
               onClick={() =>
                 setSelectedCategory(selectedCategory === cat.id ? null : cat.id)
               }
-              className={`bg-white rounded-xl shadow border-2 cursor-pointer transition p-4 ${
+              aria-pressed={selectedCategory === cat.id}
+              className={`rounded-2xl border p-4 text-left transition ${
                 selectedCategory === cat.id
-                  ? `${cat.borderColor}`
-                  : "border-transparent hover:border-gray-200"
+                  ? "border-gray-900 bg-gray-900 shadow-md"
+                  : "border-gray-200 bg-white shadow-sm hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-md"
               }`}
             >
               <div
-                className={`w-10 h-10 rounded-lg flex items-center justify-center mb-3 ${cat.color}`}
+                className={`mb-3 flex h-9 w-9 items-center justify-center rounded-xl transition ${
+                  selectedCategory === cat.id
+                    ? "bg-white/10 text-white"
+                    : "bg-gray-100 text-gray-600"
+                }`}
               >
-                <Icon size={20} />
+                <Icon size={17} />
               </div>
-              <p className="text-xs text-gray-500">{cat.name}</p>
-              <p className="text-xl font-bold text-gray-900">{stats.total}</p>
-              <p className="text-xs text-green-600">{stats.active} active</p>
-            </div>
+              <p
+                className={`text-xs font-medium leading-snug ${
+                  selectedCategory === cat.id ? "text-gray-300" : "text-gray-500"
+                }`}
+              >
+                {cat.name}
+              </p>
+              <p
+                className={`mt-0.5 text-2xl font-bold tracking-tight ${
+                  selectedCategory === cat.id ? "text-white" : "text-gray-900"
+                }`}
+              >
+                {stats.total}
+              </p>
+              <p
+                className={`mt-0.5 text-xs ${
+                  selectedCategory === cat.id ? "text-gray-400" : "text-gray-400"
+                }`}
+              >
+                {stats.active} active
+              </p>
+            </button>
           );
         })}
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition ${
-              activeTab === tab.id
-                ? "bg-black text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-            }`}
-          >
-            <tab.icon size={18} />
-            {tab.label}
-          </button>
-        ))}
+      <div className="mb-6 flex flex-wrap items-center gap-3">
+        <div className="flex gap-1 rounded-xl border border-gray-200 bg-white p-1 shadow-sm">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition ${
+                activeTab === tab.id
+                  ? "bg-gray-900 text-white shadow-sm"
+                  : "text-gray-500 hover:text-gray-900"
+              }`}
+            >
+              <tab.icon size={15} />
+              {tab.label}
+            </button>
+          ))}
+        </div>
         <div className="ml-auto flex gap-2">
-          <button className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl font-medium transition">
-            <Download size={18} />
+          <button className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-600 shadow-sm transition hover:bg-gray-50 hover:text-gray-900">
+            <Download size={15} />
             Export
           </button>
           <button
@@ -406,9 +420,9 @@ export default function CompanyPolicies() {
               resetForm();
               setOpenPolicyModal(true);
             }}
-            className="flex items-center gap-2 px-5 py-2.5 bg-black hover:bg-gray-900 text-white rounded-xl font-semibold transition"
+            className="flex items-center gap-2 rounded-xl bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800"
           >
-            <Plus size={18} />
+            <Plus size={15} />
             Add Policy
           </button>
         </div>
@@ -418,51 +432,43 @@ export default function CompanyPolicies() {
       {activeTab === "policies" && (
         <>
           {/* Filters */}
-          <div className="bg-white rounded-2xl shadow border border-gray-100 p-4 mb-6">
-            <div className="flex flex-wrap gap-4">
-              <div className="flex-1 min-w-[200px]">
-                <input
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search policies..."
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-black"
-                />
-              </div>
-              <select
-                value={selectedCategory || ""}
-                onChange={(e) => setSelectedCategory(e.target.value || null)}
-                className="w-full md:w-48 border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-black bg-white"
-              >
-                <option value="">All Categories</option>
-                {POLICY_CATEGORIES.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
-              <button
-                onClick={loadPolicies}
-                className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl font-medium transition"
-              >
-                <RefreshCw size={18} />
-                Refresh
-              </button>
-            </div>
-          </div>
+          <div className="mb-6 flex flex-wrap items-center gap-3">
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search policies..."
+              className="min-w-[200px] flex-1 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 transition focus:border-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-900/5"
+            />
+            <select
+              value={selectedCategory || ""}
+              onChange={(e) => setSelectedCategory(e.target.value || null)}
+              className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 shadow-sm transition focus:border-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-900/5 md:w-48"
+            >
+              <option value="">All Categories</option>
+              {POLICY_CATEGORIES.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+            <button
+              onClick={loadPolicies}
+              className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-600 shadow-sm transition hover:bg-gray-50 hover:text-gray-900"
+            >
+              <RefreshCw size={15} />
+              Refresh
+            </button>
 
-          {/* Active/Inactive Summary */}
-          <div className="flex gap-4 mb-6">
-            <div className="flex items-center gap-2 px-4 py-2 bg-green-50 rounded-xl">
-              <CheckCircle size={18} className="text-green-600" />
-              <span className="font-semibold text-green-700">
-                {totalActive} Active
+            <div className="flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm shadow-sm">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              <span className="font-semibold text-gray-900">{totalActive}</span>
+              <span className="text-gray-400">Active</span>
+              <span className="mx-1.5 h-4 w-px bg-gray-200" />
+              <span className="h-1.5 w-1.5 rounded-full bg-gray-300" />
+              <span className="font-semibold text-gray-900">
+                {policies.length - totalActive}
               </span>
-            </div>
-            <div className="flex items-center gap-2 px-4 py-2 bg-red-50 rounded-xl">
-              <XCircle size={18} className="text-red-600" />
-              <span className="font-semibold text-red-700">
-                {policies.length - totalActive} Inactive
-              </span>
+              <span className="text-gray-400">Inactive</span>
             </div>
           </div>
 
@@ -478,27 +484,26 @@ export default function CompanyPolicies() {
               return (
                 <div
                   key={policy.id}
-                  className={`bg-white rounded-2xl shadow border-l-4 ${category?.borderColor || "border-gray-300"} overflow-hidden`}
+                  className="rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
                 >
                   <div className="p-5">
                     <div className="flex items-start justify-between mb-3">
-                      <div
-                        className={`w-10 h-10 rounded-lg flex items-center justify-center ${category?.color || "bg-gray-100 text-gray-600"}`}
-                      >
-                        <Icon size={20} />
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gray-100 text-gray-600">
+                        <Icon size={18} />
                       </div>
                       <div className="flex items-center gap-2">
                         <span
-                          className={`px-2 py-0.5 rounded text-xs font-bold ${priorityConfig.color}`}
+                          className={`rounded-md px-2 py-0.5 text-xs font-semibold ${priorityConfig.color}`}
                         >
                           {priorityConfig.label}
                         </span>
                         <button
                           onClick={() => handleTogglePolicy(policy.id)}
-                          className={`p-1 rounded transition ${
+                          aria-label={policy.isActive ? "Deactivate policy" : "Activate policy"}
+                          className={`rounded p-1 transition ${
                             policy.isActive
-                              ? "text-green-600 hover:bg-green-50"
-                              : "text-gray-400 hover:bg-gray-100"
+                              ? "text-emerald-600 hover:bg-emerald-50"
+                              : "text-gray-300 hover:bg-gray-100"
                           }`}
                         >
                           {policy.isActive ? (
@@ -510,23 +515,32 @@ export default function CompanyPolicies() {
                       </div>
                     </div>
 
-                    <h3 className="font-bold text-gray-900 mb-1">
+                    <h3 className="mb-1.5 font-bold text-gray-900">
                       {policy.title}
                     </h3>
                     <span
-                      className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${policy.isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}
+                      className={`inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-xs font-medium ${
+                        policy.isActive
+                          ? "bg-emerald-50 text-emerald-700"
+                          : "bg-gray-100 text-gray-500"
+                      }`}
                     >
+                      <span
+                        className={`h-1.5 w-1.5 rounded-full ${
+                          policy.isActive ? "bg-emerald-500" : "bg-gray-400"
+                        }`}
+                      />
                       {policy.isActive ? "Active" : "Inactive"}
                     </span>
 
-                    <p className="text-sm text-gray-500 mt-3">
+                    <p className="mt-3 text-sm leading-relaxed text-gray-500">
                       {category?.description}
                     </p>
 
-                    <div className="flex gap-2 mt-4 pt-4 border-t border-gray-100">
+                    <div className="mt-4 flex gap-2 border-t border-gray-100 pt-4">
                       <button
                         onClick={() => handleViewPolicy(policy)}
-                        className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition"
+                        className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900"
                       >
                         <Eye size={14} />
                         View
@@ -545,7 +559,7 @@ export default function CompanyPolicies() {
                           });
                           setOpenPolicyModal(true);
                         }}
-                        className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg text-sm font-medium transition"
+                        className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-gray-900 px-3 py-2 text-sm font-semibold text-white transition hover:bg-gray-800"
                       >
                         <Edit2 size={14} />
                         Edit
@@ -555,7 +569,8 @@ export default function CompanyPolicies() {
                           setDeleteId(policy.id);
                           setOpenDeleteModal(true);
                         }}
-                        className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition"
+                        aria-label="Delete policy"
+                        className="rounded-lg border border-red-100 bg-red-50 p-2 text-red-600 transition hover:bg-red-100"
                       >
                         <Trash2 size={14} />
                       </button>
@@ -567,8 +582,27 @@ export default function CompanyPolicies() {
           </div>
 
           {filteredPolicies.length === 0 && (
-            <div className="bg-white rounded-2xl shadow border border-gray-100 p-10 text-center text-gray-500">
-              No policies found. Create your first policy!
+            <div className="flex flex-col items-center rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-16 text-center">
+              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-100 text-gray-400">
+                <BookOpen size={24} />
+              </div>
+              <h3 className="text-base font-semibold text-gray-900">
+                No policies yet
+              </h3>
+              <p className="mt-1 max-w-sm text-sm text-gray-500">
+                Create your first policy to automate leave, attendance, salary,
+                and penalty rules across your organization.
+              </p>
+              <button
+                onClick={() => {
+                  resetForm();
+                  setOpenPolicyModal(true);
+                }}
+                className="mt-5 flex items-center gap-2 rounded-xl bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800"
+              >
+                <Plus size={15} />
+                Add Policy
+              </button>
             </div>
           )}
         </>

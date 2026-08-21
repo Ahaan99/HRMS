@@ -17,10 +17,32 @@ const server = http.createServer(app);
 
 /* SOCKET SERVER */
 
+// Honor CORS_ORIGINS in production (same env var app.js uses).
+// When unset (development), all origins are allowed as before.
+const socketOrigins = process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(",").map((o) => o.trim())
+  : "*";
+
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: socketOrigins,
     methods: ["GET","POST"]
+  }
+});
+
+/* PROCESS-LEVEL CRASH GUARDS (production safety)
+   Without these, ANY unhandled promise rejection or sync throw
+   outside Express kills the whole server process. Log and keep
+   running; a process manager (pm2) should handle real restarts. */
+process.on("unhandledRejection", (reason) => {
+  console.error("UNHANDLED REJECTION:", reason);
+});
+
+process.on("uncaughtException", (err) => {
+  console.error("UNCAUGHT EXCEPTION:", err);
+  // For truly unrecoverable states, exit so pm2 restarts cleanly.
+  if (err && (err.code === "ERR_INTERNAL_ASSERTION" || err.fatal)) {
+    process.exit(1);
   }
 });
 
@@ -45,19 +67,52 @@ io.on("connection", (socket) => {
 });
 
 
+// Retry helper: MySQL throws ER_LOCK_DEADLOCK (sqlState 40001) when two
+// server instances run the same seeding INSERTs at the same moment.
+// Deadlocks are transient — retrying after a short pause resolves them.
+const withDeadlockRetry = async (label, fn, retries = 3) => {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      const isDeadlock =
+        err && (err.sqlState === "40001" || err.code === "ER_LOCK_DEADLOCK");
+      if (!isDeadlock || attempt > retries) throw err;
+      console.warn(`${label}: deadlock, retrying (${attempt}/${retries})...`);
+      await new Promise((r) => setTimeout(r, 500 * attempt));
+    }
+  }
+};
+
 const startServer = async () => {
   try {
 
     await db.query("SELECT 1");
     console.log("MySQL Connected");
 
-    await initDb();
+    await withDeadlockRetry("initDb", () => initDb());
     console.log("Database + tables ready");
 
-    await seedSuperAdmin();
-    await seedMasters();
+    await withDeadlockRetry("seedSuperAdmin", () => seedSuperAdmin());
+    await withDeadlockRetry("seedMasters", () => seedMasters());
 
     const PORT = process.env.PORT || 5000;
+
+    // Friendly handling when another server instance already owns the port:
+    // print a clear message instead of an unhandled crash loop.
+    server.on("error", (err) => {
+      if (err.code === "EADDRINUSE") {
+        console.error(
+          `Port ${PORT} is already in use by another server instance.\n` +
+            `Stop it first (Windows):\n` +
+            `  netstat -ano | findstr :${PORT}\n` +
+            `  taskkill /PID <pid> /F\n` +
+            `Then start the server again.`
+        );
+        process.exit(1);
+      }
+      throw err;
+    });
 
     server.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);

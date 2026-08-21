@@ -1,3 +1,4 @@
+import PageHero from "../../components/common/PageHero";
 // import { useEffect, useMemo, useState } from "react";
 // import StatCard from "../../components/common/StatCard";
 // import { Users as UsersIcon, Briefcase, Building2 } from "lucide-react";
@@ -338,23 +339,25 @@ export default function UsersPage() {
   return (
     <div className="space-y-6">
       {/* ================= HEADER ================= */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold">Portal Users</h1>
-          <p className="text-gray-500">
-            Manage HR, Sales & Client portals
-          </p>
-        </div>
-
-        {portal !== "ALL" && (
-          <button
-            onClick={() => setPortal("ALL")}
-            className="px-4 py-2 bg-gray-200 rounded-xl font-semibold hover:bg-gray-300 transition"
-          >
-            Reset / Show All
-          </button>
-        )}
-      </div>
+      <PageHero
+        title="Portal Users"
+        subtitle="Manage HR, Sales & Client portal accounts"
+        chips={[
+          { label: `${counts.hr || 0} HR` },
+          { label: `${counts.sales || 0} Sales` },
+          { label: `${counts.client || 0} Clients` },
+        ]}
+        actions={
+          portal !== "ALL" && (
+            <button
+              onClick={() => setPortal("ALL")}
+              className="inline-flex items-center gap-2 bg-white text-indigo-700 hover:bg-indigo-50 font-semibold px-5 py-2.5 rounded-xl shadow-sm transition-colors"
+            >
+              Show All
+            </button>
+          )
+        }
+      />
 
       {/* ================= STAT PANELS ================= */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

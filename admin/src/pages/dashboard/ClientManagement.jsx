@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import toast from "react-hot-toast";
 import {
   Search, Plus, FileText, Edit2, Trash2,
@@ -241,7 +242,7 @@ export default function ClientManagement() {
         <div className="flex items-center gap-3 w-full md:w-auto shrink-0">
           <button
             onClick={openAddModal}
-            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 active:scale-95 shadow-sm transition-all duration-200"
+            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gray-900 text-white text-sm font-semibold hover:bg-gray-800 active:scale-95 shadow-sm transition-all duration-200"
           >
             <Plus size={16} /> Add Client
           </button>
@@ -300,7 +301,7 @@ export default function ClientManagement() {
                     >
                       {c.company_logo ? (
                         <img
-                          src={`http://localhost:5000/uploads/client-logo/${c.company_logo}`}
+                          src={`${import.meta.env.VITE_UPLOADS_BASE_URL || "http://localhost:5000/uploads"}/client-logo/${c.company_logo}`}
                           alt="logo"
                           className="w-full h-full object-cover"
                         />
@@ -361,7 +362,7 @@ export default function ClientManagement() {
 
       {/* ── ADD MODAL ── */}
       <Modal open={openAdd} title="Create Client Registry" onClose={() => setOpenAdd(false)}>
-        <form onSubmit={handleCreate} className="space-y-4 max-h-[75vh] overflow-y-auto px-1 py-2">
+        <form onSubmit={handleCreate} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input label="Company Legal Name" value={form.company_name}
               onChange={(e) => setForm((p) => ({ ...p, company_name: e.target.value }))}
@@ -417,15 +418,16 @@ export default function ClientManagement() {
             onChange={(e) => setForm((p) => ({ ...p, company_description: e.target.value }))}
             placeholder="Brief about company..." />
 
-          <div className="relative">
-            <Input label="Password" type={showPassword ? "text" : "password"} value={form.password}
-              onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))}
-              placeholder="Set access password" />
-            <button type="button" onClick={() => setShowPassword((p) => !p)}
-              className="absolute right-3.5 top-8 p-1 text-slate-400 hover:text-indigo-600 transition-colors">
-              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-            </button>
-          </div>
+          <Input label="Password" type={showPassword ? "text" : "password"} value={form.password}
+            onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))}
+            placeholder="Set access password"
+            suffix={
+              <button type="button" onClick={() => setShowPassword((p) => !p)}
+                className="rounded-lg p-1.5 text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
+                aria-label={showPassword ? "Hide password" : "Show password"}>
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            } />
 
           <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
             <Toggle label="Active Status"
@@ -440,7 +442,7 @@ export default function ClientManagement() {
               Cancel
             </button>
             <button type="submit"
-              className="px-5 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 font-semibold text-sm shadow-sm transition-colors">
+              className="px-5 py-2 bg-gray-900 text-white rounded-xl hover:bg-gray-800 font-semibold text-sm shadow-sm transition-colors">
               Create Account
             </button>
           </div>
@@ -450,7 +452,7 @@ export default function ClientManagement() {
       {/* ── EDIT MODAL ── */}
       <Modal open={openEdit} title="Modify Client Properties"
         onClose={() => { setOpenEdit(false); setSelectedClient(null); }}>
-        <form onSubmit={handleUpdate} className="space-y-4 max-h-[75vh] overflow-y-auto px-1 py-2">
+        <form onSubmit={handleUpdate} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input label="Company Name" value={form.company_name}
               onChange={(e) => setForm((p) => ({ ...p, company_name: e.target.value }))} />
@@ -497,14 +499,17 @@ export default function ClientManagement() {
           <Input label="Company Description" value={form.company_description}
             onChange={(e) => setForm((p) => ({ ...p, company_description: e.target.value }))} />
 
-          <div className="relative bg-slate-50/50 p-3 rounded-xl border border-slate-100">
+          <div className="bg-slate-50/50 p-3 rounded-xl border border-slate-100">
             <Input label="Reset Password" type={showPassword ? "text" : "password"} value={form.password}
               onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))}
-              placeholder="Leave blank to keep current" />
-            <button type="button" onClick={() => setShowPassword((p) => !p)}
-              className="absolute right-6 top-[42px] text-slate-400 hover:text-indigo-600">
-              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-            </button>
+              placeholder="Leave blank to keep current"
+              suffix={
+                <button type="button" onClick={() => setShowPassword((p) => !p)}
+                  className="rounded-lg p-1.5 text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
+                  aria-label={showPassword ? "Hide password" : "Show password"}>
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              } />
           </div>
 
           <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
@@ -549,9 +554,9 @@ export default function ClientManagement() {
       />
 
       {/* ── HIRING FORM MODAL ── */}
-      {openClientForm && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-h-[92vh] overflow-y-auto w-full max-w-4xl relative border border-slate-100">
+      {openClientForm && createPortal(
+        <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto w-full max-w-4xl relative ring-1 ring-black/5">
             <div className="sticky top-0 bg-white/95 backdrop-blur-sm px-6 py-4 border-b border-slate-100 flex items-center justify-between z-20">
               <div className="flex items-center gap-2 text-indigo-600">
                 <ShieldCheck size={20} />
@@ -566,7 +571,8 @@ export default function ClientManagement() {
               <ClientForm />
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </div>

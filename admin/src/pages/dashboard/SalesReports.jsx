@@ -107,7 +107,7 @@ const SalesReports = () => {
           />
           <button
             onClick={() => navigate("/invoices")}
-            className="bg-green-600 text-white px-4 py-2 rounded mr-3"
+            className="mr-3 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 hover:text-gray-900"
           >
             Generate Invoice
           </button>
@@ -117,7 +117,7 @@ const SalesReports = () => {
               setEditingSale(null);
               setOpenModal(true);
             }}
-            className="btn-primary whitespace-nowrap"
+            className="whitespace-nowrap rounded-xl bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800"
           >
             + Add Sale
           </button>

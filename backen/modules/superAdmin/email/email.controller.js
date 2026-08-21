@@ -1,6 +1,6 @@
 import { db } from "../../../config/db.js";
 import nodemailer from "nodemailer";
-import { ENV } from "../../../env.js";
+import { ENV } from "../../../config/env.js";
 
 const transporter = nodemailer.createTransport({
   host: ENV.EMAIL_HOST || "smtp.gmail.com",

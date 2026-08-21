@@ -1,3 +1,4 @@
+import PageHero from "../../components/common/PageHero";
 import { useEffect, useState, useCallback } from "react";
 import { Search, SlidersHorizontal, Users, UserSearch, RotateCcw } from "lucide-react";
 import API from "../../services/api";
@@ -49,19 +50,26 @@ export default function AdvancedSearch() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
-        <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-          <UserSearch size={20} className="text-indigo-600" /> Advanced Search
-        </h1>
-        <div className="inline-flex rounded-lg border border-gray-200 overflow-hidden">
-          {["employees", "candidates"].map((t) => (
-            <button key={t} onClick={() => setType(t)}
-              className={`px-4 py-2 text-sm font-medium capitalize ${type === t ? "bg-gray-900 text-white" : "bg-white text-gray-600 hover:bg-gray-50"}`}>
-              {t}
-            </button>
-          ))}
-        </div>
-      </div>
+      <PageHero
+        title="Advanced Search"
+        subtitle="Deep-search employees and candidates with layered filters"
+        chips={[
+          {
+            icon: <UserSearch size={12} />,
+            label: `${total} ${total === 1 ? "Result" : "Results"}`,
+          },
+        ]}
+        actions={
+          <div className="inline-flex rounded-xl bg-white/10 border border-white/15 overflow-hidden p-1 gap-1">
+            {["employees", "candidates"].map((t) => (
+              <button key={t} onClick={() => setType(t)}
+                className={`px-4 py-2 text-sm font-semibold capitalize rounded-lg transition-colors ${type === t ? "bg-white text-indigo-700" : "text-indigo-100 hover:bg-white/10"}`}>
+                {t}
+              </button>
+            ))}
+          </div>
+        }
+      />
 
       <form
         onSubmit={(e) => { e.preventDefault(); run(1); }}

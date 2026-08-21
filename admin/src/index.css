@@ -128,3 +128,47 @@ body {
 main > * {
   animation: pageIn 0.3s cubic-bezier(0.2, 0.9, 0.3, 1) both;
 }
+
+/* ============================================================
+   FORM PRIMITIVES — .input / .btn-primary / .btn-secondary
+   Used across OfferLetter, ServiceManagement, CreateInvoice,
+   LeaveManagement, AttendanceTracker, AIChatbot pages.
+   Styled to match the admin design system tokens above.
+   ============================================================ */
+@layer components {
+  .input {
+    @apply w-full rounded-xl border px-3.5 py-2.5 text-sm transition;
+    border-color: var(--line);
+    background: var(--paper);
+    color: var(--ink);
+  }
+  .input::placeholder {
+    color: var(--ink-3);
+  }
+  .input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: var(--card);
+    box-shadow: 0 0 0 4px var(--accent-soft);
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition;
+    background: var(--ink);
+  }
+  .btn-primary:hover {
+    background: #1c2740;
+  }
+  .btn-primary:disabled {
+    opacity: 0.6;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border px-5 py-2.5 text-sm font-medium transition;
+    border-color: var(--line);
+    background: var(--card);
+    color: var(--ink-2);
+  }
+  .btn-secondary:hover {
+    background: var(--paper);
+    color: var(--ink);
+  }
+}

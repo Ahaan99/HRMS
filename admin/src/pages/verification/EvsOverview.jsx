@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { ShieldCheck, ExternalLink, RefreshCw } from "lucide-react";
 
-const EVS_API = "http://localhost:8000";
-const EVS_APP = "http://localhost:5173";
+const EVS_API = import.meta.env.VITE_EVS_API_URL || "http://localhost:8000";
+const EVS_APP = import.meta.env.VITE_EVS_APP_URL || "http://localhost:5173";
 
 const TONE = {
   "Fully Verified": "bg-emerald-50 text-emerald-700",

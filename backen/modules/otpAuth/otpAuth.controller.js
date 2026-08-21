@@ -3,6 +3,17 @@ import { db } from "../../config/db.js";
 import { ENV } from "../../config/env.js";
 import { signToken } from "../../utils/jwt.js";
 import { sendSms } from "../../utils/sms.js";
+import { sendEmail, otpEmailHtml } from "../../utils/mailer.js";
+
+/* Normalize Indian mobile numbers to E.164 for Twilio */
+const normalizePhone = (p) => {
+  if (!p) return null;
+  const digits = String(p).replace(/\D/g, "");
+  if (digits.length === 10) return `+91${digits}`;
+  if (digits.length === 12 && digits.startsWith("91")) return `+${digits}`;
+  if (String(p).trim().startsWith("+")) return String(p).trim();
+  return null; // invalid — don't attempt SMS
+};
 
 const PORTALS = ["hr", "employee", "client", "sales", "it"];
 const OTP_TTL_MIN = 5;
@@ -75,24 +86,53 @@ export const requestOtp = async (req, res) => {
       [portal, subject.id, id, otp],
     );
 
-    /* delivery: SMS when we have a phone, otherwise dev fallback */
+    /* delivery: email first when we have one, SMS as fallback/primary for phone logins */
     let delivered = false;
     let channel = "NONE";
-    const phone = !isEmail(id) ? id : subject.phone;
-    if (phone) {
-      const result = await sendSms(
+    const email = isEmail(id) ? id : subject.email;
+    const phone = normalizePhone(!isEmail(id) ? id : subject.phone);
+
+    if (isEmail(id) && email) {
+      const r = await sendEmail(
+        email,
+        "Your HRMS login OTP",
+        otpEmailHtml(otp, OTP_TTL_MIN),
+      );
+      if (r.delivered) {
+        delivered = true;
+        channel = "EMAIL";
+      }
+    }
+    if (!delivered && phone) {
+      const r = await sendSms(
         phone,
         `Your HRMS login OTP is ${otp}. Valid for ${OTP_TTL_MIN} minutes.`,
       );
-      delivered = !!result?.delivered;
-      channel = "SMS";
+      if (r?.delivered) {
+        delivered = true;
+        channel = "SMS";
+      }
     }
-    console.log(`[OTP] ${portal} login OTP for ${id}: ${otp}`);
+    if (!delivered && !isEmail(id) && email) {
+      /* phone login but SMS failed — try their email on file */
+      const r = await sendEmail(
+        email,
+        "Your HRMS login OTP",
+        otpEmailHtml(otp, OTP_TTL_MIN),
+      );
+      if (r.delivered) {
+        delivered = true;
+        channel = "EMAIL";
+      }
+    }
+    if (!delivered) console.log(`[OTP] ${portal} login OTP for ${id}: ${otp}`);
 
     res.json({
       success: true,
       message: delivered
-        ? "OTP sent via SMS"
+        ? channel === "EMAIL"
+          ? "OTP sent to your email"
+          : "OTP sent via SMS"
         : "OTP generated. (Delivery not configured — use the code shown.)",
       channel,
       expires_in: OTP_TTL_MIN * 60,
@@ -196,8 +236,11 @@ export const verifyOtp = async (req, res) => {
         .json({ success: false, message: "portal, identifier and otp are required" });
 
     const id = identifier.trim();
+    /* expiry is evaluated in SQL (expires_at > NOW()) so the check uses the
+       same clock/timezone that wrote the row — comparing in Node caused
+       fresh OTPs to look expired when MySQL and Node timezones differed */
     const [[row]] = await db.query(
-      `SELECT * FROM login_otps
+      `SELECT *, (expires_at > NOW()) AS not_expired FROM login_otps
        WHERE portal = ? AND identifier = ? AND used = 0
        ORDER BY id DESC LIMIT 1`,
       [portal, id],
@@ -206,7 +249,7 @@ export const verifyOtp = async (req, res) => {
       return res
         .status(401)
         .json({ success: false, message: "No pending OTP. Request a new one." });
-    if (new Date(row.expires_at) < new Date())
+    if (!Number(row.not_expired))
       return res
         .status(401)
         .json({ success: false, message: "OTP expired. Request a new one." });

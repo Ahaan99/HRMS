@@ -3,6 +3,7 @@ import crypto from "crypto";
 import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { signToken } from "../../../utils/jwt.js";
 import { sendSms } from "../../../utils/sms.js";
+import { sendEmail, otpEmailHtml } from "../../../utils/mailer.js";
 import { db } from "../../../config/db.js";
 
 /* Create a tracked session and return a token carrying its jti */
@@ -61,16 +62,27 @@ export const loginSuperAdmin = asyncHandler(async (req, res) => {
     );
 
     let channel = "EMAIL";
-    let smsDelivered = false;
+    let delivered = false;
     if (flags.otp_channel === "SMS" && flags.phone) {
       const result = await sendSms(
         flags.phone,
         `Your HRMS login OTP is ${otp}. Valid for 5 minutes.`,
       );
       channel = "SMS";
-      smsDelivered = !!result.delivered;
+      delivered = !!result.delivered;
     }
-    console.log(`[2FA] OTP for ${admin.email} via ${channel}: ${otp}`);
+    if (!delivered && admin.email) {
+      const r = await sendEmail(
+        admin.email,
+        "Your HRMS admin login OTP",
+        otpEmailHtml(otp, 5),
+      );
+      if (r.delivered) {
+        delivered = true;
+        channel = "EMAIL";
+      }
+    }
+    if (!delivered) console.log(`[2FA] OTP for ${admin.email} via ${channel}: ${otp}`);
 
     return res.json({
       success: true,
@@ -78,8 +90,8 @@ export const loginSuperAdmin = asyncHandler(async (req, res) => {
       admin_id: admin.id,
       channel,
       /* Dev convenience: surfaced only when no real delivery happened
-         (no SMTP / Twilio configured). Auto-hidden once SMS delivers. */
-      ...(smsDelivered ? {} : { dev_otp: otp }),
+         (no SMTP / Twilio configured). Auto-hidden once delivery works. */
+      ...(delivered ? {} : { dev_otp: otp }),
       message: `OTP sent via ${channel}`,
     });
   }
@@ -102,8 +114,9 @@ export const verifySuperAdminOtp = asyncHandler(async (req, res) => {
   if (!admin_id || !otp)
     return res.status(400).json({ success: false, message: "admin_id and otp are required" });
 
+  /* expiry evaluated in SQL so it uses the same clock that wrote the row */
   const [rows] = await db.query(
-    "SELECT id, name, email, otp_code, otp_expires_at FROM super_admins WHERE id = ? LIMIT 1",
+    "SELECT id, name, email, otp_code, (otp_expires_at > NOW()) AS not_expired FROM super_admins WHERE id = ? LIMIT 1",
     [admin_id],
   );
   if (!rows.length)
@@ -112,7 +125,7 @@ export const verifySuperAdminOtp = asyncHandler(async (req, res) => {
   const admin = rows[0];
   if (!admin.otp_code || admin.otp_code !== String(otp))
     return res.status(401).json({ success: false, message: "Invalid OTP" });
-  if (new Date(admin.otp_expires_at) < new Date())
+  if (!Number(admin.not_expired))
     return res.status(401).json({ success: false, message: "OTP expired. Login again." });
 
   await db.query(

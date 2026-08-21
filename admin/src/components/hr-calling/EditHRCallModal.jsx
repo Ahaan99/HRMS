@@ -54,7 +54,7 @@ export default function EditHRCallModal({
 
   const statusOptions = callStatusList.map((s) => ({
     value: s.id,
-    label: `${s.id} - ${s.name}`,
+    label: s.name,
   }));
 
   const update = (key, val) => setForm((p) => ({ ...p, [key]: val }));

@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { getAllInterviews } from "../../services/interviewService";
 import { getCandidateForms, deleteForm } from "../../services/formService";
 import AdminInterviewTable from "../../components/Interview/AdminInterviewTable";
@@ -202,42 +203,50 @@ export default function CandidateManagement() {
     <div className="p-6 bg-[#F8FAFC] w-full antialiased text-slate-800">
       <div className="w-full space-y-6 mx-auto">
 
-        {/* TOP BAR */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div className="flex items-center gap-3.5">
-            <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl shrink-0 shadow-sm border border-indigo-100/50">
-              <UserRoundSearch size={22} />
-            </div>
+        {/* HEADER */}
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 p-6 sm:p-8 shadow-lg shadow-indigo-200">
+          <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-5">
             <div>
-              <h1 className="text-xl font-bold tracking-tight text-slate-900">Candidate Management</h1>
-              <p className="text-xs font-medium text-slate-400 mt-0.5">Filter records, monitor statuses, and register profiles inline.</p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight text-balance">
+                Candidate Management
+              </h1>
+              <p className="text-sm text-indigo-200 mt-1.5">
+                Filter records, monitor statuses, and register profiles inline
+              </p>
+              <div className="flex flex-wrap items-center gap-3 mt-4">
+                <span className="inline-flex items-center gap-1.5 bg-white/10 text-indigo-100 text-xs font-semibold px-3 py-1.5 rounded-full border border-white/15">
+                  <Users size={12} />
+                  {totalCandidatesCount} {totalCandidatesCount === 1 ? "Record" : "Records"} on page
+                </span>
+                <span className="inline-flex items-center gap-1.5 bg-white/10 text-indigo-100 text-xs font-semibold px-3 py-1.5 rounded-full border border-white/15">
+                  <UserRoundSearch size={12} />
+                  {hrList.length} HRs
+                </span>
+                {isAnyFilterActive && (
+                  <span className="inline-flex items-center gap-1.5 bg-amber-400/20 text-amber-100 text-xs font-semibold px-3 py-1.5 rounded-full border border-amber-300/30">
+                    <SlidersHorizontal size={12} />
+                    Filters Active
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center gap-3 shrink-0">
+              <ExportButton data={rows} filename="candidates" />
+              <button
+                onClick={() => setOpenCandidateForm(true)}
+                className="inline-flex items-center gap-2 bg-white text-indigo-700 hover:bg-indigo-50 font-semibold px-5 py-2.5 rounded-xl shadow-sm transition-colors"
+              >
+                <Plus size={16} strokeWidth={2.5} />
+                Add Candidate
+              </button>
             </div>
           </div>
-          <div className="flex items-center gap-3 shrink-0 self-start md:self-auto">
-            <ExportButton data={rows} filename="candidates" />
-            <button
-              onClick={() => setOpenCandidateForm(true)}
-              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs tracking-wide uppercase rounded-xl shadow-sm hover:shadow transition-all duration-150"
-            >
-              <Plus size={16} strokeWidth={2.5} />
-              Add Candidate
-            </button>
-          </div>
-        </div>
-
-        {/* STATS */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-white rounded-xl border border-slate-200/60 p-4 flex items-center gap-3 shadow-2xs">
-            <div className="p-2 bg-slate-50 text-slate-500 rounded-lg"><Users size={16} /></div>
-            <div>
-              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Loaded Records</p>
-              <h3 className="text-lg font-bold text-slate-800 mt-0.5">{totalCandidatesCount} <span className="text-xs font-normal text-slate-400">on page</span></h3>
-            </div>
-          </div>
+          <div className="absolute -right-16 -top-16 w-64 h-64 rounded-full bg-white/5 pointer-events-none" />
+          <div className="absolute -right-4 -bottom-24 w-48 h-48 rounded-full bg-white/5 pointer-events-none" />
         </div>
 
         {/* FILTERS */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 w-full">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 w-full p-5 space-y-4">
           <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
             <div className="relative flex-1">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -260,7 +269,7 @@ export default function CandidateManagement() {
             </button>
           </div>
 
-          <div className="flex items-center gap-2 pt-1 text-slate-400 font-bold text-[10px] uppercase tracking-widest">
+          <div className="flex items-center gap-2 text-slate-400 font-bold text-[10px] uppercase tracking-widest">
             <SlidersHorizontal size={12} className="text-indigo-500" />
             <span>Refine Criteria</span>
             <div className="h-px bg-slate-100 flex-1 ml-1" />
@@ -307,16 +316,7 @@ export default function CandidateManagement() {
         </div>
 
         {/* TABLE */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 w-full">
-          <div className="px-5 py-4 border-b border-slate-100 bg-slate-50/60 flex justify-between items-center">
-            <h2 className="font-bold text-sm tracking-wide text-slate-700 uppercase">{table}</h2>
-            {loading && (
-              <span className="flex h-2 w-2 relative">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
-              </span>
-            )}
-          </div>
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 w-full overflow-hidden">
           <div className="w-full">
             <AdminInterviewTable rows={rows} table={table} loading={loading} hideButtons={true} />
           </div>
@@ -339,7 +339,7 @@ export default function CandidateManagement() {
             )}
             <button
               onClick={() => setOpenQuickAdd(true)}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold tracking-wide uppercase rounded-lg shadow-2xs transition-all"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold tracking-wide uppercase rounded-lg shadow-sm transition-all"
             >
               <Plus size={14} strokeWidth={2.5} /> Quick Add Candidate
             </button>
@@ -349,16 +349,19 @@ export default function CandidateManagement() {
       </div>
 
       {/* ✅ MODAL 1 — Add Candidate → CandidateForm */}
-      {openCandidateForm && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto w-full max-w-2xl relative">
-            <button
-              onClick={() => setOpenCandidateForm(false)}
-              className="sticky top-4 right-4 ml-auto block px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold z-10"
+      {openCandidateForm &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 p-4 backdrop-blur-sm"
+            onClick={() => setOpenCandidateForm(false)}
+          >
+            <div
+              className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-2xl ring-1 ring-black/5"
+              onClick={(e) => e.stopPropagation()}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Add Candidate"
             >
-              Close
-            </button>
-            <div className="px-6 pb-6">
               <CandidateForm
                 onSuccess={() => {
                   setOpenCandidateForm(false);
@@ -367,9 +370,9 @@ export default function CandidateManagement() {
                 onClose={() => setOpenCandidateForm(false)}
               />
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
 
       {/* ✅ MODAL 2 — Quick Add → getCandidateForms list with Delete */}
       {openQuickAdd && (

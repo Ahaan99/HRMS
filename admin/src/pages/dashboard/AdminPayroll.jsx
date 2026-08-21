@@ -141,52 +141,74 @@ export default function AdminPayroll() {
               {autoResult.message}
             </p>
             {Array.isArray(autoResult.results) &&
-              autoResult.results.length > 0 && (
-                <div className="overflow-auto max-h-[60vh]">
+              autoResult.results.filter((r) => !r.skipped).length > 0 && (
+                <div className="overflow-auto max-h-[60vh] rounded-xl border border-gray-100">
                   <table className="min-w-[700px] w-full text-xs">
                     <thead className="sticky top-0 z-10 bg-gray-50">
                       <tr>
-                        <th className="px-2 py-1.5 text-left">Employee</th>
-                        <th className="px-2 py-1.5 text-right">Paid days</th>
-                        <th className="px-2 py-1.5 text-right">Absent days</th>
-                        <th className="px-2 py-1.5 text-right">Gross</th>
-                        <th className="px-2 py-1.5 text-right">PF</th>
-                        <th className="px-2 py-1.5 text-right">ESIC</th>
-                        <th className="px-2 py-1.5 text-right">Net</th>
-                        <th className="px-2 py-1.5 text-left">Note</th>
+                        <th className="px-3 py-2 text-left">Employee</th>
+                        <th className="px-3 py-2 text-right">Paid days</th>
+                        <th className="px-3 py-2 text-right">Absent days</th>
+                        <th className="px-3 py-2 text-right">Gross</th>
+                        <th className="px-3 py-2 text-right">PF</th>
+                        <th className="px-3 py-2 text-right">ESIC</th>
+                        <th className="px-3 py-2 text-right">Net</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {autoResult.results.map((r, i) => (
-                        <tr key={i} className="border-t">
-                          <td className="px-2 py-1.5">
-                            {r.name} ({r.employeeCode})
-                          </td>
-                          <td className="px-2 py-1.5 text-right">
-                            {r.skipped ? "-" : r.paidDays}
-                          </td>
-                          <td className="px-2 py-1.5 text-right">
-                            {r.skipped ? "-" : r.absentDays}
-                          </td>
-                          <td className="px-2 py-1.5 text-right">
-                            {r.skipped ? "-" : `₹${Number(r.gross).toFixed(2)}`}
-                          </td>
-                          <td className="px-2 py-1.5 text-right">
-                            {r.skipped ? "-" : `₹${Number(r.pf).toFixed(2)}`}
-                          </td>
-                          <td className="px-2 py-1.5 text-right">
-                            {r.skipped ? "-" : `₹${Number(r.esic).toFixed(2)}`}
-                          </td>
-                          <td className="px-2 py-1.5 text-right font-semibold">
-                            {r.skipped ? "-" : `₹${Number(r.net).toFixed(2)}`}
-                          </td>
-                          <td className="px-2 py-1.5 text-gray-500">
-                            {r.skipped ? r.reason : ""}
-                          </td>
-                        </tr>
-                      ))}
+                      {autoResult.results
+                        .filter((r) => !r.skipped)
+                        .map((r, i) => (
+                          <tr key={i} className="border-t">
+                            <td className="px-3 py-2">
+                              {r.name} ({r.employeeCode})
+                            </td>
+                            <td className="px-3 py-2 text-right">
+                              {r.paidDays}
+                            </td>
+                            <td className="px-3 py-2 text-right">
+                              {r.absentDays}
+                            </td>
+                            <td className="px-3 py-2 text-right">
+                              {`₹${Number(r.gross).toFixed(2)}`}
+                            </td>
+                            <td className="px-3 py-2 text-right">
+                              {`₹${Number(r.pf).toFixed(2)}`}
+                            </td>
+                            <td className="px-3 py-2 text-right">
+                              {`₹${Number(r.esic).toFixed(2)}`}
+                            </td>
+                            <td className="px-3 py-2 text-right font-semibold">
+                              {`₹${Number(r.net).toFixed(2)}`}
+                            </td>
+                          </tr>
+                        ))}
                     </tbody>
                   </table>
+                </div>
+              )}
+
+            {Array.isArray(autoResult.results) &&
+              autoResult.results.filter((r) => r.skipped).length > 0 && (
+                <div className="mt-3 bg-amber-50 border border-amber-200 rounded-xl p-3">
+                  <p className="text-xs font-semibold text-amber-800 mb-2">
+                    Skipped (
+                    {autoResult.results.filter((r) => r.skipped).length}) —{" "}
+                    {autoResult.results.find((r) => r.skipped)?.reason ||
+                      "already processed"}
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {autoResult.results
+                      .filter((r) => r.skipped)
+                      .map((r, i) => (
+                        <span
+                          key={i}
+                          className="inline-flex items-center bg-white border border-amber-200 text-amber-700 text-xs px-2.5 py-1 rounded-lg"
+                        >
+                          {r.name} ({r.employeeCode})
+                        </span>
+                      ))}
+                  </div>
                 </div>
               )}
           </div>

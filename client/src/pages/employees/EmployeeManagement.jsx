@@ -128,17 +128,17 @@ export default function EmployeeManagement() {
   // ============================
   const departmentOptions = [
     { value: 0, label: "Select Department" },
-    ...departments.map((d) => ({ value: d.id, label: `${d.id} - ${d.name}` })),
+    ...departments.map((d) => ({ value: d.id, label: d.name })),
   ];
 
   const designationOptions = [
     { value: 0, label: "Select Designation" },
-    ...designations.map((d) => ({ value: d.id, label: `${d.id} - ${d.name}` })),
+    ...designations.map((d) => ({ value: d.id, label: d.name })),
   ];
 
   const statusOptions = statuses.map((s) => ({
     value: s.id,
-    label: `${s.id} - ${s.name}`,
+    label: s.name,
   }));
 
   const deptFilterOptions = [
@@ -397,11 +397,11 @@ const openEditModal = (emp) => {
                       </td>
 
                       <td className="px-5 py-4 text-gray-700 whitespace-nowrap">
-                        {e.departmentId} - {deptName}
+                        {deptName}
                       </td>
 
                       <td className="px-5 py-4 text-gray-700 whitespace-nowrap">
-                        {e.designationId} - {desigName}
+                        {desigName}
                       </td>
 
                       <td className="px-5 py-4 text-gray-700 whitespace-nowrap">
@@ -414,7 +414,7 @@ const openEditModal = (emp) => {
 
                       <td className="px-5 py-4 whitespace-nowrap">
                         <span className="px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-800">
-                          {e.statusId} - {statusName}
+                          {statusName}
                         </span>
                       </td>
 

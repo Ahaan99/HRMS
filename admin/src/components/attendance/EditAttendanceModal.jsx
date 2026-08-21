@@ -55,7 +55,7 @@ export default function EditAttendanceModal({
 
   const statusOptions = statusList.map((s) => ({
     value: s.id,
-    label: `${s.id} - ${s.name}`,
+    label: s.name,
   }));
 
   const update = (key, val) => setForm((p) => ({ ...p, [key]: val }));

@@ -353,19 +353,30 @@ export default function MyEOD() {
 
       {/* CREATE / EDIT MODAL */}
       {openModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b">
-              <h2 className="text-2xl font-bold">
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6">
+          <div className="bg-white rounded-2xl w-full max-w-xl max-h-[85vh] overflow-y-auto shadow-2xl">
+            <div className="sticky top-0 z-10 bg-white px-6 py-4 border-b flex items-center justify-between">
+              <h2 className="text-xl font-bold">
                 {editId
                   ? "Edit EOD"
                   : "Submit EOD"}
               </h2>
+              <button
+                type="button"
+                onClick={() => {
+                  setOpenModal(false);
+                  resetForm();
+                }}
+                className="w-9 h-9 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500"
+                aria-label="Close"
+              >
+                <XCircle size={18} />
+              </button>
             </div>
 
             <form
               onSubmit={handleSubmit}
-              className="p-6 space-y-5"
+              className="p-6 space-y-4"
             >
               <div>
                 <label className="block text-sm font-medium mb-1">
@@ -382,7 +393,7 @@ export default function MyEOD() {
                         e.target.value,
                     })
                   }
-                  className="w-full border rounded-xl px-4 py-3"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-gray-400"
                 />
               </div>
 
@@ -415,7 +426,7 @@ export default function MyEOD() {
                   </label>
 
                   <textarea
-                    rows={3}
+                    rows={2}
                     value={form[key]}
                     onChange={(e) =>
                       setForm({
@@ -424,7 +435,8 @@ export default function MyEOD() {
                           e.target.value,
                       })
                     }
-                    className="w-full border rounded-xl px-4 py-3 resize-none"
+                    placeholder={`Enter ${label.toLowerCase()}...`}
+                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-gray-400"
                   />
                 </div>
               ))}

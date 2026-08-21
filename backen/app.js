@@ -39,6 +39,7 @@ import superAdminCandidateStatusRoutes from "./modules/superAdmin/candidateStatu
 import adminJoiningRoutes from "./modules/superAdmin/joining/adminJoining.routes.js";
 import superAdminExitRoutes from "./modules/superAdmin/exit/superAdminExit.routes.js";
 import financeRoutes from "./modules/superAdmin/finance/finance.routes.js";
+import superAdminEmailRoutes from "./modules/superAdmin/email/email.routes.js";
 import leaveRoutes from "./modules/leave/leave.routes.js";
 import documentsRoutes from "./modules/documents/documents.routes.js";
 import { searchRouter, clientSearchRouter } from "./modules/search/search.routes.js";
@@ -238,6 +239,7 @@ app.use("/api/super-admin/attendance", superAdminAttendanceRoutes);
 app.use("/api/super-admin/login-settings", loginSettingsRoutes);
 app.use("/api/super-admin/policies", policiesRoutes);
 app.use("/api/super-admin/targets", targetsRoutes);
+app.use("/api/super-admin/email", superAdminEmailRoutes);
 
 app.use("/api/finance", financeRoutes);
 app.use("/api/leave", leaveRoutes);

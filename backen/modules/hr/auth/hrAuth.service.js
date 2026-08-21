@@ -8,11 +8,12 @@ export const loginHRService = async ({ email, password }) => {
     throw new Error("Email and password required");
   }
 
-  // 🔍 find HR employee
+  // find HR employee — must belong to the HR department
   const [rows] = await db.query(
-    `SELECT id, employeeCode, name, email, password_hash
-     FROM employees
-     WHERE email = ? AND isActive = 1
+    `SELECT e.id, e.employeeCode, e.name, e.email, e.password_hash
+     FROM employees e
+     JOIN departments dep ON dep.id = e.departmentId
+     WHERE e.email = ? AND e.isActive = 1 AND dep.name = 'HR'
      LIMIT 1`,
     [email],
   );
@@ -23,14 +24,8 @@ export const loginHRService = async ({ email, password }) => {
 
   const employee = rows[0];
 
-  // 👇 YAHAN ADD KARO DEBUG LOGS
-console.log("EMPLOYEE:", employee);
-console.log("PASSWORD HASH:", employee.password_hash);
-
-  // 🔐 compare password
+  // compare password (never log passwords or hashes)
   const isMatch = await bcrypt.compare(password, employee.password_hash);
-  console.log("ENTERED PASSWORD:", password);
-console.log("MATCH RESULT:", isMatch);
   if (!isMatch) {
     throw new Error("Invalid credentials");
   }

@@ -1,5 +1,18 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import {
+  CalendarCheck,
+  CalendarDays,
+  ClipboardList,
+  PartyPopper,
+  FileText,
+  Target,
+  BarChart3,
+  Award,
+  BookOpen,
+  Palmtree,
+  MessageSquare,
+} from "lucide-react";
 
 import EmployeeNavbar from "../../components/layout/EmployeeNavbar";
 import GeoPunchCard from "../../components/GeoPunchCard";
@@ -70,43 +83,43 @@ export default function Dashboard() {
     {
       title: "Work Assignment",
       path: "/assignments",
-      icon: "📝",
+      icon: <FileText size={22} />,
     },
 
     {
       title: "My Targets",
       path: "/targets",
-      icon: "🎯",
+      icon: <Target size={22} />,
     },
 
     {
       title: "EOD",
       path: "/eod",
-      icon: "📊",
+      icon: <BarChart3 size={22} />,
     },
 
     {
       title: "Performance",
       path: "/performance",
-      icon: "🏅",
+      icon: <Award size={22} />,
     },
 
     {
       title: "SOP Library",
       path: "/sops",
-      icon: "📚",
+      icon: <BookOpen size={22} />,
     },
 
     {
       title: "My Leave",
       path: "/leave",
-      icon: "🌴",
+      icon: <Palmtree size={22} />,
     },
 
     {
       title: "AI Chat",
       path: "/chat",
-      icon: "💬",
+      icon: <MessageSquare size={22} />,
     },
   ];
 
@@ -141,7 +154,7 @@ export default function Dashboard() {
               value={stats.leaveAvailable}
               subText="Days remaining this year"
               gradient="bg-gradient-to-tr from-emerald-500 to-teal-500"
-              icon="🌴"
+              icon={<Palmtree size={20} />}
             />
           </div>
           <div onClick={() => navigate("/leave")} className="cursor-pointer">
@@ -150,7 +163,7 @@ export default function Dashboard() {
               value={stats.leaveUsed}
               subText="Days taken this year"
               gradient="bg-gradient-to-tr from-amber-500 to-orange-500"
-              icon="📅"
+              icon={<CalendarDays size={20} />}
             />
           </div>
           <div
@@ -162,7 +175,7 @@ export default function Dashboard() {
               value={stats.pendingTasks}
               subText="Open work assignments"
               gradient="bg-gradient-to-tr from-indigo-500 to-purple-500"
-              icon="📝"
+              icon={<ClipboardList size={20} />}
             />
           </div>
           <div onClick={() => navigate("/leave")} className="cursor-pointer">
@@ -206,15 +219,14 @@ export default function Dashboard() {
               {/* ICON */}
               <div
                 className="
-                w-14 h-14
+                w-12 h-12
                 rounded-xl
                 flex items-center justify-center
-                text-2xl mb-4
-                bg-gradient-to-br
-                from-indigo-500
-                to-purple-500
-                text-white
-                group-hover:scale-110
+                mb-4
+                bg-gray-100
+                text-gray-700
+                group-hover:bg-gray-900
+                group-hover:text-white
                 transition
               "
               >

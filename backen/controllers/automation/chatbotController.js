@@ -324,9 +324,113 @@ const getConversations = asyncHandler(async (req, res) => {
   res.json({ success: true, data: { conversations: rows, page: parseInt(page), limit: parseInt(limit) } });
 });
 
-const getSettings = asyncHandler(async (req, res) => { res.json({ success: true, data: [] }); });
-const updateSettings = asyncHandler(async (req, res) => { res.json({ success: true, message: "Settings updated" }); });
-const getResponseTemplates = asyncHandler(async (req, res) => { res.json({ success: true, data: [] }); });
-const createResponseTemplate = asyncHandler(async (req, res) => { res.json({ success: true, message: "Template created" }); });
+// ---------- AI Chat settings (persisted, single row id=1) ----------
 
-export { sendMessage, getConversations, getSettings, updateSettings, getResponseTemplates, createResponseTemplate };
+const DEFAULT_SETTINGS = {
+  autoRespond: true,
+  humanHandoff: true,
+  responseTime: 3,
+  sentimentAnalysis: true,
+  language: "en",
+  workingHours: "9 AM - 6 PM",
+};
+
+const getSettings = asyncHandler(async (req, res) => {
+  const [rows] = await db.query("SELECT settings FROM chatbot_settings WHERE id = 1");
+  let settings = DEFAULT_SETTINGS;
+  if (rows.length) {
+    const raw = rows[0].settings;
+    settings = { ...DEFAULT_SETTINGS, ...(typeof raw === "string" ? JSON.parse(raw) : raw) };
+  }
+  res.json({ success: true, data: settings });
+});
+
+const updateSettings = asyncHandler(async (req, res) => {
+  const allowed = ["autoRespond", "humanHandoff", "responseTime", "sentimentAnalysis", "language", "workingHours"];
+  const clean = {};
+  for (const key of allowed) {
+    if (req.body[key] !== undefined) clean[key] = req.body[key];
+  }
+  const merged = { ...DEFAULT_SETTINGS, ...clean };
+  await db.query(
+    `INSERT INTO chatbot_settings (id, settings) VALUES (1, ?)
+     ON DUPLICATE KEY UPDATE settings = VALUES(settings)`,
+    [JSON.stringify(merged)]
+  );
+  res.json({ success: true, message: "Settings updated", data: merged });
+});
+
+// ---------- AI response templates (persisted CRUD) ----------
+
+const DEFAULT_TEMPLATES = [
+  ["client", "pricing", "Our pricing starts from $999/month for basic packages. Would you like me to share our detailed pricing brochure?", "pricing_inquiry"],
+  ["client", "demo", "I'd be happy to schedule a demo for you! Our team will reach out within 24 hours to confirm a suitable time.", "demo_request"],
+  ["client", "support", "Our support team is available 24/7. You can reach us at support@company.com or call our helpline.", "support_request"],
+  ["candidate", "jobs", "We're currently hiring! Please check our careers page for open positions. Which role interests you?", "job_inquiry"],
+  ["candidate", "interview", "Your interview has been scheduled. You'll receive a confirmation email with all details within 24 hours.", "interview_info"],
+  ["candidate", "status", "Your application is under review. We'll update you within 5-7 working days.", "application_status"],
+  ["sales", "lead", "New lead assigned! Check your CRM dashboard for full details. Remember to follow up within 24 hours.", "lead_assigned"],
+  ["sales", "target", "You're currently at 75% of your monthly target. Keep up the great work! Need help with any deals?", "target_progress"],
+  ["sales", "commission", "Your commission structure: 5% on deals up to $10K, 8% on $10K-$50K, 12% on $50K+. View detailed breakdown in your dashboard.", "commission_info"],
+];
+
+const getResponseTemplates = asyncHandler(async (req, res) => {
+  // lazy-seed defaults on first use so the UI is never empty
+  const [[{ cnt }]] = await db.query("SELECT COUNT(*) AS cnt FROM chatbot_templates");
+  if (cnt === 0) {
+    await db.query(
+      "INSERT INTO chatbot_templates (category, keyword, response, intent) VALUES ?",
+      [DEFAULT_TEMPLATES]
+    );
+  }
+  const [rows] = await db.query("SELECT * FROM chatbot_templates ORDER BY category, id");
+  res.json({ success: true, data: rows });
+});
+
+const createResponseTemplate = asyncHandler(async (req, res) => {
+  const { category, keyword, response, intent } = req.body;
+  if (!category || !keyword || !response) {
+    return res.status(400).json({ success: false, message: "category, keyword and response are required" });
+  }
+  const [result] = await db.query(
+    "INSERT INTO chatbot_templates (category, keyword, response, intent) VALUES (?, ?, ?, ?)",
+    [category, keyword, response, intent || null]
+  );
+  res.status(201).json({ success: true, message: "Template created", data: { id: result.insertId } });
+});
+
+const updateResponseTemplate = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { category, keyword, response, intent } = req.body;
+  if (!category || !keyword || !response) {
+    return res.status(400).json({ success: false, message: "category, keyword and response are required" });
+  }
+  const [result] = await db.query(
+    "UPDATE chatbot_templates SET category = ?, keyword = ?, response = ?, intent = ? WHERE id = ?",
+    [category, keyword, response, intent || null, id]
+  );
+  if (result.affectedRows === 0) {
+    return res.status(404).json({ success: false, message: "Template not found" });
+  }
+  res.json({ success: true, message: "Template updated" });
+});
+
+const deleteResponseTemplate = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const [result] = await db.query("DELETE FROM chatbot_templates WHERE id = ?", [id]);
+  if (result.affectedRows === 0) {
+    return res.status(404).json({ success: false, message: "Template not found" });
+  }
+  res.json({ success: true, message: "Template deleted" });
+});
+
+export {
+  sendMessage,
+  getConversations,
+  getSettings,
+  updateSettings,
+  getResponseTemplates,
+  createResponseTemplate,
+  updateResponseTemplate,
+  deleteResponseTemplate,
+};

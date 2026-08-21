@@ -44,8 +44,8 @@ export default function ChatPage() {
   const fmt = (d) => new Date(d).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
   return (
-    <div className="h-[calc(100vh-80px)] flex flex-col p-4">
-      <div className="flex-1 flex flex-col bg-white rounded-2xl shadow border border-gray-100 overflow-hidden">
+    <div className="h-[calc(100vh-80px)] flex flex-col items-center p-4 bg-gray-50">
+      <div className="flex-1 flex flex-col w-full max-w-3xl min-h-0 bg-white rounded-2xl shadow border border-gray-100 overflow-hidden">
         <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-4 flex items-center gap-3">
           <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
             <Bot className="text-white" size={22} />

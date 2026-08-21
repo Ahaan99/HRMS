@@ -40,6 +40,10 @@ const PERFORMANCE_CRITERIA = [
   { id: "adaptability", name: "Adaptability", maxScore: 10 },
 ];
 
+const DEFAULT_SCORES = Object.fromEntries(
+  PERFORMANCE_CRITERIA.map((c) => [c.id, 5]),
+);
+
 const DEPARTMENTS = [
   { id: 0, name: "All Departments" },
   { id: 1, name: "Engineering" },
@@ -117,7 +121,7 @@ export default function PerformanceSheet() {
     employeeName: "",
     department: "",
     period: dayjs().format("YYYY-MM"),
-    scores: {},
+    scores: { ...DEFAULT_SCORES },
     remarks: "",
     overallRating: 0,
   });
@@ -206,7 +210,7 @@ export default function PerformanceSheet() {
       employeeName: record.employeeName,
       department: record.department,
       period: record.period,
-      scores: { ...record.scores },
+      scores: { ...DEFAULT_SCORES, ...record.scores },
       remarks: record.remarks,
       overallRating: record.avgScore,
     });
@@ -301,7 +305,7 @@ export default function PerformanceSheet() {
       employeeName: "",
       department: "",
       period: dayjs().format("YYYY-MM"),
-      scores: {},
+      scores: { ...DEFAULT_SCORES },
       remarks: "",
       overallRating: 0,
     });
@@ -364,19 +368,19 @@ export default function PerformanceSheet() {
           color="bg-blue-50 text-blue-600"
         />
         <StatCard
-          title="Excellent (Green)"
+          title="Excellent"
           value={stats.excellent}
           icon={<CheckCircle size={20} />}
           color="bg-green-50 text-green-600"
         />
         <StatCard
-          title="Good (Yellow)"
+          title="Good"
           value={stats.good}
           icon={<AlertCircle size={20} />}
           color="bg-yellow-50 text-yellow-600"
         />
         <StatCard
-          title="Needs Improvement (Red)"
+          title="Needs Improvement"
           value={stats.needsImprovement}
           icon={<XCircle size={20} />}
           color="bg-red-50 text-red-600"

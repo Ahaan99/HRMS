@@ -171,11 +171,115 @@ export default function AIChatHub() {
     workingHours: "9 AM - 6 PM",
   });
 
+  const [templates, setTemplates] = useState([]);
+  const [templatesLoading, setTemplatesLoading] = useState(false);
+  const [templateModalOpen, setTemplateModalOpen] = useState(false);
+  const [editingTemplate, setEditingTemplate] = useState(null);
+  const [templateForm, setTemplateForm] = useState({
+    category: "client",
+    keyword: "",
+    response: "",
+    intent: "",
+  });
+  const [savingSettings, setSavingSettings] = useState(false);
+
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
     loadConversations();
   }, [activeChannel]);
+
+  useEffect(() => {
+    loadTemplates();
+    loadSettings();
+  }, []);
+
+  const loadTemplates = async () => {
+    try {
+      setTemplatesLoading(true);
+      const res = await API.get("/automation/chatbot/templates");
+      setTemplates(res.data?.data || []);
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to load templates");
+    } finally {
+      setTemplatesLoading(false);
+    }
+  };
+
+  const loadSettings = async () => {
+    try {
+      const res = await API.get("/automation/chatbot/settings");
+      if (res.data?.data && !Array.isArray(res.data.data)) {
+        setAISettings((prev) => ({ ...prev, ...res.data.data }));
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const saveSettings = async () => {
+    try {
+      setSavingSettings(true);
+      await API.put("/automation/chatbot/settings", aiSettings);
+      toast.success("AI Settings saved successfully!");
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to save settings");
+    } finally {
+      setSavingSettings(false);
+    }
+  };
+
+  const openAddTemplate = () => {
+    setEditingTemplate(null);
+    setTemplateForm({ category: activeChannel, keyword: "", response: "", intent: "" });
+    setTemplateModalOpen(true);
+  };
+
+  const openEditTemplate = (template) => {
+    setEditingTemplate(template);
+    setTemplateForm({
+      category: template.category,
+      keyword: template.keyword,
+      response: template.response,
+      intent: template.intent || "",
+    });
+    setTemplateModalOpen(true);
+  };
+
+  const saveTemplate = async () => {
+    if (!templateForm.keyword.trim() || !templateForm.response.trim()) {
+      toast.error("Keyword and response are required");
+      return;
+    }
+    try {
+      if (editingTemplate) {
+        await API.put(`/automation/chatbot/templates/${editingTemplate.id}`, templateForm);
+        toast.success("Template updated");
+      } else {
+        await API.post("/automation/chatbot/templates", templateForm);
+        toast.success("Template created");
+      }
+      setTemplateModalOpen(false);
+      await loadTemplates();
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to save template");
+    }
+  };
+
+  const removeTemplate = async (template) => {
+    if (!window.confirm(`Delete template "${template.keyword}"?`)) return;
+    try {
+      await API.delete(`/automation/chatbot/templates/${template.id}`);
+      toast.success("Template deleted");
+      await loadTemplates();
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to delete template");
+    }
+  };
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -560,41 +664,60 @@ const handleSendMessage = async () => {
           <div className="bg-white rounded-2xl shadow border border-gray-100 p-6">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-bold text-gray-900">AI Response Templates</h3>
-              <button className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-xl font-medium hover:bg-gray-800 transition">
+              <button
+                onClick={openAddTemplate}
+                className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-xl font-medium hover:bg-gray-800 transition"
+              >
                 <Plus size={18} />
                 Add Template
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {AI_RESPONSE_TEMPLATES.map((template) => {
-                const channel = AI_CHANNELS[template.category];
-                const ChannelIcon = channel.icon;
-                return (
-                  <div key={template.id} className={`border border-gray-200 rounded-xl p-4 hover:border-gray-300 transition`}>
-                    <div className="flex items-center justify-between mb-3">
-                      <div className={`flex items-center gap-2 px-2 py-1 rounded-lg ${channel.color}`}>
-                        <ChannelIcon size={14} />
-                        <span className="text-xs font-medium capitalize">{template.category}</span>
+            {templatesLoading ? (
+              <div className="py-12 text-center text-gray-400">Loading templates...</div>
+            ) : templates.length === 0 ? (
+              <div className="py-12 text-center text-gray-400">
+                No templates yet. Click "Add Template" to create one.
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {templates.map((template) => {
+                  const channel = AI_CHANNELS[template.category] || AI_CHANNELS.client;
+                  const ChannelIcon = channel.icon;
+                  return (
+                    <div key={template.id} className={`border border-gray-200 rounded-xl p-4 hover:border-gray-300 transition`}>
+                      <div className="flex items-center justify-between mb-3">
+                        <div className={`flex items-center gap-2 px-2 py-1 rounded-lg ${channel.color}`}>
+                          <ChannelIcon size={14} />
+                          <span className="text-xs font-medium capitalize">{template.category}</span>
+                        </div>
+                        <div className="flex gap-1">
+                          <button
+                            onClick={() => openEditTemplate(template)}
+                            className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded"
+                            aria-label="Edit template"
+                          >
+                            <Edit2 size={14} />
+                          </button>
+                          <button
+                            onClick={() => removeTemplate(template)}
+                            className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded"
+                            aria-label="Delete template"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
                       </div>
-                      <div className="flex gap-1">
-                        <button className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded">
-                          <Edit2 size={14} />
-                        </button>
-                        <button className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded">
-                          <Trash2 size={14} />
-                        </button>
+                      <p className="text-sm font-medium text-gray-900 mb-1">Keyword: "{template.keyword}"</p>
+                      <p className="text-sm text-gray-600 line-clamp-3">{template.response}</p>
+                      <div className="mt-3 pt-3 border-t border-gray-100">
+                        <span className="text-xs text-gray-400">Intent: {template.intent || "—"}</span>
                       </div>
                     </div>
-                    <p className="text-sm font-medium text-gray-900 mb-1">Keyword: "{template.keyword}"</p>
-                    <p className="text-sm text-gray-600 line-clamp-3">{template.response}</p>
-                    <div className="mt-3 pt-3 border-t border-gray-100">
-                      <span className="text-xs text-gray-400">Intent: {template.intent}</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -738,12 +861,94 @@ const handleSendMessage = async () => {
 
           <div className="mt-6 pt-6 border-t border-gray-100 flex justify-end">
             <button
-              onClick={() => toast.success("AI Settings saved successfully!")}
-              className="flex items-center gap-2 px-6 py-2.5 bg-black text-white rounded-xl font-semibold hover:bg-gray-800 transition"
+              onClick={saveSettings}
+              disabled={savingSettings}
+              className="flex items-center gap-2 px-6 py-2.5 bg-black text-white rounded-xl font-semibold hover:bg-gray-800 transition disabled:opacity-50"
             >
               <Save size={18} />
-              Save Settings
+              {savingSettings ? "Saving..." : "Save Settings"}
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Add / Edit Template Modal */}
+      {templateModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-gray-900">
+                {editingTemplate ? "Edit Template" : "Add Template"}
+              </h3>
+              <button
+                onClick={() => setTemplateModalOpen(false)}
+                className="p-1 text-gray-400 hover:text-gray-600 rounded"
+                aria-label="Close"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                <select
+                  value={templateForm.category}
+                  onChange={(e) => setTemplateForm((f) => ({ ...f, category: e.target.value }))}
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/10"
+                >
+                  <option value="client">Client</option>
+                  <option value="candidate">Candidate</option>
+                  <option value="sales">Sales</option>
+                  <option value="employee">Employee</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Keyword</label>
+                <input
+                  type="text"
+                  value={templateForm.keyword}
+                  onChange={(e) => setTemplateForm((f) => ({ ...f, keyword: e.target.value }))}
+                  placeholder='e.g. "pricing"'
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/10"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Response</label>
+                <textarea
+                  rows={4}
+                  value={templateForm.response}
+                  onChange={(e) => setTemplateForm((f) => ({ ...f, response: e.target.value }))}
+                  placeholder="The AI's reply when this keyword is detected"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/10"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Intent (optional)</label>
+                <input
+                  type="text"
+                  value={templateForm.intent}
+                  onChange={(e) => setTemplateForm((f) => ({ ...f, intent: e.target.value }))}
+                  placeholder="e.g. pricing_inquiry"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/10"
+                />
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                onClick={() => setTemplateModalOpen(false)}
+                className="px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={saveTemplate}
+                className="px-4 py-2 bg-black text-white rounded-xl text-sm font-semibold hover:bg-gray-800 transition"
+              >
+                {editingTemplate ? "Save Changes" : "Create Template"}
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -1,3 +1,4 @@
+import PageHero from "../../components/common/PageHero";
 import { useEffect, useState } from "react";
 import { getAllInterviews } from "../../services/interviewService";
 import AdminInterviewTable from "../../components/Interview/AdminInterviewTable";
@@ -58,18 +59,17 @@ export default function JoinedCandidates() {
     <div className="p-4 sm:p-6 space-y-6 w-full">
 
       {/* PAGE HEADER */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div className="flex items-center gap-3.5">
-          <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl shrink-0 shadow-sm border border-emerald-100/50">
-            <Users size={22} />
-          </div>
-          <div>
-            <h1 className="text-xl font-bold tracking-tight text-slate-900">Joined Candidates</h1>
-            <p className="text-xs font-medium text-slate-400 mt-0.5">View all candidates who have successfully joined.</p>
-          </div>
-        </div>
-        <ExportButton data={rows} filename="joined-candidates" className="self-start md:self-auto" />
-      </div>
+      <PageHero
+        title="Joined Candidates"
+        subtitle="View all candidates who have successfully joined"
+        chips={[
+          {
+            icon: <Users size={12} />,
+            label: `${rows.length} ${rows.length === 1 ? "Candidate" : "Candidates"}`,
+          },
+        ]}
+        actions={<ExportButton data={rows} filename="joined-candidates" />}
+      />
 
       {/* FILTERS */}
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">

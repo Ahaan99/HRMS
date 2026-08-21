@@ -1,8 +1,362 @@
 {
- "reports": [],
- "proctor_logs": [],
- "candidates": [],
+ "reports": [
+  {
+   "candidate_id": 139694,
+   "generated_at": "2026-08-17T06:19:56.512Z",
+   "interview_score": 25,
+   "communication": 50,
+   "answers_count": 1,
+   "meaningful_answers": 1,
+   "incomplete": true,
+   "avg_answer_words": 6,
+   "skill_scores": [
+    {
+     "skill": "React",
+     "score": 30
+    },
+    {
+     "skill": "MERN",
+     "score": 30
+    },
+    {
+     "skill": "Python",
+     "score": 30
+    }
+   ],
+   "duration_sec": 351,
+   "recommendation": {
+    "composite": 41,
+    "verdict": "INCOMPLETE — RE-INTERVIEW NEEDED",
+    "cls": "amber",
+    "emoji": "⚠️",
+    "components": [
+     {
+      "name": "AI Interview Performance",
+      "w": 0.45,
+      "v": 25
+     },
+     {
+      "name": "Communication",
+      "w": 0.15,
+      "v": 50
+     }
+    ],
+    "reasons": [
+     "Only 1 meaningful answers captured — session likely hit mic/echo issues, schedule a re-interview",
+     "Weak ai interview performance (25%)",
+     "Weak communication (50%)",
+     "Clean proctoring record — 100% integrity ✅"
+    ],
+    "integrity": 100
+   }
+  },
+  {
+   "candidate_id": 872578,
+   "generated_at": "2026-08-17T07:13:13.549Z",
+   "interview_score": 66,
+   "communication": 90,
+   "answers_count": 1,
+   "meaningful_answers": 1,
+   "incomplete": true,
+   "avg_answer_words": 80,
+   "skill_scores": [
+    {
+     "skill": "React",
+     "score": 66
+    },
+    {
+     "skill": "MERN",
+     "score": 54
+    },
+    {
+     "skill": "Python",
+     "score": 54
+    }
+   ],
+   "duration_sec": 184,
+   "recommendation": {
+    "composite": 76,
+    "verdict": "INCOMPLETE — RE-INTERVIEW NEEDED",
+    "cls": "amber",
+    "emoji": "⚠️",
+    "components": [
+     {
+      "name": "AI Interview Performance",
+      "w": 0.45,
+      "v": 66
+     },
+     {
+      "name": "Communication",
+      "w": 0.15,
+      "v": 90
+     }
+    ],
+    "reasons": [
+     "Only 1 meaningful answers captured — session likely hit mic/echo issues, schedule a re-interview",
+     "Decent ai interview performance (66%)",
+     "Strong communication (90%)",
+     "Clean proctoring record — 100% integrity ✅"
+    ],
+    "integrity": 100
+   }
+  },
+  {
+   "candidate_id": 632075,
+   "generated_at": "2026-08-17T07:33:14.571Z",
+   "interview_score": 50,
+   "communication": 90,
+   "answers_count": 1,
+   "meaningful_answers": 1,
+   "incomplete": true,
+   "avg_answer_words": 42,
+   "skill_scores": [
+    {
+     "skill": "React",
+     "score": 38
+    },
+    {
+     "skill": "MERN",
+     "score": 38
+    },
+    {
+     "skill": "Python",
+     "score": 38
+    }
+   ],
+   "duration_sec": 191,
+   "recommendation": {
+    "composite": 60,
+    "verdict": "INCOMPLETE — RE-INTERVIEW NEEDED",
+    "cls": "amber",
+    "emoji": "⚠️",
+    "components": [
+     {
+      "name": "AI Interview Performance",
+      "w": 0.45,
+      "v": 50
+     },
+     {
+      "name": "Communication",
+      "w": 0.15,
+      "v": 90
+     }
+    ],
+    "reasons": [
+     "Only 1 meaningful answers captured — session likely hit mic/echo issues, schedule a re-interview",
+     "Weak ai interview performance (50%)",
+     "Strong communication (90%)"
+    ],
+    "integrity": 62
+   }
+  },
+  {
+   "candidate_id": 857287,
+   "generated_at": "2026-08-17T07:56:41.699Z",
+   "interview_score": 49,
+   "communication": 90,
+   "answers_count": 9,
+   "meaningful_answers": 9,
+   "incomplete": false,
+   "avg_answer_words": 58,
+   "skill_scores": [
+    {
+     "skill": "React",
+     "score": 65
+    },
+    {
+     "skill": "MERN",
+     "score": 37
+    },
+    {
+     "skill": "Python",
+     "score": 37
+    }
+   ],
+   "duration_sec": 623,
+   "recommendation": {
+    "composite": 59,
+    "verdict": "CONSIDER / HOLD",
+    "cls": "amber",
+    "emoji": "🤔",
+    "components": [
+     {
+      "name": "AI Interview Performance",
+      "w": 0.45,
+      "v": 49
+     },
+     {
+      "name": "Communication",
+      "w": 0.15,
+      "v": 90
+     }
+    ],
+    "reasons": [
+     "Weak ai interview performance (49%)",
+     "Strong communication (90%)"
+    ],
+    "integrity": 62
+   }
+  }
+ ],
+ "proctor_logs": [
+  {
+   "candidate_id": 139694,
+   "at": "2026-08-17T06:45:41.285Z",
+   "integrity": 100,
+   "warnings": 0,
+   "terminated": false,
+   "eye_tracking": "unavailable",
+   "face_consistency": "verified same person",
+   "speech_seconds": 0,
+   "violations": [],
+   "events": [
+    {
+     "type": "tech_monitor",
+     "detail": "technical monitoring active",
+     "at": "2026-08-17T06:45:08.772Z"
+    },
+    {
+     "type": "audio_monitor",
+     "detail": "speaker detection active",
+     "at": "2026-08-17T06:45:11.306Z"
+    },
+    {
+     "type": "face_enrolled",
+     "detail": "identity baseline captured",
+     "at": "2026-08-17T06:45:16.580Z"
+    }
+   ]
+  },
+  {
+   "candidate_id": 872578,
+   "at": "2026-08-17T07:27:37.684Z",
+   "integrity": 100,
+   "warnings": 0,
+   "terminated": false,
+   "eye_tracking": "unavailable",
+   "face_consistency": "verified same person",
+   "speech_seconds": 0,
+   "violations": [],
+   "events": [
+    {
+     "type": "tech_monitor",
+     "detail": "technical monitoring active",
+     "at": "2026-08-17T07:27:05.212Z"
+    },
+    {
+     "type": "audio_monitor",
+     "detail": "speaker detection active",
+     "at": "2026-08-17T07:27:07.751Z"
+    },
+    {
+     "type": "face_enrolled",
+     "detail": "identity baseline captured",
+     "at": "2026-08-17T07:27:13.085Z"
+    }
+   ]
+  },
+  {
+   "candidate_id": 632075,
+   "at": "2026-08-17T07:33:14.570Z",
+   "integrity": 62,
+   "warnings": 2,
+   "terminated": false,
+   "eye_tracking": "unavailable",
+   "face_consistency": "verified same person",
+   "speech_seconds": 44,
+   "violations": [
+    {
+     "type": "tab_switch",
+     "at": "2026-08-17T07:32:53.646Z"
+    },
+    {
+     "type": "tab_switch",
+     "at": "2026-08-17T07:33:08.464Z"
+    }
+   ],
+   "events": [
+    {
+     "type": "tech_monitor",
+     "detail": "technical monitoring active",
+     "at": "2026-08-17T07:30:04.174Z"
+    },
+    {
+     "type": "audio_monitor",
+     "detail": "speaker detection active",
+     "at": "2026-08-17T07:30:06.708Z"
+    },
+    {
+     "type": "face_enrolled",
+     "detail": "identity baseline captured",
+     "at": "2026-08-17T07:30:11.083Z"
+    },
+    {
+     "type": "background_voice",
+     "detail": "sustained voice during robot question",
+     "at": "2026-08-17T07:32:57.109Z"
+    }
+   ]
+  },
+  {
+   "candidate_id": 857287,
+   "at": "2026-08-17T07:56:41.698Z",
+   "integrity": 62,
+   "warnings": 2,
+   "terminated": false,
+   "eye_tracking": "unavailable",
+   "face_consistency": "verified same person",
+   "speech_seconds": 174,
+   "violations": [
+    {
+     "type": "tab_switch",
+     "at": "2026-08-17T07:47:09.310Z"
+    },
+    {
+     "type": "tab_switch",
+     "at": "2026-08-17T07:56:34.025Z"
+    }
+   ],
+   "events": [
+    {
+     "type": "tech_monitor",
+     "detail": "technical monitoring active",
+     "at": "2026-08-17T07:46:20.095Z"
+    },
+    {
+     "type": "audio_monitor",
+     "detail": "speaker detection active",
+     "at": "2026-08-17T07:46:22.628Z"
+    },
+    {
+     "type": "face_enrolled",
+     "detail": "identity baseline captured",
+     "at": "2026-08-17T07:46:27.732Z"
+    },
+    {
+     "type": "background_voice",
+     "detail": "sustained voice during robot question",
+     "at": "2026-08-17T07:56:37.633Z"
+    }
+   ]
+  }
+ ],
+ "candidates": [
+  {
+   "id": 593861,
+   "name": "Phabindra Kumar Sah",
+   "email": "aha@gmail.com",
+   "phone": "+919992785583",
+   "position_title": "Product Manager",
+   "experience_years": 2,
+   "skills": [
+    "React",
+    "MERN",
+    "Python"
+   ],
+   "status": "pending"
+  }
+ ],
  "schedules": [],
  "config": {},
- "synced_at": "2026-08-18T13:50:14.398119Z"
+ "synced_at": "2026-08-21T09:35:25.530029Z"
 }

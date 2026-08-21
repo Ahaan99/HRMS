@@ -96,26 +96,26 @@ const handleJoinedChange = async (id, joined, joining_date, selection_date) => {
         <h2 className="text-lg font-semibold">{table}</h2>
 
         {!hideButtons && (
-          <div className="flex gap-2">
-            <button
-              onClick={() => setOpenModal(true)}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm"
-            >
-              + Schedule Interview
-            </button>
-
+          <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setOpenLangModal(true)}
-              className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm"
+              className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-600 shadow-sm transition hover:bg-gray-50 hover:text-gray-900"
             >
               + Language
             </button>
 
             <button
               onClick={() => setOpenLocModal(true)}
-              className="px-4 py-2 bg-orange-600 text-white rounded-lg text-sm"
+              className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-600 shadow-sm transition hover:bg-gray-50 hover:text-gray-900"
             >
               + Location
+            </button>
+
+            <button
+              onClick={() => setOpenModal(true)}
+              className="rounded-xl bg-gray-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800"
+            >
+              + Schedule Interview
             </button>
           </div>
         )}
@@ -242,8 +242,21 @@ const handleJoinedChange = async (id, joined, joining_date, selection_date) => {
 
             {!localRows.length && (
               <tr>
-                <td colSpan="17" className="text-center p-6 text-gray-500">
-                  No interviews found
+                <td colSpan="17" className="px-6 py-16 text-center">
+                  <div className="mx-auto flex max-w-xs flex-col items-center">
+                    <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 text-gray-400">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <rect x="3" y="4" width="18" height="18" rx="2" />
+                        <path d="M16 2v4M8 2v4M3 10h18" />
+                      </svg>
+                    </div>
+                    <p className="text-sm font-semibold text-gray-900">
+                      No interviews yet
+                    </p>
+                    <p className="mt-1 text-sm text-gray-500">
+                      Scheduled interviews will appear here.
+                    </p>
+                  </div>
                 </td>
               </tr>
             )}

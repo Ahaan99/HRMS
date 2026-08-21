@@ -140,7 +140,7 @@ export default function AIChatbot() {
         <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-6">
           {fresh ? (
             /* ═══ welcome / empty state ═══ */
-            <div className="mx-auto flex h-full max-w-2xl flex-col justify-center py-4">
+            <div className="mx-auto flex min-h-full max-w-2xl flex-col justify-center py-4">
               <div className="text-center">
                 <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#0b1220] text-white shadow-[0_10px_28px_-10px_rgba(11,18,32,0.5)]">
                   <Bot size={26} />

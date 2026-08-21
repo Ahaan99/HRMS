@@ -11,14 +11,16 @@ export default function Dashboard() {
     departments: 0,
     clients: 0,
   });
+  const [activity, setActivity] = useState([]);
 
   const navigate = useNavigate();
   const fetchDashboardStats = async () => {
     try {
-      const [empRes, deptRes, clientRes] = await Promise.all([
+      const [empRes, deptRes, clientRes, interviewRes] = await Promise.all([
         API.get("/super-admin/employees"),
         API.get("/super-admin/departments"),
         API.get("/super-admin/clients"),
+        API.get("/super-admin/interviews").catch(() => null),
       ]);
 
       const employees = empRes?.data?.employees || [];
@@ -29,6 +31,8 @@ export default function Dashboard() {
         clientRes?.data?.data ||
         clientRes?.data ||
         [];
+      const interviews =
+        interviewRes?.data?.data || interviewRes?.data?.interviews || [];
 
       // ✅ HR = departmentId === 1
       const hrCount = employees.filter(
@@ -41,6 +45,49 @@ export default function Dashboard() {
         departments: departments.length,
         clients: Array.isArray(clients) ? clients.length : 0,
       });
+
+      // Build real recent activity from latest records
+      const events = [];
+      const ts = (r) => new Date(r?.createdAt || r?.updatedAt || 0).getTime();
+
+      [...employees]
+        .sort((a, b) => ts(b) - ts(a))
+        .slice(0, 3)
+        .forEach((e) =>
+          events.push({
+            time: ts(e),
+            text: `Employee added: ${e.name || e.fullName || e.email || "—"}`,
+          }),
+        );
+
+      (Array.isArray(clients) ? [...clients] : [])
+        .sort((a, b) => ts(b) - ts(a))
+        .slice(0, 2)
+        .forEach((c) =>
+          events.push({
+            time: ts(c),
+            text: `Client registered: ${c.companyName || c.name || c.email || "—"}`,
+          }),
+        );
+
+      (Array.isArray(interviews) ? [...interviews] : [])
+        .sort((a, b) => ts(b) - ts(a))
+        .slice(0, 2)
+        .forEach((iv) =>
+          events.push({
+            time: ts(iv),
+            text: `Interview scheduled: ${
+              iv.candidateName || iv.candidate?.fullName || "candidate"
+            }${iv.date ? ` on ${iv.date}` : ""}`,
+          }),
+        );
+
+      setActivity(
+        events
+          .sort((a, b) => b.time - a.time)
+          .slice(0, 6)
+          .map((e) => e.text),
+      );
     } catch (err) {
       console.error(`Dashboard stats error: ${err}`);
     }
@@ -117,19 +164,20 @@ export default function Dashboard() {
         </p>
 
         <div className="mt-4 sm:mt-5 space-y-2 sm:space-y-3">
-          {[
-            "New HR account created: hr_manager@company.com",
-            "Department added: Marketing",
-            "Employee onboarding completed: EMP-2041",
-            "Payroll cycle started for February",
-          ].map((item, idx) => (
-            <div
-              key={idx}
-              className="px-3.5 py-3 rounded-xl bg-[#f7f8fb] border border-[#e6e9f0] text-[#33405c] text-xs sm:text-sm break-words"
-            >
-              {item}
+          {activity.length === 0 ? (
+            <div className="px-3.5 py-6 rounded-xl bg-[#f7f8fb] border border-[#e6e9f0] text-[#7b8698] text-xs sm:text-sm text-center">
+              No recent activity yet.
             </div>
-          ))}
+          ) : (
+            activity.map((item, idx) => (
+              <div
+                key={idx}
+                className="px-3.5 py-3 rounded-xl bg-[#f7f8fb] border border-[#e6e9f0] text-[#33405c] text-xs sm:text-sm break-words"
+              >
+                {item}
+              </div>
+            ))
+          )}
         </div>
       </div>
 
@@ -158,7 +206,7 @@ export default function Dashboard() {
             },
             {
               label: "Create Admin User",
-              to: "/dashboard/client-management",
+              to: "/users",
               glass:
                 "bg-gradient-to-r from-[#22c55e]/15 to-[#84cc16]/15 border-[#16a34a]/30 text-[#15803d] hover:from-[#22c55e]/25 hover:to-[#84cc16]/25 hover:border-[#16a34a]/50",
             },

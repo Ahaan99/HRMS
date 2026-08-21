@@ -80,7 +80,7 @@ export default function AddAttendanceModal({
   // =========================
   const statusOptions = statusList.map((s) => ({
     value: s.id,
-    label: `${s.id} - ${s.name}`,
+    label: s.name,
   }));
 
   // =========================

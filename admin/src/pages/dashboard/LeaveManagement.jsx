@@ -1,3 +1,4 @@
+import PageHero from "../../components/common/PageHero";
 import { useEffect, useState, useCallback } from "react";
 import { leaveService } from "../../services/leaveService";
 import ExportButton from "../../components/common/ExportButton";
@@ -185,27 +186,26 @@ export default function LeaveManagement() {
   return (
     <div className="space-y-5">
       {/* ── header ── */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#0b1220] text-white">
-            <CalendarDays size={20} />
-          </div>
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#7b8698]">
-              People Ops
-            </p>
-            <h1 className="text-xl font-bold tracking-tight text-[#0b1220]">Leave Management</h1>
-            <p className="mt-0.5 text-sm text-[#7b8698]">
-              Applications, balances, holiday calendar, comp-offs and leave types
-            </p>
-          </div>
-        </div>
-        <ExportButton
-          data={exportData}
-          filename={`leave-${tab.toLowerCase().replace(/\s/g, "-")}`}
-          className="self-start md:self-auto"
-        />
-      </div>
+      <PageHero
+        title="Leave Management"
+        subtitle="Applications, balances, holiday calendar, comp-offs and leave types"
+        chips={[
+          ...(pendingCount > 0
+            ? [
+                {
+                  icon: <CalendarDays size={12} />,
+                  label: `${pendingCount} Pending ${pendingCount === 1 ? "Application" : "Applications"}`,
+                },
+              ]
+            : []),
+        ]}
+        actions={
+          <ExportButton
+            data={exportData}
+            filename={`leave-${tab.toLowerCase().replace(/\s/g, "-")}`}
+          />
+        }
+      />
 
       {/* ── segmented tabs ── */}
       <div className="inline-flex max-w-full flex-wrap gap-1 rounded-xl border border-[#e6e9f0] bg-[#f0f2f7] p-1">

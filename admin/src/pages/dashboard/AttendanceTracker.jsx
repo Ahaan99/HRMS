@@ -1,3 +1,4 @@
+import PageHero from "../../components/common/PageHero";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -202,32 +203,28 @@ export default function AttendanceTracker() {
   return (
     <div className="space-y-5">
       {/* ── header ── */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#0b1220] text-white">
-            <ClipboardCheck size={20} />
-          </div>
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#7b8698]">
-              People Ops
-            </p>
-            <h1 className="text-xl font-bold tracking-tight text-[#0b1220]">
-              Attendance Tracker
-            </h1>
-            <p className="mt-0.5 text-sm text-[#7b8698]">
-              Manage and monitor employee attendance
-            </p>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2.5">
-          <button onClick={() => setOpenAdd(true)} className="btn-premium">
-            <Plus size={15} />
-            Add Attendance
-          </button>
-          <ExportButton data={filteredRecords} filename="attendance" />
-        </div>
-      </div>
+      <PageHero
+        title="Attendance Tracker"
+        subtitle="Manage and monitor employee attendance"
+        chips={[
+          {
+            icon: <ClipboardCheck size={12} />,
+            label: `${records.length} ${records.length === 1 ? "Record" : "Records"}`,
+          },
+        ]}
+        actions={
+          <>
+            <ExportButton data={filteredRecords} filename="attendance" />
+            <button
+              onClick={() => setOpenAdd(true)}
+              className="inline-flex items-center gap-2 bg-white text-indigo-700 hover:bg-indigo-50 font-semibold px-5 py-2.5 rounded-xl shadow-sm transition-colors"
+            >
+              <Plus size={15} />
+              Add Attendance
+            </button>
+          </>
+        }
+      />
 
       {/* ── status summary strip ── */}
       <div className="flex flex-wrap gap-2">

@@ -3,7 +3,7 @@ import { getAttendance, checkIn, checkOut, getWorkSchedule, updateWorkSchedule }
 import { getPerformance, calculatePerformance, getPerformanceReports, getEmployeePerformance, getPerformanceMetrics, createPerformanceMetric, updatePerformanceMetric } from "../../controllers/automation/performanceController.js";
 import { getPolicies, createPolicy, updatePolicy, deletePolicy, sendPolicyEmail, getPolicyLogs } from "../../controllers/automation/policyController.js";
 import { getTargets, createTarget, updateTarget, getAssignments, createAssignment, updateAssignment, submitEodReport, getEodReports, getDashboardStats } from "../../controllers/automation/workController.js";
-import { sendMessage, getConversations, getSettings, updateSettings, getResponseTemplates, createResponseTemplate } from "../../controllers/automation/chatbotController.js";
+import { sendMessage, getConversations, getSettings, updateSettings, getResponseTemplates, createResponseTemplate, updateResponseTemplate, deleteResponseTemplate } from "../../controllers/automation/chatbotController.js";
 import { createTicket, getTickets, updateTicket, getTicketStats } from "../../controllers/automation/supportController.js";
 import { submitClientRating, submitCandidateRating, getRatingAnalytics } from "../../controllers/automation/ratingController.js";
 import { blacklistCandidate, getBlacklist, appealBlacklist, checkBlacklist } from "../../controllers/automation/blacklistController.js";
@@ -53,6 +53,8 @@ router.get("/chatbot/settings", protect(), getSettings);
 router.put("/chatbot/settings", protect(), updateSettings);
 router.get("/chatbot/templates", protect(), getResponseTemplates);
 router.post("/chatbot/templates", protect(), createResponseTemplate);
+router.put("/chatbot/templates/:id", protect(), updateResponseTemplate);
+router.delete("/chatbot/templates/:id", protect(), deleteResponseTemplate);
 
 // Support Routes
 router.get("/support/tickets", protect(), getTickets);

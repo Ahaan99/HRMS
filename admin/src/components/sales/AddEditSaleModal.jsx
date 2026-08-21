@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { X, IndianRupee, CalendarDays, CreditCard, FileText, Loader2 } from "lucide-react";
 
 const initialForm = {
   client_code: "",
@@ -16,27 +17,37 @@ const initialForm = {
   remarks: "",
 };
 
+const fieldClass =
+  "w-full rounded-xl border border-gray-200 bg-gray-50/50 px-3.5 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 transition focus:border-gray-900 focus:bg-white focus:outline-none focus:ring-4 focus:ring-gray-900/5";
+
 const Label = ({ children, required }) => (
-  <label className="text-sm font-medium text-gray-700">
-    {children} {required && <span className="text-red-500">*</span>}
+  <label className="mb-1.5 block text-[13px] font-medium text-gray-600">
+    {children}
+    {required && <span className="ml-0.5 text-red-500">*</span>}
   </label>
 );
 
-const AddEditSaleModal = ({
-  isOpen,
-  onClose,
-  editingSale,
-  refresh,
-  BASE_URL,
-  token,
-}) => {
+const SectionTitle = ({ icon: Icon, children }) => (
+  <div className="col-span-2 mt-1 flex items-center gap-2">
+    <span className="flex h-6 w-6 items-center justify-center rounded-md bg-gray-100 text-gray-500">
+      <Icon size={13} />
+    </span>
+    <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+      {children}
+    </span>
+    <span className="h-px flex-1 bg-gray-100" />
+  </div>
+);
+
+const AddEditSaleModal = ({ isOpen, onClose, editingSale, refresh, BASE_URL, token }) => {
   const [form, setForm] = useState(initialForm);
+  const [saving, setSaving] = useState(false);
   const isEdit = !!editingSale;
 
   useEffect(() => {
     if (editingSale) setForm(editingSale);
     else setForm(initialForm);
-  }, [editingSale]);
+  }, [editingSale, isOpen]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -44,177 +55,245 @@ const AddEditSaleModal = ({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      const config = {
-        headers: { Authorization: `Bearer ${token}` },
-      };
-
+      setSaving(true);
+      const config = { headers: { Authorization: `Bearer ${token}` } };
       if (isEdit) {
-        await axios.put(
-          `${BASE_URL}/super-admin/sales/${editingSale.id}`,
-          form,
-          config,
-        );
+        await axios.put(`${BASE_URL}/super-admin/sales/${editingSale.id}`, form, config);
       } else {
         await axios.post(`${BASE_URL}/super-admin/sales`, form, config);
       }
-
       refresh();
       onClose();
     } catch (err) {
       console.error("Sale save error:", err);
       alert("Failed to save sale");
+    } finally {
+      setSaving(false);
     }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
-      <div className="bg-white rounded-2xl p-6 w-full max-w-2xl">
-        <h2 className="text-xl font-semibold mb-4">
-          {isEdit ? "Edit Sale" : "Add Sale"}
-        </h2>
-
-        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-3">
-          <div className="flex flex-col gap-1">
-            <Label required>Client Code</Label>
-            <input
-              name="client_code"
-              value={form.client_code}
-              onChange={handleChange}
-              className="input"
-              required
-            />
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 p-4 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/5"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label={isEdit ? "Edit Sale" : "Add Sale"}
+      >
+        {/* Header */}
+        <div className="flex items-start justify-between border-b border-gray-100 px-6 py-5">
+          <div>
+            <h2 className="text-lg font-bold text-gray-900">
+              {isEdit ? "Edit Sale" : "Add Sale"}
+            </h2>
+            <p className="mt-0.5 text-sm text-gray-500">
+              {isEdit
+                ? "Update the subscription details for this client."
+                : "Record a new subscription sale for a client."}
+            </p>
           </div>
-          <div className="flex flex-col gap-1">
-            <Label required>Plan name</Label>
-
-            <input
-              name="plan_name"
-              placeholder="Plan Name"
-              value={form.plan_name}
-              onChange={handleChange}
-              className="input"
-              required
-            />
-          </div>
-
-          <select
-            name="billing_months"
-            value={form.billing_months}
-            onChange={handleChange}
-            className="input"
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-lg p-1.5 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600"
+            aria-label="Close"
           >
-            {Array.from({ length: 12 }, (_, i) => (
-              <option key={i + 1} value={i + 1}>
-                {i + 1} Month
-              </option>
-            ))}
-          </select>
+            <X size={18} />
+          </button>
+        </div>
 
-          <input
-            name="amount"
-            type="number"
-            placeholder="Amount"
-            value={form.amount}
-            onChange={handleChange}
-            className="input"
-            required
-          />
-          <input
-            name="amount_paid"
-            type="number"
-            placeholder="Amount Paid"
-            value={form.amount_paid}
-            onChange={handleChange}
-            className="input"
-          />
+        {/* Body */}
+        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
+          <div className="grid flex-1 grid-cols-2 gap-x-4 gap-y-4 overflow-y-auto px-6 py-5">
+            <SectionTitle icon={FileText}>Client & Plan</SectionTitle>
 
-          <select
-            name="payment_status"
-            value={form.payment_status}
-            onChange={handleChange}
-            className="input"
-          >
-            <option value="paid">Paid</option>
-            <option value="partial">Partial</option>
-            <option value="unpaid">Unpaid</option>
-          </select>
+            <div>
+              <Label required>Client Code</Label>
+              <input
+                name="client_code"
+                value={form.client_code}
+                onChange={handleChange}
+                placeholder="e.g. CL-1024"
+                className={fieldClass}
+                required
+              />
+            </div>
+            <div>
+              <Label required>Plan Name</Label>
+              <input
+                name="plan_name"
+                value={form.plan_name}
+                onChange={handleChange}
+                placeholder="e.g. Premium Annual"
+                className={fieldClass}
+                required
+              />
+            </div>
+            <div>
+              <Label>Billing Period</Label>
+              <select
+                name="billing_months"
+                value={form.billing_months}
+                onChange={handleChange}
+                className={fieldClass}
+              >
+                {Array.from({ length: 12 }, (_, i) => (
+                  <option key={i + 1} value={i + 1}>
+                    {i + 1} {i === 0 ? "Month" : "Months"}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <Label>Subscription Status</Label>
+              <select
+                name="subscription_status"
+                value={form.subscription_status}
+                onChange={handleChange}
+                className={fieldClass}
+              >
+                <option value="active">Active</option>
+                <option value="expired">Expired</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
 
-          <select
-            name="payment_method"
-            value={form.payment_method}
-            onChange={handleChange}
-            className="input"
-          >
-            <option value="online">Online</option>
-            <option value="cash">Cash</option>
-          </select>
+            <SectionTitle icon={CreditCard}>Payment</SectionTitle>
 
-          {/* Purchase Date */}
-          <div className="flex flex-col gap-1">
-            <Label required>Purchase Date</Label>
-            <input
-              name="purchase_date"
-              type="date"
-              value={form.purchase_date}
-              onChange={handleChange}
-              className="input"
-              required
-            />
+            <div>
+              <Label required>Amount</Label>
+              <div className="relative">
+                <IndianRupee
+                  size={14}
+                  className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"
+                />
+                <input
+                  name="amount"
+                  type="number"
+                  min="0"
+                  value={form.amount}
+                  onChange={handleChange}
+                  placeholder="0"
+                  className={`${fieldClass} pl-9`}
+                  required
+                />
+              </div>
+            </div>
+            <div>
+              <Label>Amount Paid</Label>
+              <div className="relative">
+                <IndianRupee
+                  size={14}
+                  className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"
+                />
+                <input
+                  name="amount_paid"
+                  type="number"
+                  min="0"
+                  value={form.amount_paid}
+                  onChange={handleChange}
+                  placeholder="0"
+                  className={`${fieldClass} pl-9`}
+                />
+              </div>
+            </div>
+            <div>
+              <Label>Payment Status</Label>
+              <select
+                name="payment_status"
+                value={form.payment_status}
+                onChange={handleChange}
+                className={fieldClass}
+              >
+                <option value="paid">Paid</option>
+                <option value="partial">Partial</option>
+                <option value="unpaid">Unpaid</option>
+              </select>
+            </div>
+            <div>
+              <Label>Payment Method</Label>
+              <select
+                name="payment_method"
+                value={form.payment_method}
+                onChange={handleChange}
+                className={fieldClass}
+              >
+                <option value="online">Online</option>
+                <option value="cash">Cash</option>
+              </select>
+            </div>
+
+            <SectionTitle icon={CalendarDays}>Dates</SectionTitle>
+
+            <div>
+              <Label required>Purchase Date</Label>
+              <input
+                name="purchase_date"
+                type="date"
+                value={form.purchase_date}
+                onChange={handleChange}
+                className={fieldClass}
+                required
+              />
+            </div>
+            <div>
+              <Label required>Subscription Start</Label>
+              <input
+                name="start_date"
+                type="date"
+                value={form.start_date}
+                onChange={handleChange}
+                className={fieldClass}
+                required
+              />
+            </div>
+            <div className="col-span-2 sm:col-span-1">
+              <Label>Payment Due Date</Label>
+              <input
+                name="due_date"
+                type="date"
+                value={form.due_date}
+                onChange={handleChange}
+                className={fieldClass}
+              />
+            </div>
+
+            <div className="col-span-2">
+              <Label>Remarks</Label>
+              <textarea
+                name="remarks"
+                rows={3}
+                value={form.remarks}
+                onChange={handleChange}
+                placeholder="Optional notes about this sale..."
+                className={`${fieldClass} resize-none`}
+              />
+            </div>
           </div>
 
-          {/* Subscription Start */}
-          <div className="flex flex-col gap-1">
-            <Label required>Subscription Start</Label>
-            <input
-              name="start_date"
-              type="date"
-              value={form.start_date}
-              onChange={handleChange}
-              className="input"
-              required
-            />
-          </div>
-
-          {/* Payment Due Date */}
-          <div className="flex flex-col gap-1">
-            <Label required>Payment Due Date</Label>
-            <input
-              name="due_date"
-              type="date"
-              value={form.due_date}
-              onChange={handleChange}
-              className="input"
-            />
-          </div>
-          <select
-            name="subscription_status"
-            value={form.subscription_status}
-            onChange={handleChange}
-            className="input"
-          >
-            <option value="active">Active</option>
-            <option value="expired">Expired</option>
-            <option value="cancelled">Cancelled</option>
-          </select>
-
-          <textarea
-            name="remarks"
-            placeholder="Remarks"
-            value={form.remarks}
-            onChange={handleChange}
-            className="input col-span-2"
-          />
-
-          <div className="col-span-2 flex justify-end gap-2 mt-2">
-            <button type="button" onClick={onClose} className="btn-secondary">
+          {/* Footer */}
+          <div className="flex items-center justify-end gap-3 border-t border-gray-100 bg-gray-50/60 px-6 py-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900"
+            >
               Cancel
             </button>
-            <button type="submit" className="btn-primary">
-              {isEdit ? "Update" : "Create"}
+            <button
+              type="submit"
+              disabled={saving}
+              className="flex items-center gap-2 rounded-xl bg-gray-900 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 disabled:opacity-60"
+            >
+              {saving && <Loader2 size={15} className="animate-spin" />}
+              {saving ? "Saving..." : isEdit ? "Update Sale" : "Create Sale"}
             </button>
           </div>
         </form>

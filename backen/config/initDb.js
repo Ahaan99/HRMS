@@ -1792,5 +1792,60 @@ CREATE TABLE IF NOT EXISTS client_agreements (
     );
   `);
 
+  // ================================
+  // EMAIL TEMPLATES + LOGS (super admin email feature)
+  // ================================
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS email_templates (
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      template_name VARCHAR(200) NOT NULL,
+      subject VARCHAR(500) NOT NULL,
+      body TEXT NOT NULL,
+      category VARCHAR(100) DEFAULT 'general',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    )
+  `);
+
+  // ================================
+  // AI CHATBOT SETTINGS + TEMPLATES (AI Chat Hub)
+  // ================================
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS chatbot_settings (
+      id INT PRIMARY KEY,
+      settings JSON NOT NULL,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    )
+  `);
+
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS chatbot_templates (
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      category VARCHAR(50) NOT NULL,
+      keyword VARCHAR(200) NOT NULL,
+      response TEXT NOT NULL,
+      intent VARCHAR(100),
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      INDEX idx_tpl_category (category)
+    )
+  `);
+
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS email_logs (
+      id INT PRIMARY KEY AUTO_INCREMENT,
+      recipient_email VARCHAR(255) NOT NULL,
+      recipient_name VARCHAR(200),
+      subject VARCHAR(500),
+      body TEXT,
+      template_id INT NULL,
+      status ENUM('sent','failed') DEFAULT 'sent',
+      error_message TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      INDEX idx_email_status (status),
+      INDEX idx_email_created (created_at)
+    )
+  `);
+
   console.log("✅ Database initialized successfully");
 };

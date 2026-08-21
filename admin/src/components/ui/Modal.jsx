@@ -1,3 +1,6 @@
+import { createPortal } from "react-dom";
+import { X } from "lucide-react";
+
 export default function Modal({
   open,
   title,
@@ -7,35 +10,43 @@ export default function Modal({
 }) {
   if (!open) return null;
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Overlay */}
       <div
         onClick={onClose}
-        className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"
+        className="absolute inset-0 bg-gray-900/50 backdrop-blur-sm"
       />
 
       {/* Modal Box */}
       <div
-        className={`relative w-full ${width} bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden`}
+        className={`relative flex max-h-[90vh] w-full ${width} flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/5`}
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
       >
         {/* Header */}
-        <div className="p-5 border-b border-gray-100 flex items-center justify-between">
-          <h2 className="text-lg font-bold text-gray-900">{title}</h2>
+        <div className="flex shrink-0 items-center justify-between border-b border-gray-100 px-6 py-5">
+          <h2 className="text-lg font-bold tracking-tight text-gray-900">
+            {title}
+          </h2>
 
           <button
+            type="button"
             onClick={onClose}
-            className="w-10 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 transition font-bold"
+            className="rounded-lg p-1.5 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600"
+            aria-label="Close"
           >
-            ✕
+            <X size={18} />
           </button>
         </div>
 
-        {/* ✅ Body Scroll */}
-        <div className="p-5 max-h-[75vh] overflow-y-auto">
+        {/* Scrollable body */}
+        <div className="min-h-0 flex-1 overflow-y-auto px-6 py-5">
           {children}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

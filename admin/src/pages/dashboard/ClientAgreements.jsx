@@ -123,6 +123,12 @@ const handleTemplateUpload = async (e) => {
     .includes(searchTerm.toLowerCase())
 );
 
+const getPdfUrl = (path) => {
+  if (!path) return null;
+  if (path.startsWith("http")) return path;
+  return `${BASE}${path.startsWith("/") ? "" : "/"}${path}`;
+};
+
 const getExpiryStatus = (expiryDate) => {
   if (!expiryDate) return "active";
 
@@ -172,105 +178,121 @@ const expiringCount = agreements.filter(
     
     <div className="p-6 min-h-screen bg-gray-50">
       {/* HEADER */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-         <div className="bg-white p-4 rounded-2xl border mb-6">
-
-  <h2 className="font-semibold text-lg mb-3">
-    Upload Agreement Template (PDF)
-  </h2>
-
-  <form onSubmit={handleTemplateUpload} className="flex flex-col md:flex-row gap-3">
-
-    {/* TEMPLATE NAME */}
-    <input
-      type="text"
-      placeholder="Template Name"
-      value={templateName}
-      onChange={(e) => setTemplateName(e.target.value)}
-      className="border p-2 rounded-xl w-full"
-      required
-    />
-
-    {/* FILE */}
-    <input
-      type="file"
-      accept="application/pdf"
-      onChange={(e) => setTemplateFile(e.target.files[0])}
-      className="border p-2 rounded-xl w-full"
-      required
-    />
-
-    {/* BUTTON */}
-    <button
-      type="submit"
-      disabled={uploadingTemplate}
-      className="bg-indigo-600 text-white px-4 py-2 rounded-xl"
-    >
-      {uploadingTemplate ? "Uploading..." : "Upload Template"}
-    </button>
-
-  </form>
-</div>
-
+      <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-800">
-            Client Agreements
-          </h1>
-
-          <p className="text-gray-500 mt-1 text-sm">
-            Manage uploaded agreement PDFs
+          <h1 className="text-3xl font-bold text-gray-900">Client Agreements</h1>
+          <p className="mt-1 text-sm text-gray-500">
+            Manage uploaded agreement PDFs and templates
           </p>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button
-            className="flex items-center justify-center gap-2 px-5 py-3 bg-violet-600 hover:bg-violet-700 transition text-white rounded-2xl shadow-sm font-medium"
+            className="flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 hover:text-gray-900"
             onClick={() => setOpenGenerate(true)}
           >
-            <Plus size={18} />
+            <Plus size={16} />
             Generate Agreement
           </button>
           <button
-            className="flex items-center justify-center gap-2 px-5 py-3 bg-indigo-600 hover:bg-indigo-700 transition text-white rounded-2xl shadow-sm font-medium"
+            className="flex items-center justify-center gap-2 rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800"
             onClick={() => setOpenModal(true)}
           >
-            <Plus size={18} />
+            <Plus size={16} />
             Upload Agreement
           </button>
         </div>
       </div>
 
-<div className="mb-6">
-  <input
-    type="text"
-    placeholder="Search agreements..."
-    value={searchTerm}
-    onChange={(e) => setSearchTerm(e.target.value)}
-    className="w-full md:w-96 px-4 py-3 border border-gray-300 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-400"
-  />
-</div>
+      {/* UPLOAD TEMPLATE */}
+      <div className="mb-6 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+        <div className="mb-4 flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+            <FileText size={17} />
+          </div>
+          <div>
+            <h2 className="text-sm font-semibold text-gray-900">
+              Upload Agreement Template
+            </h2>
+            <p className="text-xs text-gray-500">
+              PDF templates used when generating agreements
+            </p>
+          </div>
+        </div>
 
-<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-  <div className="bg-red-100 border border-red-200 rounded-2xl p-4">
-    <h3 className="text-red-700 font-semibold">
-      Expired Agreements
-    </h3>
+        <form
+          onSubmit={handleTemplateUpload}
+          className="flex flex-col gap-3 md:flex-row md:items-center"
+        >
+          <input
+            type="text"
+            placeholder="Template name, e.g. Master Service Agreement"
+            value={templateName}
+            onChange={(e) => setTemplateName(e.target.value)}
+            className="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-3.5 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 transition focus:border-gray-900 focus:bg-white focus:outline-none focus:ring-4 focus:ring-gray-900/5"
+            required
+          />
 
-    <p className="text-3xl font-bold text-red-800">
-      {expiredCount}
-    </p>
-  </div>
+          <label className="flex w-full cursor-pointer items-center gap-2 rounded-xl border border-dashed border-gray-300 bg-gray-50/50 px-3.5 py-2.5 text-sm text-gray-500 transition hover:border-gray-400 hover:text-gray-700">
+            <FileText size={15} className="shrink-0 text-gray-400" />
+            <span className="truncate">
+              {templateFile ? templateFile.name : "Choose PDF file..."}
+            </span>
+            <input
+              type="file"
+              accept="application/pdf"
+              onChange={(e) => setTemplateFile(e.target.files[0])}
+              className="sr-only"
+              required
+            />
+          </label>
 
-  <div className="bg-yellow-100 border border-yellow-200 rounded-2xl p-4">
-    <h3 className="text-yellow-700 font-semibold">
-      Expiring Soon
-    </h3>
+          <button
+            type="submit"
+            disabled={uploadingTemplate}
+            className="shrink-0 rounded-xl bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 disabled:opacity-60"
+          >
+            {uploadingTemplate ? "Uploading..." : "Upload Template"}
+          </button>
+        </form>
+      </div>
 
-    <p className="text-3xl font-bold text-yellow-800">
-      {expiringCount}
-    </p>
-  </div>
-</div>
+      {/* SEARCH + STATS */}
+      <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-stretch">
+        <input
+          type="text"
+          placeholder="Search agreements..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 transition focus:border-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-900/5 lg:max-w-sm"
+        />
+
+        <div className="grid flex-1 grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                Expired Agreements
+              </p>
+              <p className="mt-1 text-2xl font-bold text-gray-900">{expiredCount}</p>
+            </div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-red-600">
+              <CalendarDays size={18} />
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                Expiring Soon
+              </p>
+              <p className="mt-1 text-2xl font-bold text-gray-900">{expiringCount}</p>
+            </div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+              <CalendarDays size={18} />
+            </div>
+          </div>
+        </div>
+      </div>
 
 
       {/* LOADING */}
@@ -419,33 +441,31 @@ const expiringCount = agreements.filter(
               )}
 
               {/* FOOTER */}
-              <div className="mt-6 flex items-center justify-between gap-3">
-                
-                
+              <div className="mt-6 flex items-center gap-2 border-t border-gray-100 pt-4">
                 <a
-                 href={item.agreement_pdf}
-
-                  
+                  href={getPdfUrl(item.agreement_pdf)}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-center gap-2 text-indigo-600 hover:text-indigo-800 font-medium text-sm"
+                  className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gray-900 px-3 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800"
                 >
-                  <ExternalLink size={17} />
+                  <ExternalLink size={15} />
                   View PDF
                 </a>
 
-<a
-  href={`${BASE}${item.agreement_pdf}`}
-  download
-  className="px-3 py-2 bg-green-100 text-green-700 rounded-xl text-sm"
->
-  Download PDF
-</a>
+                <a
+                  href={getPdfUrl(item.agreement_pdf)}
+                  download
+                  className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 hover:text-gray-900"
+                >
+                  Download PDF
+                </a>
+
                 <button
                   onClick={() => handleDelete(item.id)}
-                  className="w-11 h-11 rounded-2xl bg-red-50 hover:bg-red-100 transition flex items-center justify-center text-red-600"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-red-100 bg-red-50 text-red-600 transition hover:bg-red-100"
+                  aria-label="Delete agreement"
                 >
-                  <Trash2 size={18} />
+                  <Trash2 size={16} />
                 </button>
               </div>
             </div>

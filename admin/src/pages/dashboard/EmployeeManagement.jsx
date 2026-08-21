@@ -119,15 +119,15 @@ export default function EmployeeManagement() {
 
   const departmentOptions = [
     { value: 0, label: "Select Department" },
-    ...departments.map((d) => ({ value: d.id, label: `${d.id} - ${d.name}` })),
+    ...departments.map((d) => ({ value: d.id, label: d.name })),
   ];
 
   const designationOptions = [
     { value: 0, label: "Select Designation" },
-    ...designations.map((d) => ({ value: d.id, label: `${d.id} - ${d.name}` })),
+    ...designations.map((d) => ({ value: d.id, label: d.name })),
   ];
 
-  const statusOptions = statuses.map((s) => ({ value: s.id, label: `${s.id} - ${s.name}` }));
+  const statusOptions = statuses.map((s) => ({ value: s.id, label: s.name }));
   const deptFilterOptions = [{ value: 0, label: "All Departments" }, ...departments.map((d) => ({ value: d.id, label: d.name }))];
   const statusFilterOptions = [{ value: 0, label: "All Statuses" }, ...statuses.map((s) => ({ value: s.id, label: s.name }))];
 
