@@ -105,17 +105,22 @@ export default function FinanceDashboard() {
     <div className="p-6 space-y-8 bg-slate-50 min-h-screen text-slate-800">
       
       {/* HEADER SECTION */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl shadow-xs border border-slate-100">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Finance Dashboard</h1>
-          <p className="text-sm text-slate-500 mt-1">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 px-6 py-6 shadow-lg shadow-indigo-900/20 sm:px-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -right-12 -top-14 h-40 w-40 rounded-full bg-white/10" />
+          <div className="absolute -left-10 -bottom-16 h-36 w-36 rounded-full bg-white/5" />
+        </div>
+        <div className="relative z-10">
+          <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-indigo-300">Finance</p>
+          <h1 className="mt-1 text-2xl font-bold tracking-tight text-white">Finance Dashboard</h1>
+          <p className="text-sm text-indigo-200 mt-1">
             Track your company income, business expenses, and total profit margins.
           </p>
         </div>
 
         <button
           onClick={fetchData}
-          className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white font-medium rounded-xl shadow-xs hover:bg-indigo-700 active:scale-95 transition-all text-sm"
+          className="relative z-10 flex items-center gap-2 px-4 py-2.5 bg-white text-indigo-700 font-bold rounded-xl shadow-md shadow-indigo-950/20 hover:bg-indigo-50 active:scale-95 transition-all text-sm"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.253 8H18" />
@@ -127,7 +132,7 @@ export default function FinanceDashboard() {
       {/* KPI METRIC CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* REVENUE CARD */}
-        <div className="bg-white p-6 rounded-2xl shadow-xs border border-slate-100 relative overflow-hidden">
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 relative overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
           <div className="absolute top-0 left-0 w-full h-1 bg-emerald-500" />
           <div className="flex justify-between items-start">
             <div>
@@ -141,7 +146,7 @@ export default function FinanceDashboard() {
         </div>
 
         {/* EXPENSES CARD */}
-        <div className="bg-white p-6 rounded-2xl shadow-xs border border-slate-100 relative overflow-hidden">
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 relative overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
           <div className="absolute top-0 left-0 w-full h-1 bg-rose-500" />
           <div className="flex justify-between items-start">
             <div>
@@ -155,7 +160,7 @@ export default function FinanceDashboard() {
         </div>
 
         {/* NET PROFIT CARD */}
-        <div className="bg-white p-6 rounded-2xl shadow-xs border border-slate-100 relative overflow-hidden">
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 relative overflow-hidden transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
           <div className={`absolute top-0 left-0 w-full h-1 ${profit >= 0 ? 'bg-indigo-500' : 'bg-amber-500'}`} />
           <div className="flex justify-between items-start">
             <div>

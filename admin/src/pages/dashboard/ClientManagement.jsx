@@ -8,7 +8,7 @@ import {
 
 import ClientProfileDrawer from "../../components/clients/ClientProfileDrawer";
 import ClientForm from "../../components/clients/ClientForm";
-import PageHeader from "../../components/common/PageHeader";
+import PageHero from "../../components/common/PageHero";
 import ExportButton from "../../components/common/ExportButton";
 import ConfirmModal from "../../components/ui/ConfirmModal";
 import Modal from "../../components/ui/Modal";
@@ -211,22 +211,13 @@ export default function ClientManagement() {
   return (
     <div className="space-y-6 p-4 sm:p-6">
 
-      <div className="flex items-center gap-3">
-        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#0b1220] text-white">
-          <ShieldCheck size={20} />
-        </div>
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#7b8698]">
-            Accounts
-          </p>
-          <h1 className="text-xl font-bold tracking-tight text-[#0b1220]">
-            Client Directory
-          </h1>
-          <p className="mt-0.5 text-sm text-[#7b8698]">
-            Provision client platforms, manage feature modules and access
-          </p>
-        </div>
-      </div>
+      <PageHero
+        title="Client Directory"
+        subtitle="Provision client platforms, manage feature modules and access"
+        chips={[
+          { icon: <ShieldCheck size={12} />, label: `${filteredClients.length} Registered Accounts` },
+        ]}
+      />
 
       {/* ── Search + Buttons ── */}
       <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
@@ -270,15 +261,7 @@ export default function ClientManagement() {
         </div>
 
         {/* ✅ Single scroll div — both X and Y */}
-     <div
-  style={{
-    overflowX: "scroll",
-    overflowY: "auto", 
-    maxHeight: "65vh",
-    width: "100%",
-    display: "block",
-  }}
->
+        <div className="max-h-[65vh] w-full overflow-auto rounded-b-2xl">
           <table className="w-full text-left border-collapse min-w-[1100px]">
             <thead>
               <tr className="bg-slate-50/70 text-slate-500 text-xs font-semibold uppercase tracking-wider sticky top-0 border-b border-slate-100 backdrop-blur-md z-10">
@@ -436,7 +419,7 @@ export default function ClientManagement() {
               onChange={(val) => setForm((p) => ({ ...p, status: val ? "ACTIVE" : "INACTIVE" }))} />
           </div>
 
-          <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-3 sticky bottom-0 bg-white">
+          <div className="sticky bottom-0 z-10 -mx-6 -mb-5 mt-2 flex items-center justify-end gap-3 border-t border-slate-100 bg-white px-6 py-4">
             <button type="button" onClick={() => setOpenAdd(false)}
               className="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-200 font-semibold text-sm transition-colors">
               Cancel
@@ -519,7 +502,7 @@ export default function ClientManagement() {
               onChange={(val) => setForm((p) => ({ ...p, status: val ? "ACTIVE" : "INACTIVE" }))} />
           </div>
 
-          <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-3 sticky bottom-0 bg-white">
+          <div className="sticky bottom-0 z-10 -mx-6 -mb-5 mt-2 flex items-center justify-end gap-3 border-t border-slate-100 bg-white px-6 py-4">
             <button type="button" onClick={() => { setOpenEdit(false); setSelectedClient(null); }}
               className="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-200 font-semibold text-sm transition-colors">
               Cancel

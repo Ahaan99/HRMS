@@ -181,23 +181,28 @@ export default function Invoices() {
       />
 
       {/* HEADER */}
-      <div className="bg-white rounded-2xl shadow border border-gray-100 p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center">
-            <ReceiptIndianRupee className="text-blue-600" size={22} />
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 p-6 shadow-lg shadow-indigo-900/10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -right-14 -top-14 h-44 w-44 rounded-full bg-white/5" />
+          <div className="absolute -left-10 -bottom-16 h-36 w-36 rounded-full bg-white/5" />
+        </div>
+        <div className="relative flex items-center gap-3.5">
+          <div className="w-11 h-11 rounded-xl bg-white/10 ring-1 ring-white/20 flex items-center justify-center shrink-0">
+            <ReceiptIndianRupee className="text-white" size={22} />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Invoice Management</h1>
-            <p className="text-sm text-gray-500">
+            <p className="text-[11px] font-bold uppercase tracking-widest text-indigo-300">Billing</p>
+            <h1 className="text-xl font-bold text-white text-balance">Invoice Management</h1>
+            <p className="text-sm text-indigo-200 text-pretty">
               GST invoices, status tracking, due alerts, receipts and credit/debit notes.
             </p>
           </div>
         </div>
-        <div className="flex gap-3">
+        <div className="relative flex gap-3">
           <ExportButton data={tab === "Notes" ? notes : filtered} filename="invoices" />
           <button
             onClick={() => navigate("/create-invoice")}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-900 hover:bg-gray-800 text-white text-sm font-semibold"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-indigo-700 hover:bg-indigo-50 text-sm font-semibold shadow-sm transition-colors"
           >
             <Plus size={16} /> New Invoice
           </button>
@@ -218,7 +223,7 @@ export default function Invoices() {
 
       {/* DUE ALERTS */}
       {alertCount > 0 && (
-        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
+        <div className="rounded-2xl border border-amber-200/80 bg-gradient-to-r from-amber-50 to-orange-50/60 p-4 shadow-sm">
           <div className="flex items-center gap-2 font-semibold text-amber-800 text-sm mb-2">
             <AlertTriangle size={16} /> Payment Alerts ({alertCount})
           </div>
@@ -249,10 +254,10 @@ export default function Invoices() {
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`px-4 py-2 rounded-xl text-sm font-semibold ${
+            className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
               tab === t
-                ? "bg-gray-900 text-white"
-                : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
+                ? "bg-gray-900 text-white shadow-md shadow-gray-900/20"
+                : "bg-white text-gray-600 border border-gray-200 hover:border-gray-300 hover:bg-gray-50"
             }`}
           >
             {t === "Notes" ? `Credit/Debit Notes (${notes.length})` : `Invoices (${invoices.length})`}
@@ -262,7 +267,7 @@ export default function Invoices() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="ml-auto border border-gray-200 rounded-xl px-3 py-2 text-sm bg-white"
+            className="ml-auto border border-gray-200 rounded-xl px-3 py-2 text-sm bg-white shadow-sm outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10"
           >
             <option value="">All statuses</option>
             {STATUSES.map((s) => (
@@ -274,7 +279,7 @@ export default function Invoices() {
 
       {/* INVOICES TABLE */}
       {tab === "Invoices" && (
-        <div className="bg-white rounded-2xl shadow border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
           <div className="overflow-auto max-h-[60vh]">
             <table className="min-w-[1000px] w-full text-sm">
               <thead className="sticky top-0 z-10 bg-gray-50 text-gray-600">
@@ -385,7 +390,7 @@ export default function Invoices() {
 
       {/* NOTES TABLE */}
       {tab === "Notes" && (
-        <div className="bg-white rounded-2xl shadow border border-gray-100 overflow-auto max-h-[60vh]">
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-auto max-h-[60vh]">
           <table className="w-full text-sm">
             <thead className="sticky top-0 z-10 bg-gray-50 text-gray-600">
               <tr>

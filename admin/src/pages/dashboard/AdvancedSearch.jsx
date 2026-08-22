@@ -25,12 +25,12 @@ export default function AdvancedSearch() {
       .catch(() => {});
   }, []);
 
-  const run = useCallback(async (p = 1) => {
+  const run = useCallback(async (p = 1, f = null) => {
     setLoading(true);
     setError("");
     try {
       const params = { type, page: p, pageSize };
-      Object.entries(filters).forEach(([k, v]) => { if (v !== "") params[k] = v; });
+      Object.entries(f || filters).forEach(([k, v]) => { if (v !== "") params[k] = v; });
       const r = await API.get("/search/advanced", { params });
       setRows(r.data.data || []);
       setTotal(r.data.total || 0);
@@ -109,11 +109,11 @@ export default function AdvancedSearch() {
                 placeholder="Skill (e.g. React, Payroll)" className="text-sm border border-gray-200 rounded-lg px-3 py-2" />
             </>
           )}
-          <div className="flex gap-2">
+          <div className="flex gap-2 min-w-0">
             <input type="date" value={filters.joinedFrom} onChange={set("joinedFrom")}
-              className="flex-1 text-sm border border-gray-200 rounded-lg px-2 py-2" title="Joined from" />
+              className="flex-1 w-full min-w-0 text-sm border border-gray-200 rounded-lg px-2 py-2" title="Joined from" />
             <input type="date" value={filters.joinedTo} onChange={set("joinedTo")}
-              className="flex-1 text-sm border border-gray-200 rounded-lg px-2 py-2" title="Joined to" />
+              className="flex-1 w-full min-w-0 text-sm border border-gray-200 rounded-lg px-2 py-2" title="Joined to" />
           </div>
         </div>
         <div className="flex items-center gap-2 mt-4">
@@ -121,7 +121,7 @@ export default function AdvancedSearch() {
             className="inline-flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-lg bg-gray-900 text-white hover:bg-gray-700 disabled:opacity-50">
             <Search size={14} /> {loading ? "Searching..." : "Search"}
           </button>
-          <button type="button" onClick={() => { setFilters(EMPTY); }}
+          <button type="button" onClick={() => { setFilters(EMPTY); run(1, EMPTY); }}
             className="inline-flex items-center gap-1.5 text-sm font-medium px-3 py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50">
             <RotateCcw size={13} /> Reset
           </button>

@@ -1,5 +1,4 @@
 import { db } from "../../config/db.js";
-import { notifyEvent } from "../messaging/messaging.controller.js";
 
 /* ------------------------------------------------------------------ */
 const ensureTables = async () => {
@@ -101,13 +100,6 @@ export const runAlerts = async (_req, res) => {
   `);
   let sent = 0;
   for (const d of rows) {
-    if (d.notify_phone) {
-      await notifyEvent("doc_expiry", d.notify_phone, {
-        doc_name: d.doc_name,
-        expiry_date: new Date(d.expiry_date).toISOString().slice(0, 10),
-      });
-      sent++;
-    }
     await db.query(
       "UPDATE document_expiries SET last_alerted_at = NOW() WHERE id = ?",
       [d.id],

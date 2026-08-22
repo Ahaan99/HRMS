@@ -16,7 +16,6 @@ import AttendanceTracker from "../pages/dashboard/AttendanceTracker";
 import LeaveManagement from "../pages/dashboard/LeaveManagement";
 import HRDocuments from "../pages/dashboard/HRDocuments";
 import AdvancedSearch from "../pages/dashboard/AdvancedSearch";
-import MessagingCenter from "../pages/messaging/MessagingCenter";
 import JobBoardATS from "../pages/recruitment/JobBoardATS";
 import VisitorManagement from "../pages/visitors/VisitorManagement";
 import BranchManagement from "../pages/branches/BranchManagement";
@@ -106,7 +105,7 @@ export default function AppRoutes() {
           <Route path="/dashboard/leave-management" element={<LeaveManagement />} />
           <Route path="/dashboard/hr-documents" element={<HRDocuments />} />
           <Route path="/dashboard/advanced-search" element={<AdvancedSearch />} />
-          <Route path="/dashboard/messaging" element={<MessagingCenter />} />
+          
           <Route path="/dashboard/job-board" element={<JobBoardATS />} />
           <Route path="/dashboard/visitors" element={<VisitorManagement />} />
           <Route path="/dashboard/branches" element={<BranchManagement />} />

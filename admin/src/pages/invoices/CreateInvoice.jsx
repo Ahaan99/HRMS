@@ -121,16 +121,27 @@ export default function CreateInvoice() {
   return (
     <div className="mx-auto max-w-6xl p-4 sm:p-6 lg:p-8">
       {/* page header */}
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#7b8698]">
-            Billing
-          </p>
-          <h1 className="mt-1 text-xl font-bold tracking-tight text-[#0b1220] sm:text-2xl">
-            Create Invoice
-          </h1>
+      <div className="relative mb-6 overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 px-6 py-6 shadow-lg shadow-indigo-900/20 sm:px-8">
+        <div className="relative z-10 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-indigo-300">
+              Billing
+            </p>
+            <h1 className="mt-1 text-xl font-bold tracking-tight text-white sm:text-2xl">
+              Create Invoice
+            </h1>
+            <p className="mt-1 text-sm text-indigo-200">
+              Draft a GST-compliant invoice with a live preview.
+            </p>
+          </div>
+          <span className="rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-xs font-semibold text-white backdrop-blur-sm">
+            GST 18% &middot; CGST 9% + SGST 9%
+          </span>
         </div>
-        <span className="chip-premium bg-[#eef0fe] text-[#4f63f0]">GST 18% &middot; CGST 9% + SGST 9%</span>
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -right-12 -top-14 h-40 w-40 rounded-full bg-white/5" />
+          <div className="absolute -left-10 -bottom-16 h-36 w-36 rounded-full bg-white/5" />
+        </div>
       </div>
 
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">

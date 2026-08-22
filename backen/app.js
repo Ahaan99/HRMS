@@ -56,7 +56,6 @@ import webFormsRoutes from "./modules/webForms/webForms.routes.js";
 import aiRecruitRoutes from "./modules/aiRecruit/aiRecruit.routes.js";
 import notificationsRoutes from "./modules/notifications/notifications.routes.js";
 import otpAuthRoutes from "./modules/otpAuth/otpAuth.routes.js";
-import messagingRoutes from "./modules/messaging/messaging.routes.js";
 import assistantRoutes from "./modules/assistant/assistant.routes.js";
 import jobBoardRoutes from "./modules/jobBoard/jobBoard.routes.js";
 import visitorsRoutes from "./modules/visitors/visitors.routes.js";
@@ -259,7 +258,7 @@ app.use("/api/web-forms", webFormsRoutes);
 app.use("/api/ai-recruit", aiRecruitRoutes);
 app.use("/api/notifications", notificationsRoutes);
 app.use("/api/otp-auth", otpAuthRoutes);
-app.use("/api/messaging", messagingRoutes);
+
 app.use("/api/assistant", assistantRoutes);
 app.use("/api/job-board", jobBoardRoutes);
 app.use("/api/visitors", visitorsRoutes);

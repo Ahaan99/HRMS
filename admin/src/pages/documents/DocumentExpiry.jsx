@@ -23,7 +23,6 @@ export default function DocumentExpiry() {
     issue_date: "",
     expiry_date: "",
     remind_days: 30,
-    notify_phone: "",
   });
 
   const load = useCallback(async () => {
@@ -50,7 +49,7 @@ export default function DocumentExpiry() {
       setShowForm(false);
       setForm({
         doc_name: "", doc_type: "", entity_type: "COMPANY", entity_name: "",
-        issue_date: "", expiry_date: "", remind_days: 30, notify_phone: "",
+        issue_date: "", expiry_date: "", remind_days: 30,
       });
       load();
     } catch (e2) {
@@ -157,8 +156,6 @@ export default function DocumentExpiry() {
               onChange={(e) => setForm((f) => ({ ...f, remind_days: e.target.value }))}
               className="border border-gray-200 rounded-xl px-3 py-2 text-sm w-full" />
           </div>
-          <input value={form.notify_phone} onChange={(e) => setForm((f) => ({ ...f, notify_phone: e.target.value }))}
-            placeholder="Notify phone (SMS/WhatsApp)" className="border border-gray-200 rounded-xl px-3 py-2 text-sm" />
           <div className="md:col-span-4">
             <button className="px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700">
               Start tracking

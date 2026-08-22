@@ -284,7 +284,7 @@ export default function EmployeeManagement() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans flex flex-col md:flex-row antialiased -m-4 sm:-m-6">
+    <div className="bg-white text-slate-900 font-sans flex flex-col md:flex-row antialiased rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden min-h-[70vh]">
       
       {/* DESKTOP SIDEBAR */}
       <aside className={`bg-white border-r border-slate-200 transition-all duration-300 flex-col justify-between hidden md:flex shrink-0 ${sidebarOpen ? 'w-64' : 'w-20'}`}>
@@ -338,15 +338,17 @@ export default function EmployeeManagement() {
 
         <div className="space-y-6 w-full">
           {/* Main Title & Action Bar */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-2 gap-4">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 px-6 py-7 sm:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="pointer-events-none absolute -right-14 -top-14 h-44 w-44 rounded-full bg-white/10" />
+            <div className="pointer-events-none absolute -bottom-16 right-28 h-36 w-36 rounded-full bg-white/5" />
             <div>
-              <h1 className="text-2xl lg:text-3xl font-extrabold tracking-tight text-slate-900">
+              <h1 className="text-2xl lg:text-3xl font-extrabold tracking-tight text-white text-balance">
                 {activeTab === "dashboard" && "Workforce Overview"}
                 {activeTab === "directory" && "Employee Directory"}
                 {activeTab === "departments" && "Departments"}
                 {activeTab === "settings" && "Workspace Preferences"}
               </h1>
-              <p className="text-xs sm:text-sm text-slate-500 mt-1">
+              <p className="text-xs sm:text-sm text-indigo-200 mt-1.5 text-pretty">
                 {activeTab === "dashboard" && "Company-wide headcount, budget and recent joiners at a glance."}
                 {activeTab === "directory" && "Manage company staff members, status logs and system authorization credentials."}
                 {activeTab === "departments" && "Team composition, headcount and budget for every department."}
@@ -355,7 +357,7 @@ export default function EmployeeManagement() {
             </div>
             <div className={`flex-col sm:flex-row gap-3 shrink-0 ${activeTab === "directory" ? "flex" : "hidden"}`}>
               <ExportButton data={filteredEmployees} filename="employees" exclude={["profile_image"]} />
-              <button onClick={openAddModal} className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#4f63f0] hover:bg-[#3d4fd8] text-white text-sm font-semibold shadow-sm hover:shadow transition-all group">
+              <button onClick={openAddModal} className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white hover:bg-indigo-50 text-indigo-700 text-sm font-semibold shadow-sm hover:shadow transition-all group">
                 <svg className="w-4 h-4 group-hover:rotate-90 transition-transform duration-200" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
                 Add New Record
               </button>
@@ -365,21 +367,21 @@ export default function EmployeeManagement() {
           {/* Analytics Widgets */}
           {(activeTab === "dashboard" || activeTab === "directory") && (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-between">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Workforce</p>
                 <h3 className="text-2xl font-bold mt-1 text-slate-900">{employees.length}</h3>
               </div>
               <div className="p-3 bg-blue-50 text-blue-600 rounded-xl"><svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg></div>
             </div>
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-between">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Active Employees</p>
                 <h3 className="text-2xl font-bold mt-1 text-emerald-600">{activeCount}</h3>
               </div>
               <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl"><svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
             </div>
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-between">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Monthly Payroll</p>
                 <h3 className="text-2xl font-bold mt-1 text-slate-900">₹{totalSalaries.toLocaleString("en-IN")}</h3>

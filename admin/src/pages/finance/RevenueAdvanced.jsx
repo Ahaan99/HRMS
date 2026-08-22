@@ -88,23 +88,27 @@ export default function RevenueAdvanced() {
   return (
     <div className="p-6 space-y-6">
       {/* HEADER */}
-      <div className="bg-white rounded-2xl shadow border border-gray-100 p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl bg-emerald-50 flex items-center justify-center">
-            <TrendingUp className="text-emerald-600" size={22} />
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 shadow-lg shadow-indigo-900/20 p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 sm:px-8">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -right-12 -top-14 h-40 w-40 rounded-full bg-white/10" />
+          <div className="absolute -left-10 -bottom-16 h-36 w-36 rounded-full bg-white/5" />
+        </div>
+        <div className="relative z-10 flex items-center gap-3">
+          <div className="w-11 h-11 rounded-xl bg-white/10 ring-1 ring-white/20 backdrop-blur-sm flex items-center justify-center">
+            <TrendingUp className="text-white" size={22} />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Revenue Tracker — Advanced</h1>
-            <p className="text-sm text-gray-500">
+            <h1 className="text-xl font-bold text-white">Revenue Tracker — Advanced</h1>
+            <p className="text-sm text-indigo-200">
               Targets, collections, recruiter billing, profitability and conversion analytics.
             </p>
           </div>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="relative z-10 flex flex-wrap items-center gap-2">
           <select
             value={month}
             onChange={(e) => setMonth(Number(e.target.value))}
-            className="border border-gray-200 rounded-xl px-3 py-2 text-sm bg-white"
+            className="border-0 rounded-xl px-3 py-2 text-sm bg-white/95 text-slate-800 font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-white/60"
           >
             {MONTHS.map((m, i) => (
               <option key={m} value={i + 1}>
@@ -115,7 +119,7 @@ export default function RevenueAdvanced() {
           <select
             value={year}
             onChange={(e) => setYear(Number(e.target.value))}
-            className="border border-gray-200 rounded-xl px-3 py-2 text-sm bg-white"
+            className="border-0 rounded-xl px-3 py-2 text-sm bg-white/95 text-slate-800 font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-white/60"
           >
             {[year - 2, year - 1, year, year + 1]
               .filter((v, i, a) => a.indexOf(v) === i)
@@ -127,7 +131,7 @@ export default function RevenueAdvanced() {
           </select>
           <button
             onClick={() => setShowTargetModal(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-900 hover:bg-gray-800 text-white text-sm font-semibold"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-indigo-700 hover:bg-indigo-50 text-sm font-bold shadow-md shadow-indigo-950/20 active:scale-95 transition-all"
           >
             <Target size={15} /> Set Target
           </button>

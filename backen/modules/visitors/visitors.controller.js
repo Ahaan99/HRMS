@@ -1,5 +1,4 @@
 import { db } from "../../config/db.js";
-import { notifyEvent } from "../messaging/messaging.controller.js";
 
 /* ------------------------------------------------------------------ */
 const ensureTables = async () => {
@@ -48,14 +47,6 @@ export const checkIn = async (req, res) => {
       [name.trim(), phone || null, company || null, purpose.trim(),
        host_employee_id || null, hostName, badge],
     );
-
-    /* Notify the host via SMS/WhatsApp (simulation mode until keys set) */
-    if (hostPhone) {
-      notifyEvent("visitor_arrived", hostPhone, {
-        visitor_name: name.trim(),
-        purpose: purpose.trim(),
-      });
-    }
 
     res.status(201).json({
       success: true,

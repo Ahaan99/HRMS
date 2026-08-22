@@ -129,12 +129,6 @@ export default function Sidebar() {
             icon: <UserCheck size={18} />,
           },
           {
-            key: "messaging",
-            to: "/dashboard/messaging",
-            label: "WhatsApp / SMS",
-            icon: <MessageSquare size={18} />,
-          },
-          {
             key: "job-board",
             to: "/dashboard/job-board",
             label: "Job Board & ATS",

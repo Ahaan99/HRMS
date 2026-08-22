@@ -9,7 +9,7 @@
  */
 export default function PageHero({ title, subtitle, chips = [], actions }) {
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 p-6 sm:p-8 shadow-lg shadow-indigo-200 mb-6">
+    <div className="relative rounded-3xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 p-6 sm:p-8 shadow-lg shadow-indigo-200 mb-6">
       <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-5">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight text-balance">
@@ -39,8 +39,10 @@ export default function PageHero({ title, subtitle, chips = [], actions }) {
           </div>
         )}
       </div>
-      <div className="absolute -right-16 -top-16 w-64 h-64 rounded-full bg-white/5 pointer-events-none" />
-      <div className="absolute -right-4 -bottom-24 w-48 h-48 rounded-full bg-white/5 pointer-events-none" />
+      <div className="absolute inset-0 overflow-hidden rounded-3xl pointer-events-none">
+        <div className="absolute -right-16 -top-16 w-64 h-64 rounded-full bg-white/5" />
+        <div className="absolute -right-4 -bottom-24 w-48 h-48 rounded-full bg-white/5" />
+      </div>
     </div>
   );
 }

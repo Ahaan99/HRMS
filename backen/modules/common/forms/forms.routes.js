@@ -12,7 +12,7 @@ import { upload } from "../../../config/multer.js";
 const router = express.Router();
 
 // Public endpoints (no auth required for form submission)
-router.post("/client", submitClientForm);
+router.post("/client", upload.single("company_logo"), submitClientForm);
 router.post("/candidate", upload.single("resume"), submitCandidateForm);
 
 // Protected endpoints (optional - can add auth later)

@@ -148,7 +148,7 @@ export default function RevenueManagement() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-80">
-        <div className="animate-spin rounded-full h-10 w-10 border-4 border-emerald-500 border-t-transparent" />
+        <div className="animate-spin rounded-full h-10 w-10 border-4 border-indigo-500 border-t-transparent" />
       </div>
     );
   }
@@ -157,27 +157,34 @@ export default function RevenueManagement() {
     <div className="space-y-6">
       
       {/* HEADER SECTION PANEL */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gradient-to-r from-emerald-50 via-teal-50 to-cyan-50 p-6 rounded-2xl border border-emerald-100/60 shadow-xs">
-        <div>
-          <h2 className="text-xl font-bold text-slate-900 tracking-tight">Revenue Tracker</h2>
-          <p className="text-xs text-slate-500 mt-0.5">Track incoming client payments, view earnings, and monitor project billing.</p>
-        </div>
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 px-6 py-6 shadow-lg shadow-indigo-900/20 sm:px-8">
+        <div className="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-indigo-300">Finance</p>
+            <h2 className="mt-1 text-xl font-bold text-white tracking-tight sm:text-2xl">Revenue Tracker</h2>
+            <p className="text-sm text-indigo-200 mt-1">Track incoming client payments, view earnings, and monitor project billing.</p>
+          </div>
 
-        <button
-          onClick={() => {
-            setEditingId(null);
-            setShowModal(true);
-          }}
-          className="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold shadow-md shadow-emerald-100 active:scale-95 transition-all"
-        >
-          <Plus className="w-4 h-4" strokeWidth={2.5} />
-          Add Revenue
-        </button>
+          <button
+            onClick={() => {
+              setEditingId(null);
+              setShowModal(true);
+            }}
+            className="flex items-center gap-2 bg-white text-indigo-700 hover:bg-indigo-50 px-4 py-2.5 rounded-xl text-sm font-bold shadow-md shadow-indigo-950/20 active:scale-95 transition-all"
+          >
+            <Plus className="w-4 h-4" strokeWidth={2.5} />
+            Add Revenue
+          </button>
+        </div>
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -right-12 -top-14 h-40 w-40 rounded-full bg-white/10" />
+          <div className="absolute -left-10 -bottom-16 h-36 w-36 rounded-full bg-white/5" />
+        </div>
       </div>
 
       {/* METRICS & SEARCH TOOLBAR */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-100 shadow-xs w-full max-w-md focus-within:border-emerald-400 focus-within:ring-2 focus-within:ring-emerald-100 transition-all">
+        <div className="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-100 shadow-xs w-full max-w-md focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-100 transition-all">
           <Search size={18} className="text-slate-400" />
           <input
             type="text"
@@ -197,7 +204,7 @@ export default function RevenueManagement() {
       </div>
 
       {/* REVENUE DATATABLE */}
-      <div className="bg-white rounded-2xl shadow-xs border border-slate-100 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
         <div className="overflow-auto max-h-[60vh]">
           <table className="w-full text-left border-collapse">
             <thead className="sticky top-0 z-10 bg-gray-50">
@@ -265,14 +272,14 @@ export default function RevenueManagement() {
 
       {/* COMPACT INTERACTIVE MODAL SLIDEIN */}
       {showModal && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/40 backdrop-blur-xs flex justify-center items-center p-4 transition-all animate-fadeIn">
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-100 w-full max-w-md overflow-hidden relative">
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/50 backdrop-blur-sm flex p-4 transition-all animate-fadeIn">
+          <div className="bg-white rounded-2xl shadow-2xl shadow-slate-900/20 border border-slate-200/80 w-full max-w-md overflow-hidden relative flex flex-col max-h-[90vh] m-auto">
             
             {/* Header Banner */}
-            <div className="bg-gradient-to-r from-emerald-600 to-teal-600 p-5 text-white flex justify-between items-center">
+            <div className="bg-gradient-to-r from-indigo-600 to-violet-600 p-5 text-white flex justify-between items-center">
               <div>
                 <h3 className="text-lg font-bold">{editingId ? "Edit Revenue Details" : "Link Invoice to Revenue"}</h3>
-                <p className="text-emerald-100/80 text-xs mt-0.5">Connect incoming payments with your system invoices.</p>
+                <p className="text-indigo-100/80 text-xs mt-0.5">Connect incoming payments with your system invoices.</p>
               </div>
               <button 
                 onClick={closeAndResetModal} 
@@ -306,7 +313,7 @@ export default function RevenueManagement() {
                         gst: Number(invoice.cgst || 0) + Number(invoice.sgst || 0),
                       });
                     }}
-                    className="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-sm text-slate-700 font-medium focus:outline-hidden focus:border-emerald-400 focus:bg-white transition-all appearance-none"
+                    className="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-sm text-slate-700 font-medium focus:outline-hidden focus:border-indigo-400 focus:bg-white transition-all appearance-none"
                   >
                     <option value="">Choose Invoice</option>
                     {invoices.map((invoice) => (
@@ -315,7 +322,7 @@ export default function RevenueManagement() {
                       </option>
                     ))}
                   </select>
-                  <FileCheck size={16} className="absolute right-3 top-3.5 text-emerald-500 pointer-events-none" />
+                  <FileCheck size={16} className="absolute right-3 top-3.5 text-indigo-500 pointer-events-none" />
                 </div>
               </div>
 
@@ -336,7 +343,7 @@ export default function RevenueManagement() {
                   </div>
                   <div>
                     <span className="block text-slate-400 font-medium">Total Amount (INR)</span>
-                    <span className="font-bold text-emerald-600 text-sm">₹{Number(formData.amount).toLocaleString("en-IN")}</span>
+                    <span className="font-bold text-indigo-600 text-sm">Rs. {Number(formData.amount).toLocaleString("en-IN")}</span>
                   </div>
                   <div>
                     <span className="block text-slate-400 font-medium">GST Rate</span>
@@ -352,7 +359,7 @@ export default function RevenueManagement() {
                   <select
                     value={formData.status}
                     onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-sm font-semibold tracking-wide focus:outline-hidden focus:border-emerald-400 focus:bg-white transition-all appearance-none text-slate-700"
+                    className="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-sm font-semibold tracking-wide focus:outline-hidden focus:border-indigo-400 focus:bg-white transition-all appearance-none text-slate-700"
                   >
                     <option value="Paid">Paid</option>
                     <option value="Pending">Pending</option>
@@ -371,7 +378,7 @@ export default function RevenueManagement() {
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     placeholder="Add payment transaction IDs, bank details, or milestones..."
-                    className="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-sm text-slate-700 focus:outline-hidden focus:border-emerald-400 focus:bg-white transition-all pl-9"
+                    className="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-sm text-slate-700 focus:outline-hidden focus:border-indigo-400 focus:bg-white transition-all pl-9"
                   />
                   <FileText size={15} className="absolute left-3 top-3 text-slate-400" />
                 </div>
@@ -388,7 +395,7 @@ export default function RevenueManagement() {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold rounded-xl text-sm hover:opacity-95 shadow-md shadow-emerald-100 transition-all"
+                  className="px-5 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-semibold rounded-xl text-sm hover:opacity-95 shadow-md shadow-indigo-100 transition-all"
                 >
                   {editingId ? "Save Changes" : "Save Revenue"}
                 </button>
